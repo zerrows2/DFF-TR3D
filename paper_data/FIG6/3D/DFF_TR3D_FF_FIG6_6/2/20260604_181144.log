@@ -1,0 +1,1217 @@
+2026-06-04 18:11:45,031 - mmdet - INFO - Environment info:
+------------------------------------------------------------
+sys.platform: linux
+Python: 3.9.25 (main, Nov  3 2025, 22:33:05) [GCC 11.2.0]
+CUDA available: True
+GPU 0: NVIDIA L40
+CUDA_HOME: /usr/local/cuda-11.8
+NVCC: Cuda compilation tools, release 11.8, V11.8.89
+GCC: gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0
+PyTorch: 2.0.0+cu118
+PyTorch compiling details: PyTorch built with:
+  - GCC 9.3
+  - C++ Version: 201703
+  - Intel(R) oneAPI Math Kernel Library Version 2022.2-Product Build 20220804 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v2.7.3 (Git Hash 6dbeffbae1f23cbbeae17adb7b5b13f1f37c080e)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 11.8
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_90,code=sm_90
+  - CuDNN 8.7
+  - Magma 2.6.1
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.8, CUDNN_VERSION=8.7.0, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -Wno-deprecated -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOROCTRACER -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wunused-local-typedefs -Wno-unused-parameter -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-psabi -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Werror=cast-function-type -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_DISABLE_GPU_ASSERTS=ON, TORCH_VERSION=2.0.0, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=1, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, 
+
+TorchVision: 0.15.1+cu118
+OpenCV: 4.8.1
+MMCV: 1.6.0
+MMCV Compiler: GCC 11.4
+MMCV CUDA Compiler: 11.8
+MMDetection: 2.25.1
+MMSegmentation: 0.25.0
+MMDetection3D: 1.0.0rc3+ffc9f99
+spconv2.0: False
+------------------------------------------------------------
+
+2026-06-04 18:11:45,743 - mmdet - INFO - Distributed training: False
+2026-06-04 18:11:46,513 - mmdet - INFO - Config:
+voxel_size = 0.01
+model = dict(
+    type='TR3DFF3DDetector',
+    img_backbone=dict(
+        type='ResNet',
+        depth=50,
+        num_stages=4,
+        out_indices=(0, 1, 2, 3),
+        frozen_stages=1,
+        norm_cfg=dict(type='BN', requires_grad=False),
+        norm_eval=True,
+        style='caffe'),
+    img_neck=dict(
+        type='FPN',
+        in_channels=[256, 512, 1024, 2048],
+        out_channels=256,
+        num_outs=5),
+    backbone=dict(
+        type='MinkFFResNet',
+        in_channels=3,
+        max_channels=128,
+        depth=34,
+        norm='batch'),
+    neck=dict(
+        type='TR3DNeck', in_channels=(64, 128, 128, 128), out_channels=128),
+    head=dict(
+        type='TR3DHead',
+        in_channels=128,
+        n_reg_outs=8,
+        n_classes=10,
+        voxel_size=0.01,
+        assigner=dict(
+            type='TR3DAssigner',
+            top_pts_threshold=6,
+            label2level=[1, 1, 1, 0, 0, 1, 0, 0, 1, 0]),
+        bbox_loss=dict(type='RotatedIoU3DLoss', mode='diou',
+                       reduction='none')),
+    voxel_size=0.01,
+    train_cfg=dict(),
+    test_cfg=dict(nms_pre=1000, iou_thr=0.5, score_thr=0.01))
+optimizer = dict(type='AdamW', lr=0.001, weight_decay=0.0001)
+optimizer_config = dict(grad_clip=dict(max_norm=10, norm_type=2))
+lr_config = dict(policy='step', warmup=None, step=[8, 11])
+runner = dict(type='EpochBasedRunner', max_epochs=12)
+evaluation = dict(interval=12)
+custom_hooks = [dict(type='EmptyCacheHook', after_iter=True)]
+checkpoint_config = dict(interval=1, max_keep_ckpts=1)
+log_config = dict(interval=50, hooks=[dict(type='TextLoggerHook')])
+dist_params = dict(backend='nccl')
+log_level = 'INFO'
+work_dir = '/home/zero/USER/HEYU/tr3d/work_dirs/NN/DFF/DFF_TR3D_FF_FIG6_6/2'
+load_from = '/home/zero/USER/HEYU/MODEL/imvotenet_faster_rcnn_r50_fpn_2x4_sunrgbd-3d-10class_20210819_225618-62eba6ce.pth'
+resume_from = None
+workflow = [('train', 1)]
+dataset_type = 'SUNRGBDDataset'
+data_root = '/home/zero/USER/HEYU/DATA/sunrgbd_matlab/'
+class_names = ('bed', 'table', 'sofa', 'chair', 'toilet', 'desk', 'dresser',
+               'night_stand', 'bookshelf', 'bathtub')
+img_norm_cfg = dict(
+    mean=[103.53, 116.28, 123.675], std=[1.0, 1.0, 1.0], to_rgb=False)
+train_pipeline = [
+    dict(
+        type='LoadPointsFromFile',
+        coord_type='DEPTH',
+        shift_height=False,
+        use_color=True,
+        load_dim=6,
+        use_dim=[0, 1, 2, 3, 4, 5]),
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations3D'),
+    dict(
+        type='Resize',
+        img_scale=[(1333, 480), (1333, 504), (1333, 528), (1333, 552),
+                   (1333, 576), (1333, 600)],
+        multiscale_mode='value',
+        keep_ratio=True),
+    dict(
+        type='Normalize',
+        mean=[103.53, 116.28, 123.675],
+        std=[1.0, 1.0, 1.0],
+        to_rgb=False),
+    dict(type='Pad', size_divisor=32),
+    dict(
+        type='RandomFlip3D',
+        sync_2d=False,
+        flip_ratio_bev_horizontal=0.5,
+        flip_ratio_bev_vertical=0.0),
+    dict(
+        type='GlobalRotScaleTrans',
+        rot_range=[-0.523599, 0.523599],
+        scale_ratio_range=[0.85, 1.15],
+        translation_std=[0.1, 0.1, 0.1],
+        shift_height=False),
+    dict(
+        type='DefaultFormatBundle3D',
+        class_names=('bed', 'table', 'sofa', 'chair', 'toilet', 'desk',
+                     'dresser', 'night_stand', 'bookshelf', 'bathtub')),
+    dict(
+        type='Collect3D',
+        keys=['points', 'img', 'gt_bboxes_3d', 'gt_labels_3d'])
+]
+test_pipeline = [
+    dict(
+        type='LoadPointsFromFile',
+        coord_type='DEPTH',
+        shift_height=False,
+        use_color=True,
+        load_dim=6,
+        use_dim=[0, 1, 2, 3, 4, 5]),
+    dict(type='LoadImageFromFile'),
+    dict(
+        type='MultiScaleFlipAug3D',
+        img_scale=(1333, 600),
+        pts_scale_ratio=1,
+        flip=False,
+        transforms=[
+            dict(type='Resize', multiscale_mode='value', keep_ratio=True),
+            dict(
+                type='Normalize',
+                mean=[103.53, 116.28, 123.675],
+                std=[1.0, 1.0, 1.0],
+                to_rgb=False),
+            dict(type='Pad', size_divisor=32),
+            dict(
+                type='DefaultFormatBundle3D',
+                class_names=('bed', 'table', 'sofa', 'chair', 'toilet', 'desk',
+                             'dresser', 'night_stand', 'bookshelf', 'bathtub'),
+                with_label=False),
+            dict(type='Collect3D', keys=['points', 'img'])
+        ])
+]
+data = dict(
+    samples_per_gpu=16,
+    workers_per_gpu=4,
+    train=dict(
+        type='RepeatDataset',
+        times=5,
+        dataset=dict(
+            type='SUNRGBDDataset',
+            modality=dict(use_camera=True, use_lidar=True),
+            data_root='/home/zero/USER/HEYU/DATA/sunrgbd_matlab/',
+            ann_file=
+            '/home/zero/USER/HEYU/DATA/sunrgbd_matlab/sunrgbd_infos_train.pkl',
+            pipeline=[
+                dict(
+                    type='LoadPointsFromFile',
+                    coord_type='DEPTH',
+                    shift_height=False,
+                    use_color=True,
+                    load_dim=6,
+                    use_dim=[0, 1, 2, 3, 4, 5]),
+                dict(type='LoadImageFromFile'),
+                dict(type='LoadAnnotations3D'),
+                dict(
+                    type='Resize',
+                    img_scale=[(1333, 480), (1333, 504), (1333, 528),
+                               (1333, 552), (1333, 576), (1333, 600)],
+                    multiscale_mode='value',
+                    keep_ratio=True),
+                dict(
+                    type='Normalize',
+                    mean=[103.53, 116.28, 123.675],
+                    std=[1.0, 1.0, 1.0],
+                    to_rgb=False),
+                dict(type='Pad', size_divisor=32),
+                dict(
+                    type='RandomFlip3D',
+                    sync_2d=False,
+                    flip_ratio_bev_horizontal=0.5,
+                    flip_ratio_bev_vertical=0.0),
+                dict(
+                    type='GlobalRotScaleTrans',
+                    rot_range=[-0.523599, 0.523599],
+                    scale_ratio_range=[0.85, 1.15],
+                    translation_std=[0.1, 0.1, 0.1],
+                    shift_height=False),
+                dict(
+                    type='DefaultFormatBundle3D',
+                    class_names=('bed', 'table', 'sofa', 'chair', 'toilet',
+                                 'desk', 'dresser', 'night_stand', 'bookshelf',
+                                 'bathtub')),
+                dict(
+                    type='Collect3D',
+                    keys=['points', 'img', 'gt_bboxes_3d', 'gt_labels_3d'])
+            ],
+            filter_empty_gt=False,
+            classes=('bed', 'table', 'sofa', 'chair', 'toilet', 'desk',
+                     'dresser', 'night_stand', 'bookshelf', 'bathtub'),
+            box_type_3d='Depth')),
+    val=dict(
+        type='SUNRGBDDataset',
+        modality=dict(use_camera=True, use_lidar=True),
+        data_root='/home/zero/USER/HEYU/DATA/sunrgbd_matlab/',
+        ann_file=
+        '/home/zero/USER/HEYU/DATA/sunrgbd_matlab/sunrgbd_infos_val.pkl',
+        pipeline=[
+            dict(
+                type='LoadPointsFromFile',
+                coord_type='DEPTH',
+                shift_height=False,
+                use_color=True,
+                load_dim=6,
+                use_dim=[0, 1, 2, 3, 4, 5]),
+            dict(type='LoadImageFromFile'),
+            dict(
+                type='MultiScaleFlipAug3D',
+                img_scale=(1333, 600),
+                pts_scale_ratio=1,
+                flip=False,
+                transforms=[
+                    dict(
+                        type='Resize',
+                        multiscale_mode='value',
+                        keep_ratio=True),
+                    dict(
+                        type='Normalize',
+                        mean=[103.53, 116.28, 123.675],
+                        std=[1.0, 1.0, 1.0],
+                        to_rgb=False),
+                    dict(type='Pad', size_divisor=32),
+                    dict(
+                        type='DefaultFormatBundle3D',
+                        class_names=('bed', 'table', 'sofa', 'chair', 'toilet',
+                                     'desk', 'dresser', 'night_stand',
+                                     'bookshelf', 'bathtub'),
+                        with_label=False),
+                    dict(type='Collect3D', keys=['points', 'img'])
+                ])
+        ],
+        classes=('bed', 'table', 'sofa', 'chair', 'toilet', 'desk', 'dresser',
+                 'night_stand', 'bookshelf', 'bathtub'),
+        test_mode=True,
+        box_type_3d='Depth'),
+    test=dict(
+        type='SUNRGBDDataset',
+        modality=dict(use_camera=True, use_lidar=True),
+        data_root='/home/zero/USER/HEYU/DATA/sunrgbd_matlab/',
+        ann_file=
+        '/home/zero/USER/HEYU/DATA/sunrgbd_matlab/sunrgbd_infos_val.pkl',
+        pipeline=[
+            dict(
+                type='LoadPointsFromFile',
+                coord_type='DEPTH',
+                shift_height=False,
+                use_color=True,
+                load_dim=6,
+                use_dim=[0, 1, 2, 3, 4, 5]),
+            dict(type='LoadImageFromFile'),
+            dict(
+                type='MultiScaleFlipAug3D',
+                img_scale=(1333, 600),
+                pts_scale_ratio=1,
+                flip=False,
+                transforms=[
+                    dict(
+                        type='Resize',
+                        multiscale_mode='value',
+                        keep_ratio=True),
+                    dict(
+                        type='Normalize',
+                        mean=[103.53, 116.28, 123.675],
+                        std=[1.0, 1.0, 1.0],
+                        to_rgb=False),
+                    dict(type='Pad', size_divisor=32),
+                    dict(
+                        type='DefaultFormatBundle3D',
+                        class_names=('bed', 'table', 'sofa', 'chair', 'toilet',
+                                     'desk', 'dresser', 'night_stand',
+                                     'bookshelf', 'bathtub'),
+                        with_label=False),
+                    dict(type='Collect3D', keys=['points', 'img'])
+                ])
+        ],
+        classes=('bed', 'table', 'sofa', 'chair', 'toilet', 'desk', 'dresser',
+                 'night_stand', 'bookshelf', 'bathtub'),
+        test_mode=True,
+        box_type_3d='Depth'))
+gpu_ids = [0]
+
+2026-06-04 18:11:46,513 - mmdet - INFO - Set random seed to 0, deterministic: False
+2026-06-04 18:11:46,766 - mmdet - INFO - Model:
+TR3DFF3DDetector(
+  (img_backbone): ResNet(
+    (conv1): Conv2d(3, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+    (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (relu): ReLU(inplace=True)
+    (maxpool): MaxPool2d(kernel_size=3, stride=2, padding=1, dilation=1, ceil_mode=False)
+    (layer1): ResLayer(
+      (0): Bottleneck(
+        (conv1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (downsample): Sequential(
+          (0): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+      (1): Bottleneck(
+        (conv1): Conv2d(256, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+      (2): Bottleneck(
+        (conv1): Conv2d(256, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+    )
+    (layer2): ResLayer(
+      (0): Bottleneck(
+        (conv1): Conv2d(256, 128, kernel_size=(1, 1), stride=(2, 2), bias=False)
+        (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (downsample): Sequential(
+          (0): Conv2d(256, 512, kernel_size=(1, 1), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+      (1): Bottleneck(
+        (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+      (2): Bottleneck(
+        (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+      (3): Bottleneck(
+        (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+    )
+    (layer3): ResLayer(
+      (0): Bottleneck(
+        (conv1): Conv2d(512, 256, kernel_size=(1, 1), stride=(2, 2), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (downsample): Sequential(
+          (0): Conv2d(512, 1024, kernel_size=(1, 1), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+      (1): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+      (2): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+      (3): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+      (4): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+      (5): Bottleneck(
+        (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+    )
+    (layer4): ResLayer(
+      (0): Bottleneck(
+        (conv1): Conv2d(1024, 512, kernel_size=(1, 1), stride=(2, 2), bias=False)
+        (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (downsample): Sequential(
+          (0): Conv2d(1024, 2048, kernel_size=(1, 1), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+      (1): Bottleneck(
+        (conv1): Conv2d(2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+      (2): Bottleneck(
+        (conv1): Conv2d(2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+      )
+      init_cfg={'type': 'Constant', 'val': 0, 'override': {'name': 'norm3'}}
+    )
+  )
+  init_cfg=[{'type': 'Kaiming', 'layer': 'Conv2d'}, {'type': 'Constant', 'val': 1, 'layer': ['_BatchNorm', 'GroupNorm']}]
+  (img_neck): FPN(
+    (lateral_convs): ModuleList(
+      (0): ConvModule(
+        (conv): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1))
+      )
+      (1): ConvModule(
+        (conv): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1))
+      )
+      (2): ConvModule(
+        (conv): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1))
+      )
+      (3): ConvModule(
+        (conv): Conv2d(2048, 256, kernel_size=(1, 1), stride=(1, 1))
+      )
+    )
+    (fpn_convs): ModuleList(
+      (0-3): 4 x ConvModule(
+        (conv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+  )
+  init_cfg={'type': 'Xavier', 'layer': 'Conv2d', 'distribution': 'uniform'}
+  (backbone): MinkFFResNet(
+    (conv1): MinkowskiConvolution(in=3, out=64, kernel_size=[3, 3, 3], stride=[2, 2, 2], dilation=[1, 1, 1])
+    (norm1): MinkowskiBatchNorm(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (relu): MinkowskiReLU()
+    (maxpool): MinkowskiMaxPooling(kernel_size=[2, 2, 2], stride=[2, 2, 2], dilation=[1, 1, 1])
+    (layer1): Sequential(
+      (0): BasicBlock(
+        (conv1): MinkowskiConvolution(in=64, out=64, kernel_size=[3, 3, 3], stride=[2, 2, 2], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=64, out=64, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+        (downsample): Sequential(
+          (0): MinkowskiConvolution(in=64, out=64, kernel_size=[1, 1, 1], stride=[2, 2, 2], dilation=[1, 1, 1])
+          (1): MinkowskiBatchNorm(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (1): BasicBlock(
+        (conv1): MinkowskiConvolution(in=64, out=64, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=64, out=64, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+      )
+      (2): BasicBlock(
+        (conv1): MinkowskiConvolution(in=64, out=64, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=64, out=64, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+      )
+    )
+    (layer2): Sequential(
+      (0): BasicBlock(
+        (conv1): MinkowskiConvolution(in=64, out=128, kernel_size=[3, 3, 3], stride=[2, 2, 2], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+        (downsample): Sequential(
+          (0): MinkowskiConvolution(in=64, out=128, kernel_size=[1, 1, 1], stride=[2, 2, 2], dilation=[1, 1, 1])
+          (1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (1): BasicBlock(
+        (conv1): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+      )
+      (2): BasicBlock(
+        (conv1): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+      )
+      (3): BasicBlock(
+        (conv1): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+      )
+    )
+    (layer3): Sequential(
+      (0): BasicBlock(
+        (conv1): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[2, 2, 2], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+        (downsample): Sequential(
+          (0): MinkowskiConvolution(in=128, out=128, kernel_size=[1, 1, 1], stride=[2, 2, 2], dilation=[1, 1, 1])
+          (1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (1): BasicBlock(
+        (conv1): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+      )
+      (2): BasicBlock(
+        (conv1): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+      )
+      (3): BasicBlock(
+        (conv1): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+      )
+      (4): BasicBlock(
+        (conv1): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+      )
+      (5): BasicBlock(
+        (conv1): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+      )
+    )
+    (layer4): Sequential(
+      (0): BasicBlock(
+        (conv1): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[2, 2, 2], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+        (downsample): Sequential(
+          (0): MinkowskiConvolution(in=128, out=128, kernel_size=[1, 1, 1], stride=[2, 2, 2], dilation=[1, 1, 1])
+          (1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (1): BasicBlock(
+        (conv1): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+      )
+      (2): BasicBlock(
+        (conv1): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (conv2): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+        (norm2): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): MinkowskiReLU()
+      )
+    )
+  )
+  (neck): TR3DNeck(
+    (lateral_block_0): Sequential(
+      (0): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+      (1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): MinkowskiReLU()
+    )
+    (out_block_0): Sequential(
+      (0): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+      (1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): MinkowskiReLU()
+    )
+    (up_block_1): Sequential(
+      (0): MinkowskiGenerativeConvolutionTranspose(in=128, out=128, kernel_size=[3, 3, 3], stride=[2, 2, 2], dilation=[1, 1, 1])
+      (1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): MinkowskiReLU()
+    )
+    (lateral_block_1): Sequential(
+      (0): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+      (1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): MinkowskiReLU()
+    )
+    (out_block_1): Sequential(
+      (0): MinkowskiConvolution(in=128, out=128, kernel_size=[3, 3, 3], stride=[1, 1, 1], dilation=[1, 1, 1])
+      (1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): MinkowskiReLU()
+    )
+    (up_block_2): Sequential(
+      (0): MinkowskiGenerativeConvolutionTranspose(in=128, out=128, kernel_size=[3, 3, 3], stride=[2, 2, 2], dilation=[1, 1, 1])
+      (1): MinkowskiBatchNorm(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): MinkowskiReLU()
+    )
+  )
+  (head): TR3DHead(
+    (bbox_loss): RotatedIoU3DLoss()
+    (cls_loss): FocalLoss()
+    (bbox_conv): MinkowskiConvolution(in=128, out=8, kernel_size=[1, 1, 1], stride=[1, 1, 1], dilation=[1, 1, 1])
+    (cls_conv): MinkowskiConvolution(in=128, out=10, kernel_size=[1, 1, 1], stride=[1, 1, 1], dilation=[1, 1, 1])
+  )
+  (conv): Sequential(
+    (0): MinkowskiConvolution(in=256, out=64, kernel_size=[1, 1, 1], stride=[1, 1, 1], dilation=[1, 1, 1])
+    (1): MinkowskiBatchNorm(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (2): MinkowskiReLU()
+  )
+  (keep_ratio_predictor_MLPNET): KeepRatioPredictorMLPNet(
+    (net): Sequential(
+      (0): Linear(in_features=6, out_features=128, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=128, out_features=2, bias=True)
+      (3): Tanh()
+    )
+  )
+)
+2026-06-04 18:11:47,877 - mmdet - INFO - load checkpoint from local path: /home/zero/USER/HEYU/MODEL/imvotenet_faster_rcnn_r50_fpn_2x4_sunrgbd-3d-10class_20210819_225618-62eba6ce.pth
+2026-06-04 18:11:47,982 - mmdet - WARNING - The model and loaded state dict do not match exactly
+
+unexpected key in source state_dict: img_rpn_head.rpn_conv.weight, img_rpn_head.rpn_conv.bias, img_rpn_head.rpn_cls.weight, img_rpn_head.rpn_cls.bias, img_rpn_head.rpn_reg.weight, img_rpn_head.rpn_reg.bias, img_roi_head.bbox_head.fc_cls.weight, img_roi_head.bbox_head.fc_cls.bias, img_roi_head.bbox_head.fc_reg.weight, img_roi_head.bbox_head.fc_reg.bias, img_roi_head.bbox_head.shared_fcs.0.weight, img_roi_head.bbox_head.shared_fcs.0.bias, img_roi_head.bbox_head.shared_fcs.1.weight, img_roi_head.bbox_head.shared_fcs.1.bias
+
+missing keys in source state_dict: backbone.conv1.kernel, backbone.norm1.bn.weight, backbone.norm1.bn.bias, backbone.norm1.bn.running_mean, backbone.norm1.bn.running_var, backbone.layer1.0.conv1.kernel, backbone.layer1.0.norm1.bn.weight, backbone.layer1.0.norm1.bn.bias, backbone.layer1.0.norm1.bn.running_mean, backbone.layer1.0.norm1.bn.running_var, backbone.layer1.0.conv2.kernel, backbone.layer1.0.norm2.bn.weight, backbone.layer1.0.norm2.bn.bias, backbone.layer1.0.norm2.bn.running_mean, backbone.layer1.0.norm2.bn.running_var, backbone.layer1.0.downsample.0.kernel, backbone.layer1.0.downsample.1.bn.weight, backbone.layer1.0.downsample.1.bn.bias, backbone.layer1.0.downsample.1.bn.running_mean, backbone.layer1.0.downsample.1.bn.running_var, backbone.layer1.1.conv1.kernel, backbone.layer1.1.norm1.bn.weight, backbone.layer1.1.norm1.bn.bias, backbone.layer1.1.norm1.bn.running_mean, backbone.layer1.1.norm1.bn.running_var, backbone.layer1.1.conv2.kernel, backbone.layer1.1.norm2.bn.weight, backbone.layer1.1.norm2.bn.bias, backbone.layer1.1.norm2.bn.running_mean, backbone.layer1.1.norm2.bn.running_var, backbone.layer1.2.conv1.kernel, backbone.layer1.2.norm1.bn.weight, backbone.layer1.2.norm1.bn.bias, backbone.layer1.2.norm1.bn.running_mean, backbone.layer1.2.norm1.bn.running_var, backbone.layer1.2.conv2.kernel, backbone.layer1.2.norm2.bn.weight, backbone.layer1.2.norm2.bn.bias, backbone.layer1.2.norm2.bn.running_mean, backbone.layer1.2.norm2.bn.running_var, backbone.layer2.0.conv1.kernel, backbone.layer2.0.norm1.bn.weight, backbone.layer2.0.norm1.bn.bias, backbone.layer2.0.norm1.bn.running_mean, backbone.layer2.0.norm1.bn.running_var, backbone.layer2.0.conv2.kernel, backbone.layer2.0.norm2.bn.weight, backbone.layer2.0.norm2.bn.bias, backbone.layer2.0.norm2.bn.running_mean, backbone.layer2.0.norm2.bn.running_var, backbone.layer2.0.downsample.0.kernel, backbone.layer2.0.downsample.1.bn.weight, backbone.layer2.0.downsample.1.bn.bias, backbone.layer2.0.downsample.1.bn.running_mean, backbone.layer2.0.downsample.1.bn.running_var, backbone.layer2.1.conv1.kernel, backbone.layer2.1.norm1.bn.weight, backbone.layer2.1.norm1.bn.bias, backbone.layer2.1.norm1.bn.running_mean, backbone.layer2.1.norm1.bn.running_var, backbone.layer2.1.conv2.kernel, backbone.layer2.1.norm2.bn.weight, backbone.layer2.1.norm2.bn.bias, backbone.layer2.1.norm2.bn.running_mean, backbone.layer2.1.norm2.bn.running_var, backbone.layer2.2.conv1.kernel, backbone.layer2.2.norm1.bn.weight, backbone.layer2.2.norm1.bn.bias, backbone.layer2.2.norm1.bn.running_mean, backbone.layer2.2.norm1.bn.running_var, backbone.layer2.2.conv2.kernel, backbone.layer2.2.norm2.bn.weight, backbone.layer2.2.norm2.bn.bias, backbone.layer2.2.norm2.bn.running_mean, backbone.layer2.2.norm2.bn.running_var, backbone.layer2.3.conv1.kernel, backbone.layer2.3.norm1.bn.weight, backbone.layer2.3.norm1.bn.bias, backbone.layer2.3.norm1.bn.running_mean, backbone.layer2.3.norm1.bn.running_var, backbone.layer2.3.conv2.kernel, backbone.layer2.3.norm2.bn.weight, backbone.layer2.3.norm2.bn.bias, backbone.layer2.3.norm2.bn.running_mean, backbone.layer2.3.norm2.bn.running_var, backbone.layer3.0.conv1.kernel, backbone.layer3.0.norm1.bn.weight, backbone.layer3.0.norm1.bn.bias, backbone.layer3.0.norm1.bn.running_mean, backbone.layer3.0.norm1.bn.running_var, backbone.layer3.0.conv2.kernel, backbone.layer3.0.norm2.bn.weight, backbone.layer3.0.norm2.bn.bias, backbone.layer3.0.norm2.bn.running_mean, backbone.layer3.0.norm2.bn.running_var, backbone.layer3.0.downsample.0.kernel, backbone.layer3.0.downsample.1.bn.weight, backbone.layer3.0.downsample.1.bn.bias, backbone.layer3.0.downsample.1.bn.running_mean, backbone.layer3.0.downsample.1.bn.running_var, backbone.layer3.1.conv1.kernel, backbone.layer3.1.norm1.bn.weight, backbone.layer3.1.norm1.bn.bias, backbone.layer3.1.norm1.bn.running_mean, backbone.layer3.1.norm1.bn.running_var, backbone.layer3.1.conv2.kernel, backbone.layer3.1.norm2.bn.weight, backbone.layer3.1.norm2.bn.bias, backbone.layer3.1.norm2.bn.running_mean, backbone.layer3.1.norm2.bn.running_var, backbone.layer3.2.conv1.kernel, backbone.layer3.2.norm1.bn.weight, backbone.layer3.2.norm1.bn.bias, backbone.layer3.2.norm1.bn.running_mean, backbone.layer3.2.norm1.bn.running_var, backbone.layer3.2.conv2.kernel, backbone.layer3.2.norm2.bn.weight, backbone.layer3.2.norm2.bn.bias, backbone.layer3.2.norm2.bn.running_mean, backbone.layer3.2.norm2.bn.running_var, backbone.layer3.3.conv1.kernel, backbone.layer3.3.norm1.bn.weight, backbone.layer3.3.norm1.bn.bias, backbone.layer3.3.norm1.bn.running_mean, backbone.layer3.3.norm1.bn.running_var, backbone.layer3.3.conv2.kernel, backbone.layer3.3.norm2.bn.weight, backbone.layer3.3.norm2.bn.bias, backbone.layer3.3.norm2.bn.running_mean, backbone.layer3.3.norm2.bn.running_var, backbone.layer3.4.conv1.kernel, backbone.layer3.4.norm1.bn.weight, backbone.layer3.4.norm1.bn.bias, backbone.layer3.4.norm1.bn.running_mean, backbone.layer3.4.norm1.bn.running_var, backbone.layer3.4.conv2.kernel, backbone.layer3.4.norm2.bn.weight, backbone.layer3.4.norm2.bn.bias, backbone.layer3.4.norm2.bn.running_mean, backbone.layer3.4.norm2.bn.running_var, backbone.layer3.5.conv1.kernel, backbone.layer3.5.norm1.bn.weight, backbone.layer3.5.norm1.bn.bias, backbone.layer3.5.norm1.bn.running_mean, backbone.layer3.5.norm1.bn.running_var, backbone.layer3.5.conv2.kernel, backbone.layer3.5.norm2.bn.weight, backbone.layer3.5.norm2.bn.bias, backbone.layer3.5.norm2.bn.running_mean, backbone.layer3.5.norm2.bn.running_var, backbone.layer4.0.conv1.kernel, backbone.layer4.0.norm1.bn.weight, backbone.layer4.0.norm1.bn.bias, backbone.layer4.0.norm1.bn.running_mean, backbone.layer4.0.norm1.bn.running_var, backbone.layer4.0.conv2.kernel, backbone.layer4.0.norm2.bn.weight, backbone.layer4.0.norm2.bn.bias, backbone.layer4.0.norm2.bn.running_mean, backbone.layer4.0.norm2.bn.running_var, backbone.layer4.0.downsample.0.kernel, backbone.layer4.0.downsample.1.bn.weight, backbone.layer4.0.downsample.1.bn.bias, backbone.layer4.0.downsample.1.bn.running_mean, backbone.layer4.0.downsample.1.bn.running_var, backbone.layer4.1.conv1.kernel, backbone.layer4.1.norm1.bn.weight, backbone.layer4.1.norm1.bn.bias, backbone.layer4.1.norm1.bn.running_mean, backbone.layer4.1.norm1.bn.running_var, backbone.layer4.1.conv2.kernel, backbone.layer4.1.norm2.bn.weight, backbone.layer4.1.norm2.bn.bias, backbone.layer4.1.norm2.bn.running_mean, backbone.layer4.1.norm2.bn.running_var, backbone.layer4.2.conv1.kernel, backbone.layer4.2.norm1.bn.weight, backbone.layer4.2.norm1.bn.bias, backbone.layer4.2.norm1.bn.running_mean, backbone.layer4.2.norm1.bn.running_var, backbone.layer4.2.conv2.kernel, backbone.layer4.2.norm2.bn.weight, backbone.layer4.2.norm2.bn.bias, backbone.layer4.2.norm2.bn.running_mean, backbone.layer4.2.norm2.bn.running_var, neck.lateral_block_0.0.kernel, neck.lateral_block_0.1.bn.weight, neck.lateral_block_0.1.bn.bias, neck.lateral_block_0.1.bn.running_mean, neck.lateral_block_0.1.bn.running_var, neck.out_block_0.0.kernel, neck.out_block_0.1.bn.weight, neck.out_block_0.1.bn.bias, neck.out_block_0.1.bn.running_mean, neck.out_block_0.1.bn.running_var, neck.up_block_1.0.kernel, neck.up_block_1.1.bn.weight, neck.up_block_1.1.bn.bias, neck.up_block_1.1.bn.running_mean, neck.up_block_1.1.bn.running_var, neck.lateral_block_1.0.kernel, neck.lateral_block_1.1.bn.weight, neck.lateral_block_1.1.bn.bias, neck.lateral_block_1.1.bn.running_mean, neck.lateral_block_1.1.bn.running_var, neck.out_block_1.0.kernel, neck.out_block_1.1.bn.weight, neck.out_block_1.1.bn.bias, neck.out_block_1.1.bn.running_mean, neck.out_block_1.1.bn.running_var, neck.up_block_2.0.kernel, neck.up_block_2.1.bn.weight, neck.up_block_2.1.bn.bias, neck.up_block_2.1.bn.running_mean, neck.up_block_2.1.bn.running_var, head.bbox_conv.kernel, head.bbox_conv.bias, head.cls_conv.kernel, head.cls_conv.bias, conv.0.kernel, conv.1.bn.weight, conv.1.bn.bias, conv.1.bn.running_mean, conv.1.bn.running_var, keep_ratio_predictor_MLPNET.net.0.weight, keep_ratio_predictor_MLPNET.net.0.bias, keep_ratio_predictor_MLPNET.net.2.weight, keep_ratio_predictor_MLPNET.net.2.bias
+
+2026-06-04 18:11:47,988 - mmdet - INFO - Start running, host: zero@l40server, work_dir: /home/zero/USER/HEYU/tr3d/work_dirs/NN/DFF/DFF_TR3D_FF_FIG6_6/2
+2026-06-04 18:11:47,989 - mmdet - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(NORMAL      ) CheckpointHook                     
+(LOW         ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(NORMAL      ) EmptyCacheHook                     
+(LOW         ) IterTimerHook                      
+(LOW         ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(LOW         ) IterTimerHook                      
+(LOW         ) EvalHook                           
+ -------------------- 
+after_train_iter:
+(ABOVE_NORMAL) OptimizerHook                      
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) EmptyCacheHook                     
+(LOW         ) IterTimerHook                      
+(LOW         ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) CheckpointHook                     
+(NORMAL      ) EmptyCacheHook                     
+(LOW         ) EvalHook                           
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) EmptyCacheHook                     
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(NORMAL      ) EmptyCacheHook                     
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_epoch:
+(NORMAL      ) EmptyCacheHook                     
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+after_run:
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+2026-06-04 18:11:47,989 - mmdet - INFO - workflow: [('train', 1)], max: 12 epochs
+2026-06-04 18:11:47,989 - mmdet - INFO - Checkpoints will be saved to /home/zero/USER/HEYU/tr3d/work_dirs/NN/DFF/DFF_TR3D_FF_FIG6_6/2 by HardDiskBackend.
+2026-06-04 18:12:18,500 - mmdet - INFO - Epoch [1][50/1652]	lr: 1.000e-03, eta: 3:21:05, time: 0.610, data_time: 0.091, memory: 4439, bbox_loss: 0.6489, cls_loss: 0.6778, loss: 1.3267, grad_norm: 7.9492
+2026-06-04 18:12:47,084 - mmdet - INFO - Epoch [1][100/1652]	lr: 1.000e-03, eta: 3:14:15, time: 0.572, data_time: 0.042, memory: 4439, bbox_loss: 0.5743, cls_loss: 0.4853, loss: 1.0597, grad_norm: 9.1960
+2026-06-04 18:13:15,845 - mmdet - INFO - Epoch [1][150/1652]	lr: 1.000e-03, eta: 3:12:02, time: 0.575, data_time: 0.043, memory: 4439, bbox_loss: 0.5803, cls_loss: 0.4595, loss: 1.0398, grad_norm: 7.6459
+2026-06-04 18:13:44,997 - mmdet - INFO - Epoch [1][200/1652]	lr: 1.000e-03, eta: 3:11:20, time: 0.583, data_time: 0.044, memory: 4439, bbox_loss: 0.5612, cls_loss: 0.4325, loss: 0.9937, grad_norm: 7.9842
+2026-06-04 18:14:13,590 - mmdet - INFO - Epoch [1][250/1652]	lr: 1.000e-03, eta: 3:09:59, time: 0.572, data_time: 0.044, memory: 4439, bbox_loss: 0.5484, cls_loss: 0.4149, loss: 0.9633, grad_norm: 7.5844
+2026-06-04 18:14:42,888 - mmdet - INFO - Epoch [1][300/1652]	lr: 1.000e-03, eta: 3:09:42, time: 0.586, data_time: 0.043, memory: 4439, bbox_loss: 0.5410, cls_loss: 0.4096, loss: 0.9506, grad_norm: 6.6324
+2026-06-04 18:15:11,214 - mmdet - INFO - Epoch [1][350/1652]	lr: 1.000e-03, eta: 3:08:27, time: 0.567, data_time: 0.044, memory: 4439, bbox_loss: 0.5277, cls_loss: 0.3879, loss: 0.9156, grad_norm: 7.0521
+2026-06-04 18:15:39,720 - mmdet - INFO - Epoch [1][400/1652]	lr: 1.000e-03, eta: 3:07:32, time: 0.570, data_time: 0.042, memory: 4439, bbox_loss: 0.5367, cls_loss: 0.3784, loss: 0.9152, grad_norm: 6.7148
+2026-06-04 18:16:08,161 - mmdet - INFO - Epoch [1][450/1652]	lr: 1.000e-03, eta: 3:06:40, time: 0.569, data_time: 0.044, memory: 4439, bbox_loss: 0.5227, cls_loss: 0.3751, loss: 0.8978, grad_norm: 6.6283
+2026-06-04 18:16:36,677 - mmdet - INFO - Epoch [1][500/1652]	lr: 1.000e-03, eta: 3:05:56, time: 0.570, data_time: 0.044, memory: 4439, bbox_loss: 0.5227, cls_loss: 0.3634, loss: 0.8861, grad_norm: 6.8501
+2026-06-04 18:17:05,158 - mmdet - INFO - Epoch [1][550/1652]	lr: 1.000e-03, eta: 3:05:14, time: 0.570, data_time: 0.044, memory: 4439, bbox_loss: 0.5170, cls_loss: 0.3634, loss: 0.8804, grad_norm: 5.9231
+2026-06-04 18:17:34,564 - mmdet - INFO - Epoch [1][600/1652]	lr: 1.000e-03, eta: 3:05:03, time: 0.588, data_time: 0.044, memory: 4439, bbox_loss: 0.5062, cls_loss: 0.3451, loss: 0.8513, grad_norm: 6.9971
+2026-06-04 18:18:03,199 - mmdet - INFO - Epoch [1][650/1652]	lr: 1.000e-03, eta: 3:04:27, time: 0.573, data_time: 0.047, memory: 4439, bbox_loss: 0.5048, cls_loss: 0.3530, loss: 0.8578, grad_norm: 6.1518
+2026-06-04 18:18:30,849 - mmdet - INFO - Epoch [1][700/1652]	lr: 1.000e-03, eta: 3:03:25, time: 0.553, data_time: 0.045, memory: 4439, bbox_loss: 0.4963, cls_loss: 0.3470, loss: 0.8434, grad_norm: 5.8937
+2026-06-04 18:18:59,590 - mmdet - INFO - Epoch [1][750/1652]	lr: 1.000e-03, eta: 3:02:56, time: 0.575, data_time: 0.045, memory: 4439, bbox_loss: 0.5026, cls_loss: 0.3245, loss: 0.8271, grad_norm: 5.6617
+2026-06-04 18:19:28,193 - mmdet - INFO - Epoch [1][800/1652]	lr: 1.000e-03, eta: 3:02:23, time: 0.572, data_time: 0.042, memory: 4439, bbox_loss: 0.4944, cls_loss: 0.3493, loss: 0.8437, grad_norm: 5.7354
+2026-06-04 18:19:56,968 - mmdet - INFO - Epoch [1][850/1652]	lr: 1.000e-03, eta: 3:01:54, time: 0.575, data_time: 0.044, memory: 4439, bbox_loss: 0.4977, cls_loss: 0.3426, loss: 0.8403, grad_norm: 5.1322
+2026-06-04 18:20:25,511 - mmdet - INFO - Epoch [1][900/1652]	lr: 1.000e-03, eta: 3:01:21, time: 0.571, data_time: 0.043, memory: 4439, bbox_loss: 0.4936, cls_loss: 0.3257, loss: 0.8192, grad_norm: 5.1350
+2026-06-04 18:20:54,781 - mmdet - INFO - Epoch [1][950/1652]	lr: 1.000e-03, eta: 3:01:03, time: 0.585, data_time: 0.044, memory: 4507, bbox_loss: 0.4936, cls_loss: 0.3218, loss: 0.8154, grad_norm: 5.1649
+2026-06-04 18:21:24,215 - mmdet - INFO - Exp name: tr3d-ff_sunrgbd-3d-10class.py
+2026-06-04 18:21:24,216 - mmdet - INFO - Epoch [1][1000/1652]	lr: 1.000e-03, eta: 3:00:46, time: 0.589, data_time: 0.044, memory: 4507, bbox_loss: 0.4975, cls_loss: 0.3387, loss: 0.8362, grad_norm: 4.8963
+2026-06-04 18:21:53,011 - mmdet - INFO - Epoch [1][1050/1652]	lr: 1.000e-03, eta: 3:00:17, time: 0.576, data_time: 0.041, memory: 4507, bbox_loss: 0.4908, cls_loss: 0.3242, loss: 0.8151, grad_norm: 4.7687
+2026-06-04 18:22:22,494 - mmdet - INFO - Epoch [1][1100/1652]	lr: 1.000e-03, eta: 3:00:00, time: 0.590, data_time: 0.045, memory: 4507, bbox_loss: 0.4929, cls_loss: 0.3234, loss: 0.8164, grad_norm: 4.8980
+2026-06-04 18:22:51,392 - mmdet - INFO - Epoch [1][1150/1652]	lr: 1.000e-03, eta: 2:59:32, time: 0.578, data_time: 0.044, memory: 4507, bbox_loss: 0.4850, cls_loss: 0.3230, loss: 0.8080, grad_norm: 4.7471
+2026-06-04 18:23:20,466 - mmdet - INFO - Epoch [1][1200/1652]	lr: 1.000e-03, eta: 2:59:07, time: 0.581, data_time: 0.045, memory: 4735, bbox_loss: 0.4909, cls_loss: 0.3223, loss: 0.8132, grad_norm: 4.9968
+2026-06-04 18:23:49,536 - mmdet - INFO - Epoch [1][1250/1652]	lr: 1.000e-03, eta: 2:58:41, time: 0.581, data_time: 0.045, memory: 4735, bbox_loss: 0.4702, cls_loss: 0.3021, loss: 0.7723, grad_norm: 5.5361
+2026-06-04 18:24:18,852 - mmdet - INFO - Epoch [1][1300/1652]	lr: 1.000e-03, eta: 2:58:18, time: 0.586, data_time: 0.045, memory: 4735, bbox_loss: 0.4748, cls_loss: 0.3105, loss: 0.7853, grad_norm: 4.5394
+2026-06-04 18:24:47,850 - mmdet - INFO - Epoch [1][1350/1652]	lr: 1.000e-03, eta: 2:57:51, time: 0.580, data_time: 0.044, memory: 4735, bbox_loss: 0.4722, cls_loss: 0.3043, loss: 0.7765, grad_norm: 5.2291
+2026-06-04 18:25:16,965 - mmdet - INFO - Epoch [1][1400/1652]	lr: 1.000e-03, eta: 2:57:25, time: 0.582, data_time: 0.044, memory: 4735, bbox_loss: 0.4733, cls_loss: 0.3092, loss: 0.7825, grad_norm: 4.6223
+2026-06-04 18:25:46,154 - mmdet - INFO - Epoch [1][1450/1652]	lr: 1.000e-03, eta: 2:57:00, time: 0.584, data_time: 0.043, memory: 4735, bbox_loss: 0.4735, cls_loss: 0.3048, loss: 0.7783, grad_norm: 5.1760
+2026-06-04 18:26:15,099 - mmdet - INFO - Epoch [1][1500/1652]	lr: 1.000e-03, eta: 2:56:32, time: 0.579, data_time: 0.043, memory: 4735, bbox_loss: 0.4725, cls_loss: 0.3079, loss: 0.7804, grad_norm: 4.3537
+2026-06-04 18:26:44,309 - mmdet - INFO - Epoch [1][1550/1652]	lr: 1.000e-03, eta: 2:56:07, time: 0.584, data_time: 0.045, memory: 4735, bbox_loss: 0.4769, cls_loss: 0.3064, loss: 0.7834, grad_norm: 4.2189
+2026-06-04 18:27:13,821 - mmdet - INFO - Epoch [1][1600/1652]	lr: 1.000e-03, eta: 2:55:45, time: 0.590, data_time: 0.044, memory: 4735, bbox_loss: 0.4737, cls_loss: 0.3010, loss: 0.7747, grad_norm: 4.2714
+2026-06-04 18:27:42,902 - mmdet - INFO - Epoch [1][1650/1652]	lr: 1.000e-03, eta: 2:55:17, time: 0.582, data_time: 0.044, memory: 4735, bbox_loss: 0.4815, cls_loss: 0.3171, loss: 0.7986, grad_norm: 3.9472
+2026-06-04 18:27:44,205 - mmdet - INFO - Saving checkpoint at 1 epochs
+2026-06-04 18:28:16,969 - mmdet - INFO - Epoch [2][50/1652]	lr: 1.000e-03, eta: 2:55:06, time: 0.638, data_time: 0.094, memory: 4735, bbox_loss: 0.4715, cls_loss: 0.3015, loss: 0.7729, grad_norm: 4.5217
+2026-06-04 18:28:45,339 - mmdet - INFO - Epoch [2][100/1652]	lr: 1.000e-03, eta: 2:54:31, time: 0.567, data_time: 0.045, memory: 4735, bbox_loss: 0.4723, cls_loss: 0.3110, loss: 0.7833, grad_norm: 4.1996
+2026-06-04 18:29:14,673 - mmdet - INFO - Epoch [2][150/1652]	lr: 1.000e-03, eta: 2:54:06, time: 0.587, data_time: 0.045, memory: 4735, bbox_loss: 0.4705, cls_loss: 0.2927, loss: 0.7632, grad_norm: 4.3620
+2026-06-04 18:29:43,304 - mmdet - INFO - Epoch [2][200/1652]	lr: 1.000e-03, eta: 2:53:33, time: 0.573, data_time: 0.044, memory: 4735, bbox_loss: 0.4693, cls_loss: 0.3014, loss: 0.7707, grad_norm: 4.2433
+2026-06-04 18:30:11,945 - mmdet - INFO - Epoch [2][250/1652]	lr: 1.000e-03, eta: 2:53:01, time: 0.573, data_time: 0.044, memory: 4735, bbox_loss: 0.4703, cls_loss: 0.3027, loss: 0.7730, grad_norm: 3.8776
+2026-06-04 18:30:41,159 - mmdet - INFO - Epoch [2][300/1652]	lr: 1.000e-03, eta: 2:52:34, time: 0.584, data_time: 0.044, memory: 4735, bbox_loss: 0.4617, cls_loss: 0.2893, loss: 0.7511, grad_norm: 3.8739
+2026-06-04 18:31:10,626 - mmdet - INFO - Epoch [2][350/1652]	lr: 1.000e-03, eta: 2:52:10, time: 0.589, data_time: 0.044, memory: 4735, bbox_loss: 0.4725, cls_loss: 0.3013, loss: 0.7738, grad_norm: 4.4867
+2026-06-04 18:31:38,986 - mmdet - INFO - Epoch [2][400/1652]	lr: 1.000e-03, eta: 2:51:35, time: 0.567, data_time: 0.044, memory: 4735, bbox_loss: 0.4713, cls_loss: 0.3019, loss: 0.7732, grad_norm: 4.1492
+2026-06-04 18:32:08,110 - mmdet - INFO - Epoch [2][450/1652]	lr: 1.000e-03, eta: 2:51:08, time: 0.582, data_time: 0.045, memory: 4735, bbox_loss: 0.4639, cls_loss: 0.2932, loss: 0.7571, grad_norm: 4.1659
+2026-06-04 18:32:37,308 - mmdet - INFO - Epoch [2][500/1652]	lr: 1.000e-03, eta: 2:50:41, time: 0.584, data_time: 0.042, memory: 4735, bbox_loss: 0.4591, cls_loss: 0.2923, loss: 0.7514, grad_norm: 4.7586
+2026-06-04 18:33:05,013 - mmdet - INFO - Epoch [2][550/1652]	lr: 1.000e-03, eta: 2:50:02, time: 0.554, data_time: 0.044, memory: 4735, bbox_loss: 0.4516, cls_loss: 0.2860, loss: 0.7376, grad_norm: 4.2862
+2026-06-04 18:33:32,430 - mmdet - INFO - Epoch [2][600/1652]	lr: 1.000e-03, eta: 2:49:21, time: 0.548, data_time: 0.044, memory: 4735, bbox_loss: 0.4697, cls_loss: 0.3062, loss: 0.7759, grad_norm: 3.7492
+2026-06-04 18:34:00,069 - mmdet - INFO - Epoch [2][650/1652]	lr: 1.000e-03, eta: 2:48:42, time: 0.553, data_time: 0.045, memory: 4735, bbox_loss: 0.4636, cls_loss: 0.2932, loss: 0.7569, grad_norm: 3.9110
+2026-06-04 18:34:27,711 - mmdet - INFO - Epoch [2][700/1652]	lr: 1.000e-03, eta: 2:48:04, time: 0.553, data_time: 0.044, memory: 4735, bbox_loss: 0.4605, cls_loss: 0.2907, loss: 0.7511, grad_norm: 4.2905
+2026-06-04 18:34:55,551 - mmdet - INFO - Epoch [2][750/1652]	lr: 1.000e-03, eta: 2:47:28, time: 0.557, data_time: 0.043, memory: 4735, bbox_loss: 0.4603, cls_loss: 0.2900, loss: 0.7504, grad_norm: 3.5846
+2026-06-04 18:35:22,890 - mmdet - INFO - Epoch [2][800/1652]	lr: 1.000e-03, eta: 2:46:48, time: 0.547, data_time: 0.043, memory: 4735, bbox_loss: 0.4568, cls_loss: 0.2814, loss: 0.7381, grad_norm: 4.0497
+2026-06-04 18:35:50,525 - mmdet - INFO - Epoch [2][850/1652]	lr: 1.000e-03, eta: 2:46:11, time: 0.553, data_time: 0.044, memory: 4735, bbox_loss: 0.4634, cls_loss: 0.2965, loss: 0.7600, grad_norm: 3.9203
+2026-06-04 18:36:18,222 - mmdet - INFO - Epoch [2][900/1652]	lr: 1.000e-03, eta: 2:45:35, time: 0.554, data_time: 0.042, memory: 4735, bbox_loss: 0.4613, cls_loss: 0.2952, loss: 0.7564, grad_norm: 3.7277
+2026-06-04 18:36:46,067 - mmdet - INFO - Epoch [2][950/1652]	lr: 1.000e-03, eta: 2:45:00, time: 0.557, data_time: 0.045, memory: 4735, bbox_loss: 0.4586, cls_loss: 0.2810, loss: 0.7396, grad_norm: 3.7165
+2026-06-04 18:37:13,725 - mmdet - INFO - Epoch [2][1000/1652]	lr: 1.000e-03, eta: 2:44:25, time: 0.553, data_time: 0.044, memory: 4735, bbox_loss: 0.4532, cls_loss: 0.2811, loss: 0.7343, grad_norm: 3.9388
+2026-06-04 18:37:41,300 - mmdet - INFO - Epoch [2][1050/1652]	lr: 1.000e-03, eta: 2:43:49, time: 0.551, data_time: 0.044, memory: 4735, bbox_loss: 0.4603, cls_loss: 0.2892, loss: 0.7495, grad_norm: 3.4180
+2026-06-04 18:38:09,106 - mmdet - INFO - Epoch [2][1100/1652]	lr: 1.000e-03, eta: 2:43:14, time: 0.556, data_time: 0.043, memory: 4735, bbox_loss: 0.4624, cls_loss: 0.2825, loss: 0.7448, grad_norm: 3.3343
+2026-06-04 18:38:36,936 - mmdet - INFO - Epoch [2][1150/1652]	lr: 1.000e-03, eta: 2:42:40, time: 0.557, data_time: 0.045, memory: 4735, bbox_loss: 0.4565, cls_loss: 0.2815, loss: 0.7380, grad_norm: 3.6260
+2026-06-04 18:39:04,537 - mmdet - INFO - Epoch [2][1200/1652]	lr: 1.000e-03, eta: 2:42:05, time: 0.552, data_time: 0.045, memory: 4735, bbox_loss: 0.4517, cls_loss: 0.2806, loss: 0.7323, grad_norm: 3.7835
+2026-06-04 18:39:33,592 - mmdet - INFO - Epoch [2][1250/1652]	lr: 1.000e-03, eta: 2:41:39, time: 0.581, data_time: 0.044, memory: 4735, bbox_loss: 0.4506, cls_loss: 0.2757, loss: 0.7262, grad_norm: 3.8140
+2026-06-04 18:40:02,914 - mmdet - INFO - Epoch [2][1300/1652]	lr: 1.000e-03, eta: 2:41:14, time: 0.586, data_time: 0.044, memory: 4735, bbox_loss: 0.4472, cls_loss: 0.2867, loss: 0.7339, grad_norm: 3.0973
+2026-06-04 18:40:32,267 - mmdet - INFO - Epoch [2][1350/1652]	lr: 1.000e-03, eta: 2:40:49, time: 0.587, data_time: 0.045, memory: 4735, bbox_loss: 0.4460, cls_loss: 0.2722, loss: 0.7183, grad_norm: 3.6524
+2026-06-04 18:41:01,609 - mmdet - INFO - Epoch [2][1400/1652]	lr: 1.000e-03, eta: 2:40:24, time: 0.587, data_time: 0.045, memory: 4735, bbox_loss: 0.4486, cls_loss: 0.2788, loss: 0.7274, grad_norm: 3.6519
+2026-06-04 18:41:31,008 - mmdet - INFO - Epoch [2][1450/1652]	lr: 1.000e-03, eta: 2:39:59, time: 0.588, data_time: 0.045, memory: 4735, bbox_loss: 0.4409, cls_loss: 0.2727, loss: 0.7137, grad_norm: 3.4267
+2026-06-04 18:41:59,560 - mmdet - INFO - Epoch [2][1500/1652]	lr: 1.000e-03, eta: 2:39:30, time: 0.571, data_time: 0.044, memory: 4735, bbox_loss: 0.4490, cls_loss: 0.2731, loss: 0.7222, grad_norm: 3.6536
+2026-06-04 18:42:28,212 - mmdet - INFO - Epoch [2][1550/1652]	lr: 1.000e-03, eta: 2:39:01, time: 0.573, data_time: 0.045, memory: 4735, bbox_loss: 0.4526, cls_loss: 0.2862, loss: 0.7388, grad_norm: 3.2946
+2026-06-04 18:42:56,669 - mmdet - INFO - Epoch [2][1600/1652]	lr: 1.000e-03, eta: 2:38:31, time: 0.569, data_time: 0.043, memory: 4735, bbox_loss: 0.4497, cls_loss: 0.2738, loss: 0.7235, grad_norm: 3.4173
+2026-06-04 18:43:25,429 - mmdet - INFO - Epoch [2][1650/1652]	lr: 1.000e-03, eta: 2:38:03, time: 0.575, data_time: 0.043, memory: 4735, bbox_loss: 0.4450, cls_loss: 0.2776, loss: 0.7226, grad_norm: 3.6142
+2026-06-04 18:43:26,717 - mmdet - INFO - Saving checkpoint at 2 epochs
+2026-06-04 18:43:58,943 - mmdet - INFO - Epoch [3][50/1652]	lr: 1.000e-03, eta: 2:37:41, time: 0.630, data_time: 0.092, memory: 4735, bbox_loss: 0.4439, cls_loss: 0.2766, loss: 0.7205, grad_norm: 3.3553
+2026-06-04 18:44:27,871 - mmdet - INFO - Epoch [3][100/1652]	lr: 1.000e-03, eta: 2:37:13, time: 0.579, data_time: 0.044, memory: 4735, bbox_loss: 0.4468, cls_loss: 0.2859, loss: 0.7327, grad_norm: 3.2157
+2026-06-04 18:44:57,481 - mmdet - INFO - Epoch [3][150/1652]	lr: 1.000e-03, eta: 2:36:49, time: 0.592, data_time: 0.043, memory: 4735, bbox_loss: 0.4517, cls_loss: 0.2781, loss: 0.7299, grad_norm: 3.4713
+2026-06-04 18:45:26,674 - mmdet - INFO - Epoch [3][200/1652]	lr: 1.000e-03, eta: 2:36:22, time: 0.584, data_time: 0.045, memory: 4735, bbox_loss: 0.4502, cls_loss: 0.2647, loss: 0.7148, grad_norm: 3.9978
+2026-06-04 18:45:56,202 - mmdet - INFO - Epoch [3][250/1652]	lr: 1.000e-03, eta: 2:35:57, time: 0.591, data_time: 0.044, memory: 4735, bbox_loss: 0.4476, cls_loss: 0.2813, loss: 0.7290, grad_norm: 3.4400
+2026-06-04 18:46:25,667 - mmdet - INFO - Epoch [3][300/1652]	lr: 1.000e-03, eta: 2:35:31, time: 0.589, data_time: 0.044, memory: 4735, bbox_loss: 0.4401, cls_loss: 0.2758, loss: 0.7160, grad_norm: 3.2337
+2026-06-04 18:46:54,552 - mmdet - INFO - Epoch [3][350/1652]	lr: 1.000e-03, eta: 2:35:03, time: 0.578, data_time: 0.043, memory: 4735, bbox_loss: 0.4350, cls_loss: 0.2654, loss: 0.7003, grad_norm: 3.3157
+2026-06-04 18:47:22,339 - mmdet - INFO - Epoch [3][400/1652]	lr: 1.000e-03, eta: 2:34:30, time: 0.556, data_time: 0.044, memory: 4735, bbox_loss: 0.4543, cls_loss: 0.2730, loss: 0.7273, grad_norm: 3.0741
+2026-06-04 18:47:51,435 - mmdet - INFO - Epoch [3][450/1652]	lr: 1.000e-03, eta: 2:34:03, time: 0.582, data_time: 0.044, memory: 4735, bbox_loss: 0.4475, cls_loss: 0.2744, loss: 0.7218, grad_norm: 3.5017
+2026-06-04 18:48:20,452 - mmdet - INFO - Epoch [3][500/1652]	lr: 1.000e-03, eta: 2:33:35, time: 0.580, data_time: 0.043, memory: 4735, bbox_loss: 0.4350, cls_loss: 0.2730, loss: 0.7080, grad_norm: 3.4680
+2026-06-04 18:48:49,068 - mmdet - INFO - Epoch [3][550/1652]	lr: 1.000e-03, eta: 2:33:06, time: 0.572, data_time: 0.044, memory: 4735, bbox_loss: 0.4392, cls_loss: 0.2632, loss: 0.7024, grad_norm: 4.0317
+2026-06-04 18:49:16,583 - mmdet - INFO - Epoch [3][600/1652]	lr: 1.000e-03, eta: 2:32:32, time: 0.550, data_time: 0.045, memory: 4735, bbox_loss: 0.4362, cls_loss: 0.2683, loss: 0.7045, grad_norm: 3.1838
+2026-06-04 18:49:44,873 - mmdet - INFO - Epoch [3][650/1652]	lr: 1.000e-03, eta: 2:32:01, time: 0.566, data_time: 0.045, memory: 4735, bbox_loss: 0.4275, cls_loss: 0.2644, loss: 0.6919, grad_norm: 3.2271
+2026-06-04 18:50:11,760 - mmdet - INFO - Epoch [3][700/1652]	lr: 1.000e-03, eta: 2:31:25, time: 0.538, data_time: 0.043, memory: 4735, bbox_loss: 0.4352, cls_loss: 0.2691, loss: 0.7044, grad_norm: 3.0057
+2026-06-04 18:50:39,458 - mmdet - INFO - Epoch [3][750/1652]	lr: 1.000e-03, eta: 2:30:52, time: 0.554, data_time: 0.046, memory: 4735, bbox_loss: 0.4405, cls_loss: 0.2700, loss: 0.7106, grad_norm: 3.1699
+2026-06-04 18:51:07,069 - mmdet - INFO - Epoch [3][800/1652]	lr: 1.000e-03, eta: 2:30:20, time: 0.552, data_time: 0.043, memory: 4735, bbox_loss: 0.4383, cls_loss: 0.2759, loss: 0.7142, grad_norm: 3.2539
+2026-06-04 18:51:34,904 - mmdet - INFO - Epoch [3][850/1652]	lr: 1.000e-03, eta: 2:29:48, time: 0.557, data_time: 0.044, memory: 4735, bbox_loss: 0.4364, cls_loss: 0.2716, loss: 0.7080, grad_norm: 3.4749
+2026-06-04 18:52:02,422 - mmdet - INFO - Epoch [3][900/1652]	lr: 1.000e-03, eta: 2:29:15, time: 0.550, data_time: 0.043, memory: 4735, bbox_loss: 0.4289, cls_loss: 0.2653, loss: 0.6942, grad_norm: 3.3869
+2026-06-04 18:52:30,373 - mmdet - INFO - Epoch [3][950/1652]	lr: 1.000e-03, eta: 2:28:43, time: 0.559, data_time: 0.043, memory: 4735, bbox_loss: 0.4390, cls_loss: 0.2669, loss: 0.7059, grad_norm: 2.9748
+2026-06-04 18:52:57,498 - mmdet - INFO - Epoch [3][1000/1652]	lr: 1.000e-03, eta: 2:28:09, time: 0.542, data_time: 0.042, memory: 4735, bbox_loss: 0.4255, cls_loss: 0.2625, loss: 0.6879, grad_norm: 3.3486
+2026-06-04 18:53:25,049 - mmdet - INFO - Epoch [3][1050/1652]	lr: 1.000e-03, eta: 2:27:37, time: 0.551, data_time: 0.043, memory: 4735, bbox_loss: 0.4325, cls_loss: 0.2716, loss: 0.7041, grad_norm: 3.3175
+2026-06-04 18:53:53,338 - mmdet - INFO - Epoch [3][1100/1652]	lr: 1.000e-03, eta: 2:27:07, time: 0.566, data_time: 0.044, memory: 4735, bbox_loss: 0.4311, cls_loss: 0.2692, loss: 0.7003, grad_norm: 3.5015
+2026-06-04 18:54:20,762 - mmdet - INFO - Epoch [3][1150/1652]	lr: 1.000e-03, eta: 2:26:34, time: 0.548, data_time: 0.043, memory: 4735, bbox_loss: 0.4294, cls_loss: 0.2650, loss: 0.6944, grad_norm: 3.5057
+2026-06-04 18:54:48,010 - mmdet - INFO - Epoch [3][1200/1652]	lr: 1.000e-03, eta: 2:26:01, time: 0.545, data_time: 0.044, memory: 4735, bbox_loss: 0.4264, cls_loss: 0.2646, loss: 0.6910, grad_norm: 3.1749
+2026-06-04 18:55:17,475 - mmdet - INFO - Epoch [3][1250/1652]	lr: 1.000e-03, eta: 2:25:35, time: 0.589, data_time: 0.044, memory: 4735, bbox_loss: 0.4306, cls_loss: 0.2686, loss: 0.6991, grad_norm: 3.0782
+2026-06-04 18:55:47,011 - mmdet - INFO - Epoch [3][1300/1652]	lr: 1.000e-03, eta: 2:25:10, time: 0.591, data_time: 0.045, memory: 4735, bbox_loss: 0.4238, cls_loss: 0.2631, loss: 0.6869, grad_norm: 3.3319
+2026-06-04 18:56:16,467 - mmdet - INFO - Epoch [3][1350/1652]	lr: 1.000e-03, eta: 2:24:44, time: 0.589, data_time: 0.043, memory: 4735, bbox_loss: 0.4327, cls_loss: 0.2639, loss: 0.6966, grad_norm: 3.1076
+2026-06-04 18:56:45,820 - mmdet - INFO - Epoch [3][1400/1652]	lr: 1.000e-03, eta: 2:24:17, time: 0.587, data_time: 0.045, memory: 4735, bbox_loss: 0.4230, cls_loss: 0.2601, loss: 0.6831, grad_norm: 3.9565
+2026-06-04 18:57:14,957 - mmdet - INFO - Epoch [3][1450/1652]	lr: 1.000e-03, eta: 2:23:50, time: 0.583, data_time: 0.045, memory: 4735, bbox_loss: 0.4276, cls_loss: 0.2587, loss: 0.6864, grad_norm: 3.1068
+2026-06-04 18:57:44,050 - mmdet - INFO - Epoch [3][1500/1652]	lr: 1.000e-03, eta: 2:23:23, time: 0.582, data_time: 0.044, memory: 4735, bbox_loss: 0.4214, cls_loss: 0.2525, loss: 0.6740, grad_norm: 3.2752
+2026-06-04 18:58:12,903 - mmdet - INFO - Epoch [3][1550/1652]	lr: 1.000e-03, eta: 2:22:55, time: 0.577, data_time: 0.044, memory: 4735, bbox_loss: 0.4264, cls_loss: 0.2640, loss: 0.6903, grad_norm: 3.1301
+2026-06-04 18:58:41,856 - mmdet - INFO - Epoch [3][1600/1652]	lr: 1.000e-03, eta: 2:22:28, time: 0.579, data_time: 0.044, memory: 4735, bbox_loss: 0.4172, cls_loss: 0.2650, loss: 0.6821, grad_norm: 3.0692
+2026-06-04 18:59:10,265 - mmdet - INFO - Epoch [3][1650/1652]	lr: 1.000e-03, eta: 2:21:58, time: 0.568, data_time: 0.043, memory: 4735, bbox_loss: 0.4296, cls_loss: 0.2744, loss: 0.7040, grad_norm: 2.8484
+2026-06-04 18:59:11,547 - mmdet - INFO - Saving checkpoint at 3 epochs
+2026-06-04 18:59:43,682 - mmdet - INFO - Epoch [4][50/1652]	lr: 1.000e-03, eta: 2:21:33, time: 0.629, data_time: 0.093, memory: 4735, bbox_loss: 0.4217, cls_loss: 0.2644, loss: 0.6861, grad_norm: 3.1952
+2026-06-04 19:00:12,020 - mmdet - INFO - Epoch [4][100/1652]	lr: 1.000e-03, eta: 2:21:04, time: 0.567, data_time: 0.042, memory: 4735, bbox_loss: 0.4293, cls_loss: 0.2638, loss: 0.6932, grad_norm: 2.9202
+2026-06-04 19:00:39,493 - mmdet - INFO - Epoch [4][150/1652]	lr: 1.000e-03, eta: 2:20:32, time: 0.549, data_time: 0.043, memory: 4735, bbox_loss: 0.4202, cls_loss: 0.2635, loss: 0.6836, grad_norm: 2.9931
+2026-06-04 19:01:07,426 - mmdet - INFO - Epoch [4][200/1652]	lr: 1.000e-03, eta: 2:20:01, time: 0.559, data_time: 0.043, memory: 4735, bbox_loss: 0.4181, cls_loss: 0.2591, loss: 0.6772, grad_norm: 3.0842
+2026-06-04 19:01:35,229 - mmdet - INFO - Epoch [4][250/1652]	lr: 1.000e-03, eta: 2:19:30, time: 0.556, data_time: 0.043, memory: 4735, bbox_loss: 0.4255, cls_loss: 0.2650, loss: 0.6905, grad_norm: 3.1789
+2026-06-04 19:02:04,714 - mmdet - INFO - Epoch [4][300/1652]	lr: 1.000e-03, eta: 2:19:04, time: 0.590, data_time: 0.046, memory: 4735, bbox_loss: 0.4138, cls_loss: 0.2524, loss: 0.6662, grad_norm: 2.8693
+2026-06-04 19:02:34,004 - mmdet - INFO - Epoch [4][350/1652]	lr: 1.000e-03, eta: 2:18:37, time: 0.586, data_time: 0.045, memory: 4735, bbox_loss: 0.4167, cls_loss: 0.2584, loss: 0.6751, grad_norm: 3.1331
+2026-06-04 19:03:03,185 - mmdet - INFO - Epoch [4][400/1652]	lr: 1.000e-03, eta: 2:18:10, time: 0.584, data_time: 0.044, memory: 4735, bbox_loss: 0.4275, cls_loss: 0.2635, loss: 0.6909, grad_norm: 3.0020
+2026-06-04 19:03:32,545 - mmdet - INFO - Epoch [4][450/1652]	lr: 1.000e-03, eta: 2:17:43, time: 0.587, data_time: 0.045, memory: 4735, bbox_loss: 0.4056, cls_loss: 0.2518, loss: 0.6574, grad_norm: 3.2728
+2026-06-04 19:04:01,394 - mmdet - INFO - Epoch [4][500/1652]	lr: 1.000e-03, eta: 2:17:15, time: 0.577, data_time: 0.046, memory: 4735, bbox_loss: 0.4201, cls_loss: 0.2539, loss: 0.6739, grad_norm: 3.1975
+2026-06-04 19:04:31,038 - mmdet - INFO - Epoch [4][550/1652]	lr: 1.000e-03, eta: 2:16:49, time: 0.593, data_time: 0.043, memory: 4735, bbox_loss: 0.4084, cls_loss: 0.2486, loss: 0.6570, grad_norm: 2.9459
+2026-06-04 19:04:59,965 - mmdet - INFO - Epoch [4][600/1652]	lr: 1.000e-03, eta: 2:16:21, time: 0.579, data_time: 0.045, memory: 4735, bbox_loss: 0.4092, cls_loss: 0.2656, loss: 0.6748, grad_norm: 3.1027
+2026-06-04 19:05:29,141 - mmdet - INFO - Epoch [4][650/1652]	lr: 1.000e-03, eta: 2:15:53, time: 0.584, data_time: 0.043, memory: 4735, bbox_loss: 0.4170, cls_loss: 0.2558, loss: 0.6728, grad_norm: 3.2943
+2026-06-04 19:05:58,452 - mmdet - INFO - Epoch [4][700/1652]	lr: 1.000e-03, eta: 2:15:26, time: 0.586, data_time: 0.044, memory: 4735, bbox_loss: 0.4187, cls_loss: 0.2561, loss: 0.6748, grad_norm: 3.1074
+2026-06-04 19:06:27,866 - mmdet - INFO - Epoch [4][750/1652]	lr: 1.000e-03, eta: 2:14:59, time: 0.588, data_time: 0.045, memory: 4735, bbox_loss: 0.4254, cls_loss: 0.2608, loss: 0.6862, grad_norm: 2.9662
+2026-06-04 19:06:57,346 - mmdet - INFO - Epoch [4][800/1652]	lr: 1.000e-03, eta: 2:14:33, time: 0.590, data_time: 0.048, memory: 4735, bbox_loss: 0.4188, cls_loss: 0.2720, loss: 0.6908, grad_norm: 3.5300
+2026-06-04 19:07:26,920 - mmdet - INFO - Epoch [4][850/1652]	lr: 1.000e-03, eta: 2:14:06, time: 0.591, data_time: 0.044, memory: 4735, bbox_loss: 0.4070, cls_loss: 0.2509, loss: 0.6579, grad_norm: 3.2209
+2026-06-04 19:07:54,895 - mmdet - INFO - Epoch [4][900/1652]	lr: 1.000e-03, eta: 2:13:36, time: 0.560, data_time: 0.044, memory: 4735, bbox_loss: 0.4117, cls_loss: 0.2603, loss: 0.6721, grad_norm: 3.2532
+2026-06-04 19:08:23,816 - mmdet - INFO - Epoch [4][950/1652]	lr: 1.000e-03, eta: 2:13:07, time: 0.578, data_time: 0.044, memory: 4735, bbox_loss: 0.4096, cls_loss: 0.2479, loss: 0.6576, grad_norm: 3.2427
+2026-06-04 19:08:53,458 - mmdet - INFO - Epoch [4][1000/1652]	lr: 1.000e-03, eta: 2:12:41, time: 0.593, data_time: 0.045, memory: 4735, bbox_loss: 0.4121, cls_loss: 0.2486, loss: 0.6607, grad_norm: 3.3220
+2026-06-04 19:09:22,946 - mmdet - INFO - Epoch [4][1050/1652]	lr: 1.000e-03, eta: 2:12:14, time: 0.590, data_time: 0.045, memory: 4735, bbox_loss: 0.4112, cls_loss: 0.2586, loss: 0.6698, grad_norm: 2.8403
+2026-06-04 19:09:53,018 - mmdet - INFO - Epoch [4][1100/1652]	lr: 1.000e-03, eta: 2:11:48, time: 0.601, data_time: 0.045, memory: 4735, bbox_loss: 0.4094, cls_loss: 0.2562, loss: 0.6656, grad_norm: 2.8845
+2026-06-04 19:10:22,272 - mmdet - INFO - Epoch [4][1150/1652]	lr: 1.000e-03, eta: 2:11:21, time: 0.585, data_time: 0.047, memory: 4735, bbox_loss: 0.4102, cls_loss: 0.2498, loss: 0.6599, grad_norm: 3.0267
+2026-06-04 19:10:51,276 - mmdet - INFO - Epoch [4][1200/1652]	lr: 1.000e-03, eta: 2:10:53, time: 0.580, data_time: 0.045, memory: 4735, bbox_loss: 0.3972, cls_loss: 0.2502, loss: 0.6473, grad_norm: 2.9706
+2026-06-04 19:11:20,676 - mmdet - INFO - Epoch [4][1250/1652]	lr: 1.000e-03, eta: 2:10:25, time: 0.588, data_time: 0.043, memory: 4735, bbox_loss: 0.4013, cls_loss: 0.2471, loss: 0.6483, grad_norm: 3.1279
+2026-06-04 19:11:49,758 - mmdet - INFO - Epoch [4][1300/1652]	lr: 1.000e-03, eta: 2:09:57, time: 0.582, data_time: 0.044, memory: 4735, bbox_loss: 0.4097, cls_loss: 0.2507, loss: 0.6604, grad_norm: 2.7122
+2026-06-04 19:12:19,071 - mmdet - INFO - Epoch [4][1350/1652]	lr: 1.000e-03, eta: 2:09:30, time: 0.586, data_time: 0.045, memory: 4735, bbox_loss: 0.4121, cls_loss: 0.2517, loss: 0.6639, grad_norm: 3.0950
+2026-06-04 19:12:48,603 - mmdet - INFO - Epoch [4][1400/1652]	lr: 1.000e-03, eta: 2:09:03, time: 0.591, data_time: 0.045, memory: 4735, bbox_loss: 0.4003, cls_loss: 0.2583, loss: 0.6586, grad_norm: 2.7397
+2026-06-04 19:13:17,504 - mmdet - INFO - Epoch [4][1450/1652]	lr: 1.000e-03, eta: 2:08:34, time: 0.578, data_time: 0.044, memory: 4735, bbox_loss: 0.4081, cls_loss: 0.2574, loss: 0.6655, grad_norm: 3.0237
+2026-06-04 19:13:46,207 - mmdet - INFO - Epoch [4][1500/1652]	lr: 1.000e-03, eta: 2:08:06, time: 0.574, data_time: 0.043, memory: 4735, bbox_loss: 0.4114, cls_loss: 0.2519, loss: 0.6634, grad_norm: 2.8925
+2026-06-04 19:14:15,253 - mmdet - INFO - Epoch [4][1550/1652]	lr: 1.000e-03, eta: 2:07:37, time: 0.581, data_time: 0.045, memory: 4735, bbox_loss: 0.4112, cls_loss: 0.2532, loss: 0.6644, grad_norm: 2.6549
+2026-06-04 19:14:44,583 - mmdet - INFO - Epoch [4][1600/1652]	lr: 1.000e-03, eta: 2:07:10, time: 0.587, data_time: 0.045, memory: 4735, bbox_loss: 0.4001, cls_loss: 0.2410, loss: 0.6410, grad_norm: 2.8585
+2026-06-04 19:15:13,820 - mmdet - INFO - Epoch [4][1650/1652]	lr: 1.000e-03, eta: 2:06:42, time: 0.585, data_time: 0.044, memory: 4735, bbox_loss: 0.4089, cls_loss: 0.2510, loss: 0.6599, grad_norm: 2.9425
+2026-06-04 19:15:15,022 - mmdet - INFO - Saving checkpoint at 4 epochs
+2026-06-04 19:15:47,575 - mmdet - INFO - Epoch [5][50/1652]	lr: 1.000e-03, eta: 2:06:16, time: 0.636, data_time: 0.093, memory: 4735, bbox_loss: 0.4082, cls_loss: 0.2445, loss: 0.6527, grad_norm: 3.0590
+2026-06-04 19:16:17,220 - mmdet - INFO - Epoch [5][100/1652]	lr: 1.000e-03, eta: 2:05:49, time: 0.593, data_time: 0.044, memory: 4735, bbox_loss: 0.4119, cls_loss: 0.2462, loss: 0.6581, grad_norm: 3.3908
+2026-06-04 19:16:45,402 - mmdet - INFO - Epoch [5][150/1652]	lr: 1.000e-03, eta: 2:05:19, time: 0.564, data_time: 0.047, memory: 4735, bbox_loss: 0.4027, cls_loss: 0.2464, loss: 0.6491, grad_norm: 2.8725
+2026-06-04 19:17:14,821 - mmdet - INFO - Epoch [5][200/1652]	lr: 1.000e-03, eta: 2:04:51, time: 0.588, data_time: 0.043, memory: 4735, bbox_loss: 0.4049, cls_loss: 0.2507, loss: 0.6556, grad_norm: 2.7381
+2026-06-04 19:17:44,155 - mmdet - INFO - Epoch [5][250/1652]	lr: 1.000e-03, eta: 2:04:24, time: 0.587, data_time: 0.046, memory: 4735, bbox_loss: 0.4035, cls_loss: 0.2502, loss: 0.6537, grad_norm: 2.6588
+2026-06-04 19:18:13,260 - mmdet - INFO - Epoch [5][300/1652]	lr: 1.000e-03, eta: 2:03:56, time: 0.582, data_time: 0.043, memory: 4735, bbox_loss: 0.3973, cls_loss: 0.2426, loss: 0.6400, grad_norm: 2.8686
+2026-06-04 19:18:42,180 - mmdet - INFO - Epoch [5][350/1652]	lr: 1.000e-03, eta: 2:03:27, time: 0.578, data_time: 0.045, memory: 4735, bbox_loss: 0.4009, cls_loss: 0.2455, loss: 0.6464, grad_norm: 2.8911
+2026-06-04 19:19:11,483 - mmdet - INFO - Epoch [5][400/1652]	lr: 1.000e-03, eta: 2:02:59, time: 0.586, data_time: 0.047, memory: 4735, bbox_loss: 0.4051, cls_loss: 0.2403, loss: 0.6454, grad_norm: 2.8906
+2026-06-04 19:19:40,441 - mmdet - INFO - Epoch [5][450/1652]	lr: 1.000e-03, eta: 2:02:31, time: 0.579, data_time: 0.045, memory: 4735, bbox_loss: 0.3966, cls_loss: 0.2441, loss: 0.6407, grad_norm: 2.6627
+2026-06-04 19:20:09,802 - mmdet - INFO - Epoch [5][500/1652]	lr: 1.000e-03, eta: 2:02:03, time: 0.587, data_time: 0.048, memory: 4735, bbox_loss: 0.4063, cls_loss: 0.2509, loss: 0.6572, grad_norm: 2.8279
+2026-06-04 19:20:37,776 - mmdet - INFO - Epoch [5][550/1652]	lr: 1.000e-03, eta: 2:01:33, time: 0.559, data_time: 0.044, memory: 4735, bbox_loss: 0.4019, cls_loss: 0.2519, loss: 0.6538, grad_norm: 2.9822
+2026-06-04 19:21:05,411 - mmdet - INFO - Epoch [5][600/1652]	lr: 1.000e-03, eta: 2:01:02, time: 0.553, data_time: 0.043, memory: 4735, bbox_loss: 0.4050, cls_loss: 0.2550, loss: 0.6600, grad_norm: 2.8638
+2026-06-04 19:21:33,237 - mmdet - INFO - Epoch [5][650/1652]	lr: 1.000e-03, eta: 2:00:31, time: 0.556, data_time: 0.042, memory: 4735, bbox_loss: 0.3985, cls_loss: 0.2545, loss: 0.6530, grad_norm: 2.7570
+2026-06-04 19:22:01,204 - mmdet - INFO - Epoch [5][700/1652]	lr: 1.000e-03, eta: 2:00:01, time: 0.559, data_time: 0.044, memory: 4735, bbox_loss: 0.3969, cls_loss: 0.2436, loss: 0.6405, grad_norm: 2.7365
+2026-06-04 19:22:29,101 - mmdet - INFO - Epoch [5][750/1652]	lr: 1.000e-03, eta: 1:59:31, time: 0.558, data_time: 0.043, memory: 4735, bbox_loss: 0.4056, cls_loss: 0.2490, loss: 0.6546, grad_norm: 2.4872
+2026-06-04 19:22:58,396 - mmdet - INFO - Epoch [5][800/1652]	lr: 1.000e-03, eta: 1:59:03, time: 0.586, data_time: 0.044, memory: 4735, bbox_loss: 0.4060, cls_loss: 0.2543, loss: 0.6603, grad_norm: 2.4367
+2026-06-04 19:23:27,354 - mmdet - INFO - Epoch [5][850/1652]	lr: 1.000e-03, eta: 1:58:35, time: 0.579, data_time: 0.045, memory: 4735, bbox_loss: 0.3891, cls_loss: 0.2385, loss: 0.6275, grad_norm: 2.8715
+2026-06-04 19:23:56,840 - mmdet - INFO - Epoch [5][900/1652]	lr: 1.000e-03, eta: 1:58:07, time: 0.590, data_time: 0.044, memory: 4735, bbox_loss: 0.3982, cls_loss: 0.2531, loss: 0.6513, grad_norm: 2.5592
+2026-06-04 19:24:26,660 - mmdet - INFO - Epoch [5][950/1652]	lr: 1.000e-03, eta: 1:57:40, time: 0.596, data_time: 0.045, memory: 4735, bbox_loss: 0.3979, cls_loss: 0.2437, loss: 0.6417, grad_norm: 2.7702
+2026-06-04 19:24:55,862 - mmdet - INFO - Epoch [5][1000/1652]	lr: 1.000e-03, eta: 1:57:12, time: 0.584, data_time: 0.045, memory: 4735, bbox_loss: 0.3936, cls_loss: 0.2373, loss: 0.6309, grad_norm: 3.0240
+2026-06-04 19:25:25,065 - mmdet - INFO - Epoch [5][1050/1652]	lr: 1.000e-03, eta: 1:56:44, time: 0.584, data_time: 0.044, memory: 4735, bbox_loss: 0.4021, cls_loss: 0.2420, loss: 0.6441, grad_norm: 2.8171
+2026-06-04 19:25:54,941 - mmdet - INFO - Epoch [5][1100/1652]	lr: 1.000e-03, eta: 1:56:17, time: 0.598, data_time: 0.043, memory: 4735, bbox_loss: 0.3951, cls_loss: 0.2421, loss: 0.6372, grad_norm: 2.5579
+2026-06-04 19:26:24,175 - mmdet - INFO - Epoch [5][1150/1652]	lr: 1.000e-03, eta: 1:55:49, time: 0.585, data_time: 0.044, memory: 4735, bbox_loss: 0.4068, cls_loss: 0.2360, loss: 0.6428, grad_norm: 2.7146
+2026-06-04 19:26:53,235 - mmdet - INFO - Epoch [5][1200/1652]	lr: 1.000e-03, eta: 1:55:20, time: 0.581, data_time: 0.045, memory: 4735, bbox_loss: 0.4001, cls_loss: 0.2460, loss: 0.6461, grad_norm: 2.5458
+2026-06-04 19:27:22,470 - mmdet - INFO - Epoch [5][1250/1652]	lr: 1.000e-03, eta: 1:54:52, time: 0.585, data_time: 0.044, memory: 4735, bbox_loss: 0.3936, cls_loss: 0.2426, loss: 0.6362, grad_norm: 2.6775
+2026-06-04 19:27:52,070 - mmdet - INFO - Epoch [5][1300/1652]	lr: 1.000e-03, eta: 1:54:24, time: 0.592, data_time: 0.044, memory: 4735, bbox_loss: 0.3972, cls_loss: 0.2483, loss: 0.6456, grad_norm: 2.5407
+2026-06-04 19:28:21,292 - mmdet - INFO - Epoch [5][1350/1652]	lr: 1.000e-03, eta: 1:53:56, time: 0.584, data_time: 0.044, memory: 4735, bbox_loss: 0.3978, cls_loss: 0.2361, loss: 0.6339, grad_norm: 2.5195
+2026-06-04 19:28:50,888 - mmdet - INFO - Epoch [5][1400/1652]	lr: 1.000e-03, eta: 1:53:29, time: 0.592, data_time: 0.044, memory: 4735, bbox_loss: 0.3932, cls_loss: 0.2415, loss: 0.6347, grad_norm: 2.7932
+2026-06-04 19:29:20,501 - mmdet - INFO - Epoch [5][1450/1652]	lr: 1.000e-03, eta: 1:53:01, time: 0.592, data_time: 0.045, memory: 4735, bbox_loss: 0.3974, cls_loss: 0.2474, loss: 0.6448, grad_norm: 2.4055
+2026-06-04 19:29:49,835 - mmdet - INFO - Epoch [5][1500/1652]	lr: 1.000e-03, eta: 1:52:33, time: 0.587, data_time: 0.044, memory: 4735, bbox_loss: 0.4059, cls_loss: 0.2503, loss: 0.6562, grad_norm: 2.3700
+2026-06-04 19:30:19,315 - mmdet - INFO - Epoch [5][1550/1652]	lr: 1.000e-03, eta: 1:52:05, time: 0.590, data_time: 0.045, memory: 4735, bbox_loss: 0.3898, cls_loss: 0.2340, loss: 0.6239, grad_norm: 2.5456
+2026-06-04 19:30:48,817 - mmdet - INFO - Epoch [5][1600/1652]	lr: 1.000e-03, eta: 1:51:37, time: 0.590, data_time: 0.044, memory: 4735, bbox_loss: 0.3984, cls_loss: 0.2454, loss: 0.6438, grad_norm: 2.4238
+2026-06-04 19:31:18,748 - mmdet - INFO - Epoch [5][1650/1652]	lr: 1.000e-03, eta: 1:51:10, time: 0.599, data_time: 0.046, memory: 4735, bbox_loss: 0.3953, cls_loss: 0.2441, loss: 0.6394, grad_norm: 2.4213
+2026-06-04 19:31:20,024 - mmdet - INFO - Saving checkpoint at 5 epochs
+2026-06-04 19:31:51,244 - mmdet - INFO - Epoch [6][50/1652]	lr: 1.000e-03, eta: 1:50:41, time: 0.610, data_time: 0.094, memory: 4735, bbox_loss: 0.3896, cls_loss: 0.2335, loss: 0.6230, grad_norm: 2.4181
+2026-06-04 19:32:18,830 - mmdet - INFO - Epoch [6][100/1652]	lr: 1.000e-03, eta: 1:50:10, time: 0.552, data_time: 0.043, memory: 4735, bbox_loss: 0.4026, cls_loss: 0.2442, loss: 0.6468, grad_norm: 2.4468
+2026-06-04 19:32:47,593 - mmdet - INFO - Epoch [6][150/1652]	lr: 1.000e-03, eta: 1:49:41, time: 0.575, data_time: 0.046, memory: 4735, bbox_loss: 0.3891, cls_loss: 0.2342, loss: 0.6233, grad_norm: 2.3010
+2026-06-04 19:33:17,283 - mmdet - INFO - Epoch [6][200/1652]	lr: 1.000e-03, eta: 1:49:13, time: 0.594, data_time: 0.044, memory: 4735, bbox_loss: 0.3894, cls_loss: 0.2323, loss: 0.6217, grad_norm: 2.5875
+2026-06-04 19:33:46,464 - mmdet - INFO - Epoch [6][250/1652]	lr: 1.000e-03, eta: 1:48:45, time: 0.584, data_time: 0.044, memory: 4735, bbox_loss: 0.3941, cls_loss: 0.2350, loss: 0.6291, grad_norm: 2.6726
+2026-06-04 19:34:15,932 - mmdet - INFO - Epoch [6][300/1652]	lr: 1.000e-03, eta: 1:48:17, time: 0.589, data_time: 0.044, memory: 4735, bbox_loss: 0.3983, cls_loss: 0.2365, loss: 0.6348, grad_norm: 2.8818
+2026-06-04 19:34:45,283 - mmdet - INFO - Epoch [6][350/1652]	lr: 1.000e-03, eta: 1:47:49, time: 0.587, data_time: 0.044, memory: 4735, bbox_loss: 0.4032, cls_loss: 0.2383, loss: 0.6415, grad_norm: 2.5200
+2026-06-04 19:35:14,085 - mmdet - INFO - Epoch [6][400/1652]	lr: 1.000e-03, eta: 1:47:20, time: 0.576, data_time: 0.044, memory: 4735, bbox_loss: 0.3868, cls_loss: 0.2267, loss: 0.6135, grad_norm: 2.8194
+2026-06-04 19:35:42,057 - mmdet - INFO - Epoch [6][450/1652]	lr: 1.000e-03, eta: 1:46:50, time: 0.559, data_time: 0.044, memory: 4735, bbox_loss: 0.3934, cls_loss: 0.2375, loss: 0.6309, grad_norm: 2.5065
+2026-06-04 19:36:10,839 - mmdet - INFO - Epoch [6][500/1652]	lr: 1.000e-03, eta: 1:46:21, time: 0.576, data_time: 0.045, memory: 4735, bbox_loss: 0.3977, cls_loss: 0.2480, loss: 0.6457, grad_norm: 2.1698
+2026-06-04 19:36:40,035 - mmdet - INFO - Epoch [6][550/1652]	lr: 1.000e-03, eta: 1:45:53, time: 0.584, data_time: 0.047, memory: 4735, bbox_loss: 0.3892, cls_loss: 0.2359, loss: 0.6250, grad_norm: 2.4807
+2026-06-04 19:37:09,165 - mmdet - INFO - Epoch [6][600/1652]	lr: 1.000e-03, eta: 1:45:24, time: 0.583, data_time: 0.044, memory: 4735, bbox_loss: 0.3972, cls_loss: 0.2361, loss: 0.6334, grad_norm: 2.1991
+2026-06-04 19:37:38,260 - mmdet - INFO - Epoch [6][650/1652]	lr: 1.000e-03, eta: 1:44:56, time: 0.582, data_time: 0.044, memory: 4735, bbox_loss: 0.3912, cls_loss: 0.2365, loss: 0.6277, grad_norm: 2.4560
+2026-06-04 19:38:07,094 - mmdet - INFO - Epoch [6][700/1652]	lr: 1.000e-03, eta: 1:44:27, time: 0.577, data_time: 0.043, memory: 4735, bbox_loss: 0.3963, cls_loss: 0.2396, loss: 0.6360, grad_norm: 2.8115
+2026-06-04 19:38:37,095 - mmdet - INFO - Epoch [6][750/1652]	lr: 1.000e-03, eta: 1:43:59, time: 0.600, data_time: 0.044, memory: 4735, bbox_loss: 0.3891, cls_loss: 0.2388, loss: 0.6279, grad_norm: 2.4272
+2026-06-04 19:39:06,225 - mmdet - INFO - Epoch [6][800/1652]	lr: 1.000e-03, eta: 1:43:31, time: 0.583, data_time: 0.044, memory: 4735, bbox_loss: 0.3860, cls_loss: 0.2393, loss: 0.6253, grad_norm: 2.2138
+2026-06-04 19:39:35,665 - mmdet - INFO - Epoch [6][850/1652]	lr: 1.000e-03, eta: 1:43:03, time: 0.589, data_time: 0.044, memory: 4735, bbox_loss: 0.3969, cls_loss: 0.2358, loss: 0.6328, grad_norm: 2.8285
+2026-06-04 19:40:04,814 - mmdet - INFO - Epoch [6][900/1652]	lr: 1.000e-03, eta: 1:42:34, time: 0.583, data_time: 0.043, memory: 4735, bbox_loss: 0.3945, cls_loss: 0.2357, loss: 0.6303, grad_norm: 2.3353
+2026-06-04 19:40:34,164 - mmdet - INFO - Epoch [6][950/1652]	lr: 1.000e-03, eta: 1:42:06, time: 0.587, data_time: 0.042, memory: 4735, bbox_loss: 0.3840, cls_loss: 0.2256, loss: 0.6097, grad_norm: 2.5844
+2026-06-04 19:41:03,590 - mmdet - INFO - Epoch [6][1000/1652]	lr: 1.000e-03, eta: 1:41:38, time: 0.589, data_time: 0.043, memory: 4735, bbox_loss: 0.3836, cls_loss: 0.2298, loss: 0.6133, grad_norm: 2.4804
+2026-06-04 19:41:33,081 - mmdet - INFO - Epoch [6][1050/1652]	lr: 1.000e-03, eta: 1:41:09, time: 0.590, data_time: 0.043, memory: 4735, bbox_loss: 0.3967, cls_loss: 0.2427, loss: 0.6394, grad_norm: 2.1314
+2026-06-04 19:42:02,957 - mmdet - INFO - Epoch [6][1100/1652]	lr: 1.000e-03, eta: 1:40:42, time: 0.598, data_time: 0.044, memory: 4735, bbox_loss: 0.3948, cls_loss: 0.2410, loss: 0.6359, grad_norm: 2.4986
+2026-06-04 19:42:32,084 - mmdet - INFO - Epoch [6][1150/1652]	lr: 1.000e-03, eta: 1:40:13, time: 0.583, data_time: 0.044, memory: 4735, bbox_loss: 0.3952, cls_loss: 0.2372, loss: 0.6324, grad_norm: 2.4509
+2026-06-04 19:43:01,444 - mmdet - INFO - Epoch [6][1200/1652]	lr: 1.000e-03, eta: 1:39:45, time: 0.587, data_time: 0.045, memory: 4735, bbox_loss: 0.3901, cls_loss: 0.2422, loss: 0.6323, grad_norm: 2.3116
+2026-06-04 19:43:31,360 - mmdet - INFO - Epoch [6][1250/1652]	lr: 1.000e-03, eta: 1:39:17, time: 0.598, data_time: 0.049, memory: 4735, bbox_loss: 0.3892, cls_loss: 0.2291, loss: 0.6183, grad_norm: 2.3059
+2026-06-04 19:44:00,960 - mmdet - INFO - Epoch [6][1300/1652]	lr: 1.000e-03, eta: 1:38:49, time: 0.592, data_time: 0.044, memory: 4735, bbox_loss: 0.3949, cls_loss: 0.2440, loss: 0.6389, grad_norm: 2.3969
+2026-06-04 19:44:30,596 - mmdet - INFO - Epoch [6][1350/1652]	lr: 1.000e-03, eta: 1:38:21, time: 0.593, data_time: 0.044, memory: 4735, bbox_loss: 0.3896, cls_loss: 0.2290, loss: 0.6186, grad_norm: 2.3186
+2026-06-04 19:45:00,291 - mmdet - INFO - Epoch [6][1400/1652]	lr: 1.000e-03, eta: 1:37:53, time: 0.594, data_time: 0.043, memory: 4735, bbox_loss: 0.3846, cls_loss: 0.2342, loss: 0.6189, grad_norm: 2.4506
+2026-06-04 19:45:29,615 - mmdet - INFO - Epoch [6][1450/1652]	lr: 1.000e-03, eta: 1:37:24, time: 0.586, data_time: 0.045, memory: 4735, bbox_loss: 0.3819, cls_loss: 0.2382, loss: 0.6201, grad_norm: 2.2278
+2026-06-04 19:45:58,721 - mmdet - INFO - Epoch [6][1500/1652]	lr: 1.000e-03, eta: 1:36:56, time: 0.582, data_time: 0.044, memory: 4735, bbox_loss: 0.3832, cls_loss: 0.2304, loss: 0.6136, grad_norm: 2.4480
+2026-06-04 19:46:28,261 - mmdet - INFO - Epoch [6][1550/1652]	lr: 1.000e-03, eta: 1:36:27, time: 0.591, data_time: 0.044, memory: 4735, bbox_loss: 0.3803, cls_loss: 0.2273, loss: 0.6076, grad_norm: 2.4417
+2026-06-04 19:46:57,631 - mmdet - INFO - Epoch [6][1600/1652]	lr: 1.000e-03, eta: 1:35:59, time: 0.587, data_time: 0.044, memory: 4735, bbox_loss: 0.3923, cls_loss: 0.2329, loss: 0.6252, grad_norm: 2.3871
+2026-06-04 19:47:27,143 - mmdet - INFO - Epoch [6][1650/1652]	lr: 1.000e-03, eta: 1:35:31, time: 0.590, data_time: 0.043, memory: 4735, bbox_loss: 0.3791, cls_loss: 0.2298, loss: 0.6088, grad_norm: 2.3257
+2026-06-04 19:47:28,407 - mmdet - INFO - Saving checkpoint at 6 epochs
+2026-06-04 19:48:01,190 - mmdet - INFO - Epoch [7][50/1652]	lr: 1.000e-03, eta: 1:35:03, time: 0.641, data_time: 0.093, memory: 4735, bbox_loss: 0.3853, cls_loss: 0.2364, loss: 0.6217, grad_norm: 2.0175
+2026-06-04 19:48:30,956 - mmdet - INFO - Epoch [7][100/1652]	lr: 1.000e-03, eta: 1:34:35, time: 0.595, data_time: 0.045, memory: 4735, bbox_loss: 0.3851, cls_loss: 0.2398, loss: 0.6249, grad_norm: 2.2775
+2026-06-04 19:48:59,719 - mmdet - INFO - Epoch [7][150/1652]	lr: 1.000e-03, eta: 1:34:05, time: 0.575, data_time: 0.042, memory: 4735, bbox_loss: 0.3825, cls_loss: 0.2200, loss: 0.6025, grad_norm: 2.4946
+2026-06-04 19:49:29,213 - mmdet - INFO - Epoch [7][200/1652]	lr: 1.000e-03, eta: 1:33:37, time: 0.590, data_time: 0.044, memory: 4735, bbox_loss: 0.3865, cls_loss: 0.2299, loss: 0.6164, grad_norm: 2.3227
+2026-06-04 19:49:57,979 - mmdet - INFO - Epoch [7][250/1652]	lr: 1.000e-03, eta: 1:33:08, time: 0.575, data_time: 0.046, memory: 4735, bbox_loss: 0.3846, cls_loss: 0.2289, loss: 0.6135, grad_norm: 2.1839
+2026-06-04 19:50:27,222 - mmdet - INFO - Epoch [7][300/1652]	lr: 1.000e-03, eta: 1:32:39, time: 0.585, data_time: 0.043, memory: 4735, bbox_loss: 0.3833, cls_loss: 0.2270, loss: 0.6102, grad_norm: 2.5788
+2026-06-04 19:50:56,979 - mmdet - INFO - Epoch [7][350/1652]	lr: 1.000e-03, eta: 1:32:11, time: 0.595, data_time: 0.046, memory: 4735, bbox_loss: 0.3756, cls_loss: 0.2269, loss: 0.6025, grad_norm: 2.3358
+2026-06-04 19:51:26,671 - mmdet - INFO - Epoch [7][400/1652]	lr: 1.000e-03, eta: 1:31:43, time: 0.594, data_time: 0.043, memory: 4735, bbox_loss: 0.3895, cls_loss: 0.2377, loss: 0.6272, grad_norm: 1.9951
+2026-06-04 19:51:54,927 - mmdet - INFO - Epoch [7][450/1652]	lr: 1.000e-03, eta: 1:31:14, time: 0.565, data_time: 0.043, memory: 4735, bbox_loss: 0.3854, cls_loss: 0.2348, loss: 0.6202, grad_norm: 2.0317
+2026-06-04 19:52:23,907 - mmdet - INFO - Epoch [7][500/1652]	lr: 1.000e-03, eta: 1:30:45, time: 0.580, data_time: 0.044, memory: 4735, bbox_loss: 0.3795, cls_loss: 0.2250, loss: 0.6045, grad_norm: 2.4178
+2026-06-04 19:52:53,111 - mmdet - INFO - Epoch [7][550/1652]	lr: 1.000e-03, eta: 1:30:16, time: 0.584, data_time: 0.046, memory: 4735, bbox_loss: 0.3805, cls_loss: 0.2200, loss: 0.6005, grad_norm: 2.4017
+2026-06-04 19:53:22,702 - mmdet - INFO - Epoch [7][600/1652]	lr: 1.000e-03, eta: 1:29:48, time: 0.592, data_time: 0.043, memory: 4735, bbox_loss: 0.3828, cls_loss: 0.2337, loss: 0.6165, grad_norm: 2.3091
+2026-06-04 19:53:51,960 - mmdet - INFO - Epoch [7][650/1652]	lr: 1.000e-03, eta: 1:29:19, time: 0.585, data_time: 0.045, memory: 4735, bbox_loss: 0.3820, cls_loss: 0.2264, loss: 0.6084, grad_norm: 2.2645
+2026-06-04 19:54:21,654 - mmdet - INFO - Epoch [7][700/1652]	lr: 1.000e-03, eta: 1:28:51, time: 0.594, data_time: 0.045, memory: 4735, bbox_loss: 0.3852, cls_loss: 0.2283, loss: 0.6136, grad_norm: 2.2908
+2026-06-04 19:54:51,070 - mmdet - INFO - Epoch [7][750/1652]	lr: 1.000e-03, eta: 1:28:22, time: 0.588, data_time: 0.044, memory: 4735, bbox_loss: 0.3838, cls_loss: 0.2305, loss: 0.6143, grad_norm: 2.2377
+2026-06-04 19:55:20,455 - mmdet - INFO - Epoch [7][800/1652]	lr: 1.000e-03, eta: 1:27:54, time: 0.588, data_time: 0.044, memory: 4735, bbox_loss: 0.3861, cls_loss: 0.2286, loss: 0.6147, grad_norm: 2.1920
+2026-06-04 19:55:49,948 - mmdet - INFO - Epoch [7][850/1652]	lr: 1.000e-03, eta: 1:27:25, time: 0.590, data_time: 0.043, memory: 4735, bbox_loss: 0.3809, cls_loss: 0.2319, loss: 0.6129, grad_norm: 2.0017
+2026-06-04 19:56:19,359 - mmdet - INFO - Epoch [7][900/1652]	lr: 1.000e-03, eta: 1:26:57, time: 0.588, data_time: 0.043, memory: 4735, bbox_loss: 0.3780, cls_loss: 0.2176, loss: 0.5956, grad_norm: 2.2457
+2026-06-04 19:56:48,483 - mmdet - INFO - Epoch [7][950/1652]	lr: 1.000e-03, eta: 1:26:28, time: 0.582, data_time: 0.043, memory: 4735, bbox_loss: 0.3826, cls_loss: 0.2270, loss: 0.6096, grad_norm: 2.2165
+2026-06-04 19:57:17,389 - mmdet - INFO - Epoch [7][1000/1652]	lr: 1.000e-03, eta: 1:25:59, time: 0.578, data_time: 0.043, memory: 4735, bbox_loss: 0.3770, cls_loss: 0.2227, loss: 0.5997, grad_norm: 2.1228
+2026-06-04 19:57:46,569 - mmdet - INFO - Epoch [7][1050/1652]	lr: 1.000e-03, eta: 1:25:30, time: 0.584, data_time: 0.045, memory: 4735, bbox_loss: 0.3836, cls_loss: 0.2282, loss: 0.6117, grad_norm: 2.3897
+2026-06-04 19:58:16,264 - mmdet - INFO - Epoch [7][1100/1652]	lr: 1.000e-03, eta: 1:25:02, time: 0.594, data_time: 0.045, memory: 4735, bbox_loss: 0.3874, cls_loss: 0.2360, loss: 0.6234, grad_norm: 2.3269
+2026-06-04 19:58:45,725 - mmdet - INFO - Epoch [7][1150/1652]	lr: 1.000e-03, eta: 1:24:33, time: 0.589, data_time: 0.044, memory: 4735, bbox_loss: 0.3858, cls_loss: 0.2362, loss: 0.6220, grad_norm: 2.1799
+2026-06-04 19:59:15,122 - mmdet - INFO - Epoch [7][1200/1652]	lr: 1.000e-03, eta: 1:24:05, time: 0.588, data_time: 0.043, memory: 4735, bbox_loss: 0.3795, cls_loss: 0.2231, loss: 0.6027, grad_norm: 2.3303
+2026-06-04 19:59:44,551 - mmdet - INFO - Epoch [7][1250/1652]	lr: 1.000e-03, eta: 1:23:36, time: 0.589, data_time: 0.044, memory: 4735, bbox_loss: 0.3826, cls_loss: 0.2315, loss: 0.6141, grad_norm: 2.2468
+2026-06-04 20:00:13,493 - mmdet - INFO - Epoch [7][1300/1652]	lr: 1.000e-03, eta: 1:23:07, time: 0.579, data_time: 0.044, memory: 4735, bbox_loss: 0.3732, cls_loss: 0.2197, loss: 0.5930, grad_norm: 2.0105
+2026-06-04 20:00:42,921 - mmdet - INFO - Epoch [7][1350/1652]	lr: 1.000e-03, eta: 1:22:38, time: 0.589, data_time: 0.045, memory: 4735, bbox_loss: 0.3818, cls_loss: 0.2224, loss: 0.6043, grad_norm: 2.9393
+2026-06-04 20:01:12,567 - mmdet - INFO - Epoch [7][1400/1652]	lr: 1.000e-03, eta: 1:22:10, time: 0.593, data_time: 0.044, memory: 4735, bbox_loss: 0.3788, cls_loss: 0.2218, loss: 0.6005, grad_norm: 2.3307
+2026-06-04 20:01:41,656 - mmdet - INFO - Epoch [7][1450/1652]	lr: 1.000e-03, eta: 1:21:41, time: 0.582, data_time: 0.044, memory: 4735, bbox_loss: 0.3865, cls_loss: 0.2347, loss: 0.6212, grad_norm: 2.2792
+2026-06-04 20:02:10,886 - mmdet - INFO - Epoch [7][1500/1652]	lr: 1.000e-03, eta: 1:21:12, time: 0.585, data_time: 0.043, memory: 4735, bbox_loss: 0.3835, cls_loss: 0.2225, loss: 0.6059, grad_norm: 2.1638
+2026-06-04 20:02:40,757 - mmdet - INFO - Epoch [7][1550/1652]	lr: 1.000e-03, eta: 1:20:44, time: 0.597, data_time: 0.044, memory: 4735, bbox_loss: 0.3903, cls_loss: 0.2296, loss: 0.6199, grad_norm: 4.1409
+2026-06-04 20:03:10,173 - mmdet - INFO - Epoch [7][1600/1652]	lr: 1.000e-03, eta: 1:20:15, time: 0.588, data_time: 0.043, memory: 4735, bbox_loss: 0.3907, cls_loss: 0.2296, loss: 0.6202, grad_norm: 1.6844
+2026-06-04 20:03:39,945 - mmdet - INFO - Epoch [7][1650/1652]	lr: 1.000e-03, eta: 1:19:47, time: 0.595, data_time: 0.045, memory: 4735, bbox_loss: 0.3859, cls_loss: 0.2263, loss: 0.6121, grad_norm: 1.8689
+2026-06-04 20:03:41,289 - mmdet - INFO - Saving checkpoint at 7 epochs
+2026-06-04 20:04:14,401 - mmdet - INFO - Epoch [8][50/1652]	lr: 1.000e-03, eta: 1:19:18, time: 0.648, data_time: 0.094, memory: 4735, bbox_loss: 0.3781, cls_loss: 0.2261, loss: 0.6042, grad_norm: 2.0386
+2026-06-04 20:04:44,040 - mmdet - INFO - Epoch [8][100/1652]	lr: 1.000e-03, eta: 1:18:50, time: 0.593, data_time: 0.044, memory: 4735, bbox_loss: 0.3735, cls_loss: 0.2163, loss: 0.5898, grad_norm: 1.9815
+2026-06-04 20:05:13,456 - mmdet - INFO - Epoch [8][150/1652]	lr: 1.000e-03, eta: 1:18:21, time: 0.588, data_time: 0.044, memory: 4735, bbox_loss: 0.3787, cls_loss: 0.2218, loss: 0.6005, grad_norm: 2.2092
+2026-06-04 20:05:42,177 - mmdet - INFO - Epoch [8][200/1652]	lr: 1.000e-03, eta: 1:17:52, time: 0.574, data_time: 0.043, memory: 4735, bbox_loss: 0.3820, cls_loss: 0.2304, loss: 0.6124, grad_norm: 2.2851
+2026-06-04 20:06:10,156 - mmdet - INFO - Epoch [8][250/1652]	lr: 1.000e-03, eta: 1:17:22, time: 0.560, data_time: 0.045, memory: 4735, bbox_loss: 0.3789, cls_loss: 0.2214, loss: 0.6003, grad_norm: 1.8159
+2026-06-04 20:06:38,573 - mmdet - INFO - Epoch [8][300/1652]	lr: 1.000e-03, eta: 1:16:53, time: 0.568, data_time: 0.044, memory: 4735, bbox_loss: 0.3729, cls_loss: 0.2200, loss: 0.5929, grad_norm: 2.1389
+2026-06-04 20:07:06,872 - mmdet - INFO - Epoch [8][350/1652]	lr: 1.000e-03, eta: 1:16:24, time: 0.566, data_time: 0.045, memory: 4735, bbox_loss: 0.3854, cls_loss: 0.2299, loss: 0.6153, grad_norm: 1.8959
+2026-06-04 20:07:34,501 - mmdet - INFO - Epoch [8][400/1652]	lr: 1.000e-03, eta: 1:15:54, time: 0.553, data_time: 0.044, memory: 4735, bbox_loss: 0.3858, cls_loss: 0.2273, loss: 0.6131, grad_norm: 2.0634
+2026-06-04 20:08:02,110 - mmdet - INFO - Epoch [8][450/1652]	lr: 1.000e-03, eta: 1:15:24, time: 0.552, data_time: 0.045, memory: 4735, bbox_loss: 0.3731, cls_loss: 0.2148, loss: 0.5879, grad_norm: 1.9944
+2026-06-04 20:08:30,452 - mmdet - INFO - Epoch [8][500/1652]	lr: 1.000e-03, eta: 1:14:55, time: 0.567, data_time: 0.045, memory: 4735, bbox_loss: 0.3783, cls_loss: 0.2249, loss: 0.6032, grad_norm: 1.9640
+2026-06-04 20:08:59,783 - mmdet - INFO - Epoch [8][550/1652]	lr: 1.000e-03, eta: 1:14:26, time: 0.587, data_time: 0.044, memory: 4735, bbox_loss: 0.3806, cls_loss: 0.2236, loss: 0.6042, grad_norm: 1.9656
+2026-06-04 20:09:28,886 - mmdet - INFO - Epoch [8][600/1652]	lr: 1.000e-03, eta: 1:13:57, time: 0.582, data_time: 0.043, memory: 4735, bbox_loss: 0.3764, cls_loss: 0.2189, loss: 0.5953, grad_norm: 2.1979
+2026-06-04 20:09:58,340 - mmdet - INFO - Epoch [8][650/1652]	lr: 1.000e-03, eta: 1:13:28, time: 0.589, data_time: 0.046, memory: 4735, bbox_loss: 0.3733, cls_loss: 0.2226, loss: 0.5960, grad_norm: 2.2441
+2026-06-04 20:10:26,747 - mmdet - INFO - Epoch [8][700/1652]	lr: 1.000e-03, eta: 1:12:59, time: 0.568, data_time: 0.044, memory: 4735, bbox_loss: 0.3802, cls_loss: 0.2209, loss: 0.6010, grad_norm: 2.0807
+2026-06-04 20:10:55,465 - mmdet - INFO - Epoch [8][750/1652]	lr: 1.000e-03, eta: 1:12:30, time: 0.574, data_time: 0.044, memory: 4735, bbox_loss: 0.3710, cls_loss: 0.2229, loss: 0.5939, grad_norm: 2.1117
+2026-06-04 20:11:23,053 - mmdet - INFO - Epoch [8][800/1652]	lr: 1.000e-03, eta: 1:12:00, time: 0.552, data_time: 0.044, memory: 4735, bbox_loss: 0.3767, cls_loss: 0.2289, loss: 0.6056, grad_norm: 1.9436
+2026-06-04 20:11:50,841 - mmdet - INFO - Epoch [8][850/1652]	lr: 1.000e-03, eta: 1:11:30, time: 0.556, data_time: 0.043, memory: 4735, bbox_loss: 0.3813, cls_loss: 0.2266, loss: 0.6079, grad_norm: 2.1392
+2026-06-04 20:12:18,480 - mmdet - INFO - Epoch [8][900/1652]	lr: 1.000e-03, eta: 1:11:01, time: 0.553, data_time: 0.045, memory: 4735, bbox_loss: 0.3772, cls_loss: 0.2214, loss: 0.5986, grad_norm: 2.0369
+2026-06-04 20:12:46,650 - mmdet - INFO - Epoch [8][950/1652]	lr: 1.000e-03, eta: 1:10:31, time: 0.563, data_time: 0.045, memory: 4735, bbox_loss: 0.3791, cls_loss: 0.2226, loss: 0.6018, grad_norm: 2.1483
+2026-06-04 20:13:14,445 - mmdet - INFO - Epoch [8][1000/1652]	lr: 1.000e-03, eta: 1:10:02, time: 0.556, data_time: 0.043, memory: 4735, bbox_loss: 0.3823, cls_loss: 0.2249, loss: 0.6072, grad_norm: 1.9967
+2026-06-04 20:13:42,207 - mmdet - INFO - Epoch [8][1050/1652]	lr: 1.000e-03, eta: 1:09:32, time: 0.555, data_time: 0.043, memory: 4735, bbox_loss: 0.3899, cls_loss: 0.2314, loss: 0.6213, grad_norm: 1.8268
+2026-06-04 20:14:10,099 - mmdet - INFO - Epoch [8][1100/1652]	lr: 1.000e-03, eta: 1:09:02, time: 0.558, data_time: 0.042, memory: 4735, bbox_loss: 0.3808, cls_loss: 0.2268, loss: 0.6076, grad_norm: 1.8446
+2026-06-04 20:14:37,685 - mmdet - INFO - Epoch [8][1150/1652]	lr: 1.000e-03, eta: 1:08:33, time: 0.552, data_time: 0.044, memory: 4735, bbox_loss: 0.3757, cls_loss: 0.2196, loss: 0.5954, grad_norm: 1.9388
+2026-06-04 20:15:05,637 - mmdet - INFO - Epoch [8][1200/1652]	lr: 1.000e-03, eta: 1:08:03, time: 0.559, data_time: 0.043, memory: 4735, bbox_loss: 0.3774, cls_loss: 0.2239, loss: 0.6013, grad_norm: 2.0627
+2026-06-04 20:15:33,719 - mmdet - INFO - Epoch [8][1250/1652]	lr: 1.000e-03, eta: 1:07:34, time: 0.562, data_time: 0.044, memory: 4735, bbox_loss: 0.3773, cls_loss: 0.2319, loss: 0.6092, grad_norm: 1.9000
+2026-06-04 20:16:01,544 - mmdet - INFO - Epoch [8][1300/1652]	lr: 1.000e-03, eta: 1:07:04, time: 0.556, data_time: 0.042, memory: 4735, bbox_loss: 0.3650, cls_loss: 0.2160, loss: 0.5810, grad_norm: 2.0388
+2026-06-04 20:16:29,291 - mmdet - INFO - Epoch [8][1350/1652]	lr: 1.000e-03, eta: 1:06:35, time: 0.555, data_time: 0.044, memory: 4735, bbox_loss: 0.3741, cls_loss: 0.2166, loss: 0.5907, grad_norm: 2.1365
+2026-06-04 20:16:57,444 - mmdet - INFO - Epoch [8][1400/1652]	lr: 1.000e-03, eta: 1:06:06, time: 0.563, data_time: 0.044, memory: 4735, bbox_loss: 0.3614, cls_loss: 0.2148, loss: 0.5762, grad_norm: 1.8934
+2026-06-04 20:17:25,336 - mmdet - INFO - Epoch [8][1450/1652]	lr: 1.000e-03, eta: 1:05:36, time: 0.558, data_time: 0.043, memory: 4735, bbox_loss: 0.3715, cls_loss: 0.2191, loss: 0.5907, grad_norm: 1.8775
+2026-06-04 20:17:53,438 - mmdet - INFO - Epoch [8][1500/1652]	lr: 1.000e-03, eta: 1:05:07, time: 0.562, data_time: 0.044, memory: 4735, bbox_loss: 0.3775, cls_loss: 0.2178, loss: 0.5953, grad_norm: 2.0466
+2026-06-04 20:18:21,541 - mmdet - INFO - Epoch [8][1550/1652]	lr: 1.000e-03, eta: 1:04:38, time: 0.562, data_time: 0.045, memory: 4735, bbox_loss: 0.3728, cls_loss: 0.2202, loss: 0.5930, grad_norm: 2.0183
+2026-06-04 20:18:49,182 - mmdet - INFO - Epoch [8][1600/1652]	lr: 1.000e-03, eta: 1:04:08, time: 0.553, data_time: 0.044, memory: 4735, bbox_loss: 0.3807, cls_loss: 0.2221, loss: 0.6028, grad_norm: 2.0503
+2026-06-04 20:19:16,893 - mmdet - INFO - Epoch [8][1650/1652]	lr: 1.000e-03, eta: 1:03:39, time: 0.554, data_time: 0.043, memory: 4735, bbox_loss: 0.3803, cls_loss: 0.2191, loss: 0.5993, grad_norm: 1.9687
+2026-06-04 20:19:17,990 - mmdet - INFO - Saving checkpoint at 8 epochs
+2026-06-04 20:19:49,800 - mmdet - INFO - Epoch [9][50/1652]	lr: 1.000e-04, eta: 1:03:09, time: 0.625, data_time: 0.092, memory: 4735, bbox_loss: 0.3765, cls_loss: 0.2167, loss: 0.5932, grad_norm: 1.6396
+2026-06-04 20:20:19,541 - mmdet - INFO - Epoch [9][100/1652]	lr: 1.000e-04, eta: 1:02:41, time: 0.595, data_time: 0.045, memory: 4735, bbox_loss: 0.3501, cls_loss: 0.2025, loss: 0.5527, grad_norm: 1.5571
+2026-06-04 20:20:49,619 - mmdet - INFO - Epoch [9][150/1652]	lr: 1.000e-04, eta: 1:02:12, time: 0.602, data_time: 0.046, memory: 4735, bbox_loss: 0.3627, cls_loss: 0.2153, loss: 0.5780, grad_norm: 1.5671
+2026-06-04 20:21:18,950 - mmdet - INFO - Epoch [9][200/1652]	lr: 1.000e-04, eta: 1:01:44, time: 0.587, data_time: 0.045, memory: 4735, bbox_loss: 0.3592, cls_loss: 0.2063, loss: 0.5655, grad_norm: 1.5882
+2026-06-04 20:21:47,781 - mmdet - INFO - Epoch [9][250/1652]	lr: 1.000e-04, eta: 1:01:15, time: 0.577, data_time: 0.044, memory: 4735, bbox_loss: 0.3619, cls_loss: 0.2095, loss: 0.5715, grad_norm: 1.5234
+2026-06-04 20:22:17,354 - mmdet - INFO - Epoch [9][300/1652]	lr: 1.000e-04, eta: 1:00:46, time: 0.591, data_time: 0.043, memory: 4735, bbox_loss: 0.3667, cls_loss: 0.2122, loss: 0.5788, grad_norm: 1.6503
+2026-06-04 20:22:46,167 - mmdet - INFO - Epoch [9][350/1652]	lr: 1.000e-04, eta: 1:00:17, time: 0.576, data_time: 0.042, memory: 4735, bbox_loss: 0.3613, cls_loss: 0.2086, loss: 0.5699, grad_norm: 1.6688
+2026-06-04 20:23:14,601 - mmdet - INFO - Epoch [9][400/1652]	lr: 1.000e-04, eta: 0:59:48, time: 0.569, data_time: 0.044, memory: 4735, bbox_loss: 0.3493, cls_loss: 0.2050, loss: 0.5543, grad_norm: 1.5574
+2026-06-04 20:23:43,870 - mmdet - INFO - Epoch [9][450/1652]	lr: 1.000e-04, eta: 0:59:19, time: 0.585, data_time: 0.043, memory: 4735, bbox_loss: 0.3556, cls_loss: 0.2034, loss: 0.5591, grad_norm: 1.6420
+2026-06-04 20:24:13,425 - mmdet - INFO - Epoch [9][500/1652]	lr: 1.000e-04, eta: 0:58:51, time: 0.591, data_time: 0.044, memory: 4735, bbox_loss: 0.3532, cls_loss: 0.2068, loss: 0.5600, grad_norm: 1.6375
+2026-06-04 20:24:42,028 - mmdet - INFO - Epoch [9][550/1652]	lr: 1.000e-04, eta: 0:58:22, time: 0.572, data_time: 0.044, memory: 4735, bbox_loss: 0.3512, cls_loss: 0.2023, loss: 0.5535, grad_norm: 1.6158
+2026-06-04 20:25:11,589 - mmdet - INFO - Epoch [9][600/1652]	lr: 1.000e-04, eta: 0:57:53, time: 0.591, data_time: 0.045, memory: 4735, bbox_loss: 0.3570, cls_loss: 0.2078, loss: 0.5648, grad_norm: 1.5638
+2026-06-04 20:25:40,922 - mmdet - INFO - Epoch [9][650/1652]	lr: 1.000e-04, eta: 0:57:24, time: 0.587, data_time: 0.043, memory: 4735, bbox_loss: 0.3515, cls_loss: 0.1988, loss: 0.5503, grad_norm: 1.7084
+2026-06-04 20:26:10,317 - mmdet - INFO - Epoch [9][700/1652]	lr: 1.000e-04, eta: 0:56:56, time: 0.588, data_time: 0.045, memory: 4735, bbox_loss: 0.3490, cls_loss: 0.1978, loss: 0.5468, grad_norm: 1.6712
+2026-06-04 20:26:39,218 - mmdet - INFO - Epoch [9][750/1652]	lr: 1.000e-04, eta: 0:56:27, time: 0.578, data_time: 0.044, memory: 4735, bbox_loss: 0.3535, cls_loss: 0.2041, loss: 0.5575, grad_norm: 1.9141
+2026-06-04 20:27:08,760 - mmdet - INFO - Epoch [9][800/1652]	lr: 1.000e-04, eta: 0:55:58, time: 0.591, data_time: 0.043, memory: 4735, bbox_loss: 0.3566, cls_loss: 0.2026, loss: 0.5591, grad_norm: 1.6218
+2026-06-04 20:27:38,434 - mmdet - INFO - Epoch [9][850/1652]	lr: 1.000e-04, eta: 0:55:29, time: 0.593, data_time: 0.044, memory: 4735, bbox_loss: 0.3558, cls_loss: 0.2041, loss: 0.5599, grad_norm: 1.6803
+2026-06-04 20:28:08,072 - mmdet - INFO - Epoch [9][900/1652]	lr: 1.000e-04, eta: 0:55:01, time: 0.593, data_time: 0.045, memory: 4735, bbox_loss: 0.3484, cls_loss: 0.1968, loss: 0.5452, grad_norm: 1.7131
+2026-06-04 20:28:37,753 - mmdet - INFO - Epoch [9][950/1652]	lr: 1.000e-04, eta: 0:54:32, time: 0.594, data_time: 0.046, memory: 4735, bbox_loss: 0.3506, cls_loss: 0.1952, loss: 0.5458, grad_norm: 1.6021
+2026-06-04 20:29:07,626 - mmdet - INFO - Epoch [9][1000/1652]	lr: 1.000e-04, eta: 0:54:04, time: 0.597, data_time: 0.044, memory: 4735, bbox_loss: 0.3536, cls_loss: 0.2074, loss: 0.5610, grad_norm: 1.6013
+2026-06-04 20:29:37,399 - mmdet - INFO - Epoch [9][1050/1652]	lr: 1.000e-04, eta: 0:53:35, time: 0.595, data_time: 0.045, memory: 4735, bbox_loss: 0.3491, cls_loss: 0.2003, loss: 0.5494, grad_norm: 1.6471
+2026-06-04 20:30:06,020 - mmdet - INFO - Epoch [9][1100/1652]	lr: 1.000e-04, eta: 0:53:06, time: 0.572, data_time: 0.045, memory: 4735, bbox_loss: 0.3550, cls_loss: 0.2065, loss: 0.5615, grad_norm: 1.6558
+2026-06-04 20:30:33,486 - mmdet - INFO - Epoch [9][1150/1652]	lr: 1.000e-04, eta: 0:52:36, time: 0.549, data_time: 0.043, memory: 4735, bbox_loss: 0.3565, cls_loss: 0.2019, loss: 0.5584, grad_norm: 1.5956
+2026-06-04 20:31:01,397 - mmdet - INFO - Epoch [9][1200/1652]	lr: 1.000e-04, eta: 0:52:07, time: 0.558, data_time: 0.042, memory: 4735, bbox_loss: 0.3496, cls_loss: 0.2015, loss: 0.5511, grad_norm: 1.6802
+2026-06-04 20:31:29,307 - mmdet - INFO - Epoch [9][1250/1652]	lr: 1.000e-04, eta: 0:51:38, time: 0.558, data_time: 0.044, memory: 4735, bbox_loss: 0.3535, cls_loss: 0.2034, loss: 0.5568, grad_norm: 1.7949
+2026-06-04 20:31:57,474 - mmdet - INFO - Epoch [9][1300/1652]	lr: 1.000e-04, eta: 0:51:09, time: 0.563, data_time: 0.043, memory: 4735, bbox_loss: 0.3475, cls_loss: 0.2023, loss: 0.5499, grad_norm: 1.7482
+2026-06-04 20:32:27,175 - mmdet - INFO - Epoch [9][1350/1652]	lr: 1.000e-04, eta: 0:50:40, time: 0.594, data_time: 0.044, memory: 4735, bbox_loss: 0.3628, cls_loss: 0.2100, loss: 0.5728, grad_norm: 1.6400
+2026-06-04 20:32:55,931 - mmdet - INFO - Epoch [9][1400/1652]	lr: 1.000e-04, eta: 0:50:11, time: 0.575, data_time: 0.042, memory: 4735, bbox_loss: 0.3578, cls_loss: 0.2047, loss: 0.5625, grad_norm: 1.5900
+2026-06-04 20:33:25,696 - mmdet - INFO - Epoch [9][1450/1652]	lr: 1.000e-04, eta: 0:49:43, time: 0.595, data_time: 0.045, memory: 4735, bbox_loss: 0.3558, cls_loss: 0.2048, loss: 0.5606, grad_norm: 1.8371
+2026-06-04 20:33:55,205 - mmdet - INFO - Epoch [9][1500/1652]	lr: 1.000e-04, eta: 0:49:14, time: 0.590, data_time: 0.045, memory: 4735, bbox_loss: 0.3589, cls_loss: 0.2061, loss: 0.5650, grad_norm: 1.6228
+2026-06-04 20:34:24,234 - mmdet - INFO - Epoch [9][1550/1652]	lr: 1.000e-04, eta: 0:48:45, time: 0.581, data_time: 0.043, memory: 4735, bbox_loss: 0.3567, cls_loss: 0.2066, loss: 0.5633, grad_norm: 1.6875
+2026-06-04 20:34:53,627 - mmdet - INFO - Epoch [9][1600/1652]	lr: 1.000e-04, eta: 0:48:16, time: 0.588, data_time: 0.043, memory: 4735, bbox_loss: 0.3561, cls_loss: 0.2039, loss: 0.5600, grad_norm: 1.8397
+2026-06-04 20:35:21,821 - mmdet - INFO - Epoch [9][1650/1652]	lr: 1.000e-04, eta: 0:47:47, time: 0.564, data_time: 0.044, memory: 4735, bbox_loss: 0.3586, cls_loss: 0.2071, loss: 0.5657, grad_norm: 1.6969
+2026-06-04 20:35:23,004 - mmdet - INFO - Saving checkpoint at 9 epochs
+2026-06-04 20:35:54,257 - mmdet - INFO - Epoch [10][50/1652]	lr: 1.000e-04, eta: 0:47:17, time: 0.614, data_time: 0.093, memory: 4735, bbox_loss: 0.3531, cls_loss: 0.1993, loss: 0.5524, grad_norm: 1.6342
+2026-06-04 20:36:22,311 - mmdet - INFO - Epoch [10][100/1652]	lr: 1.000e-04, eta: 0:46:48, time: 0.561, data_time: 0.044, memory: 4735, bbox_loss: 0.3477, cls_loss: 0.1986, loss: 0.5463, grad_norm: 1.6433
+2026-06-04 20:36:50,139 - mmdet - INFO - Epoch [10][150/1652]	lr: 1.000e-04, eta: 0:46:19, time: 0.557, data_time: 0.043, memory: 4735, bbox_loss: 0.3467, cls_loss: 0.1934, loss: 0.5401, grad_norm: 1.6673
+2026-06-04 20:37:18,237 - mmdet - INFO - Epoch [10][200/1652]	lr: 1.000e-04, eta: 0:45:49, time: 0.562, data_time: 0.042, memory: 4735, bbox_loss: 0.3509, cls_loss: 0.2025, loss: 0.5534, grad_norm: 1.7699
+2026-06-04 20:37:45,698 - mmdet - INFO - Epoch [10][250/1652]	lr: 1.000e-04, eta: 0:45:20, time: 0.549, data_time: 0.043, memory: 4735, bbox_loss: 0.3438, cls_loss: 0.1941, loss: 0.5379, grad_norm: 1.7352
+2026-06-04 20:38:14,420 - mmdet - INFO - Epoch [10][300/1652]	lr: 1.000e-04, eta: 0:44:51, time: 0.574, data_time: 0.045, memory: 4735, bbox_loss: 0.3472, cls_loss: 0.1969, loss: 0.5441, grad_norm: 1.7759
+2026-06-04 20:38:43,878 - mmdet - INFO - Epoch [10][350/1652]	lr: 1.000e-04, eta: 0:44:22, time: 0.589, data_time: 0.046, memory: 4735, bbox_loss: 0.3574, cls_loss: 0.2115, loss: 0.5690, grad_norm: 1.6677
+2026-06-04 20:39:13,031 - mmdet - INFO - Epoch [10][400/1652]	lr: 1.000e-04, eta: 0:43:54, time: 0.583, data_time: 0.043, memory: 4735, bbox_loss: 0.3487, cls_loss: 0.1997, loss: 0.5484, grad_norm: 1.6077
+2026-06-04 20:39:42,420 - mmdet - INFO - Epoch [10][450/1652]	lr: 1.000e-04, eta: 0:43:25, time: 0.588, data_time: 0.045, memory: 4735, bbox_loss: 0.3392, cls_loss: 0.1918, loss: 0.5310, grad_norm: 1.7262
+2026-06-04 20:40:11,834 - mmdet - INFO - Epoch [10][500/1652]	lr: 1.000e-04, eta: 0:42:56, time: 0.588, data_time: 0.043, memory: 4735, bbox_loss: 0.3533, cls_loss: 0.2003, loss: 0.5536, grad_norm: 1.6819
+2026-06-04 20:40:41,093 - mmdet - INFO - Epoch [10][550/1652]	lr: 1.000e-04, eta: 0:42:27, time: 0.585, data_time: 0.045, memory: 4735, bbox_loss: 0.3509, cls_loss: 0.2039, loss: 0.5548, grad_norm: 1.7619
+2026-06-04 20:41:11,069 - mmdet - INFO - Epoch [10][600/1652]	lr: 1.000e-04, eta: 0:41:59, time: 0.600, data_time: 0.044, memory: 4735, bbox_loss: 0.3455, cls_loss: 0.1972, loss: 0.5427, grad_norm: 1.7108
+2026-06-04 20:41:40,597 - mmdet - INFO - Epoch [10][650/1652]	lr: 1.000e-04, eta: 0:41:30, time: 0.591, data_time: 0.044, memory: 4735, bbox_loss: 0.3554, cls_loss: 0.2054, loss: 0.5608, grad_norm: 1.6964
+2026-06-04 20:42:10,353 - mmdet - INFO - Epoch [10][700/1652]	lr: 1.000e-04, eta: 0:41:01, time: 0.595, data_time: 0.043, memory: 4735, bbox_loss: 0.3539, cls_loss: 0.1989, loss: 0.5528, grad_norm: 1.7554
+2026-06-04 20:42:38,666 - mmdet - INFO - Epoch [10][750/1652]	lr: 1.000e-04, eta: 0:40:32, time: 0.566, data_time: 0.043, memory: 4735, bbox_loss: 0.3512, cls_loss: 0.2010, loss: 0.5522, grad_norm: 1.6568
+2026-06-04 20:43:06,478 - mmdet - INFO - Epoch [10][800/1652]	lr: 1.000e-04, eta: 0:40:03, time: 0.556, data_time: 0.042, memory: 4735, bbox_loss: 0.3630, cls_loss: 0.2096, loss: 0.5726, grad_norm: 1.6852
+2026-06-04 20:43:34,045 - mmdet - INFO - Epoch [10][850/1652]	lr: 1.000e-04, eta: 0:39:34, time: 0.551, data_time: 0.042, memory: 4735, bbox_loss: 0.3597, cls_loss: 0.2033, loss: 0.5629, grad_norm: 1.6623
+2026-06-04 20:44:01,837 - mmdet - INFO - Epoch [10][900/1652]	lr: 1.000e-04, eta: 0:39:04, time: 0.556, data_time: 0.043, memory: 4735, bbox_loss: 0.3487, cls_loss: 0.1962, loss: 0.5449, grad_norm: 1.6496
+2026-06-04 20:44:29,645 - mmdet - INFO - Epoch [10][950/1652]	lr: 1.000e-04, eta: 0:38:35, time: 0.556, data_time: 0.043, memory: 4735, bbox_loss: 0.3484, cls_loss: 0.2031, loss: 0.5515, grad_norm: 1.7072
+2026-06-04 20:44:57,371 - mmdet - INFO - Epoch [10][1000/1652]	lr: 1.000e-04, eta: 0:38:06, time: 0.554, data_time: 0.043, memory: 4735, bbox_loss: 0.3387, cls_loss: 0.1956, loss: 0.5343, grad_norm: 1.6621
+2026-06-04 20:45:25,623 - mmdet - INFO - Epoch [10][1050/1652]	lr: 1.000e-04, eta: 0:37:37, time: 0.565, data_time: 0.045, memory: 4735, bbox_loss: 0.3535, cls_loss: 0.2002, loss: 0.5537, grad_norm: 1.6303
+2026-06-04 20:45:54,377 - mmdet - INFO - Epoch [10][1100/1652]	lr: 1.000e-04, eta: 0:37:08, time: 0.575, data_time: 0.045, memory: 4735, bbox_loss: 0.3520, cls_loss: 0.2054, loss: 0.5574, grad_norm: 1.7091
+2026-06-04 20:46:22,457 - mmdet - INFO - Epoch [10][1150/1652]	lr: 1.000e-04, eta: 0:36:39, time: 0.562, data_time: 0.043, memory: 4735, bbox_loss: 0.3518, cls_loss: 0.1991, loss: 0.5509, grad_norm: 1.6930
+2026-06-04 20:46:50,138 - mmdet - INFO - Epoch [10][1200/1652]	lr: 1.000e-04, eta: 0:36:10, time: 0.554, data_time: 0.044, memory: 4735, bbox_loss: 0.3591, cls_loss: 0.2012, loss: 0.5603, grad_norm: 1.6450
+2026-06-04 20:47:18,166 - mmdet - INFO - Epoch [10][1250/1652]	lr: 1.000e-04, eta: 0:35:41, time: 0.561, data_time: 0.042, memory: 4735, bbox_loss: 0.3499, cls_loss: 0.2059, loss: 0.5558, grad_norm: 1.7429
+2026-06-04 20:47:46,244 - mmdet - INFO - Epoch [10][1300/1652]	lr: 1.000e-04, eta: 0:35:12, time: 0.562, data_time: 0.045, memory: 4735, bbox_loss: 0.3491, cls_loss: 0.1998, loss: 0.5488, grad_norm: 1.7778
+2026-06-04 20:48:14,557 - mmdet - INFO - Epoch [10][1350/1652]	lr: 1.000e-04, eta: 0:34:43, time: 0.566, data_time: 0.046, memory: 4735, bbox_loss: 0.3414, cls_loss: 0.1938, loss: 0.5352, grad_norm: 1.6533
+2026-06-04 20:48:42,774 - mmdet - INFO - Epoch [10][1400/1652]	lr: 1.000e-04, eta: 0:34:14, time: 0.564, data_time: 0.044, memory: 4735, bbox_loss: 0.3531, cls_loss: 0.2007, loss: 0.5538, grad_norm: 1.5910
+2026-06-04 20:49:10,702 - mmdet - INFO - Epoch [10][1450/1652]	lr: 1.000e-04, eta: 0:33:44, time: 0.559, data_time: 0.043, memory: 4735, bbox_loss: 0.3458, cls_loss: 0.1960, loss: 0.5418, grad_norm: 1.8109
+2026-06-04 20:49:38,627 - mmdet - INFO - Epoch [10][1500/1652]	lr: 1.000e-04, eta: 0:33:15, time: 0.558, data_time: 0.043, memory: 4735, bbox_loss: 0.3521, cls_loss: 0.2008, loss: 0.5529, grad_norm: 1.7324
+2026-06-04 20:50:06,264 - mmdet - INFO - Epoch [10][1550/1652]	lr: 1.000e-04, eta: 0:32:46, time: 0.553, data_time: 0.044, memory: 4735, bbox_loss: 0.3452, cls_loss: 0.2008, loss: 0.5460, grad_norm: 1.6578
+2026-06-04 20:50:33,649 - mmdet - INFO - Epoch [10][1600/1652]	lr: 1.000e-04, eta: 0:32:17, time: 0.548, data_time: 0.043, memory: 4735, bbox_loss: 0.3513, cls_loss: 0.1973, loss: 0.5485, grad_norm: 1.7011
+2026-06-04 20:51:01,123 - mmdet - INFO - Epoch [10][1650/1652]	lr: 1.000e-04, eta: 0:31:48, time: 0.549, data_time: 0.044, memory: 4735, bbox_loss: 0.3589, cls_loss: 0.2044, loss: 0.5633, grad_norm: 1.7783
+2026-06-04 20:51:02,250 - mmdet - INFO - Saving checkpoint at 10 epochs
+2026-06-04 20:51:35,416 - mmdet - INFO - Epoch [11][50/1652]	lr: 1.000e-04, eta: 0:31:18, time: 0.651, data_time: 0.093, memory: 4735, bbox_loss: 0.3508, cls_loss: 0.2006, loss: 0.5514, grad_norm: 1.5829
+2026-06-04 20:52:04,578 - mmdet - INFO - Epoch [11][100/1652]	lr: 1.000e-04, eta: 0:30:50, time: 0.583, data_time: 0.043, memory: 4735, bbox_loss: 0.3598, cls_loss: 0.2038, loss: 0.5635, grad_norm: 1.6698
+2026-06-04 20:52:34,057 - mmdet - INFO - Epoch [11][150/1652]	lr: 1.000e-04, eta: 0:30:21, time: 0.590, data_time: 0.044, memory: 4735, bbox_loss: 0.3507, cls_loss: 0.1973, loss: 0.5480, grad_norm: 1.6619
+2026-06-04 20:53:04,150 - mmdet - INFO - Epoch [11][200/1652]	lr: 1.000e-04, eta: 0:29:52, time: 0.602, data_time: 0.044, memory: 4735, bbox_loss: 0.3475, cls_loss: 0.1975, loss: 0.5449, grad_norm: 1.7266
+2026-06-04 20:53:33,850 - mmdet - INFO - Epoch [11][250/1652]	lr: 1.000e-04, eta: 0:29:23, time: 0.594, data_time: 0.045, memory: 4735, bbox_loss: 0.3507, cls_loss: 0.1964, loss: 0.5471, grad_norm: 1.6693
+2026-06-04 20:54:02,965 - mmdet - INFO - Epoch [11][300/1652]	lr: 1.000e-04, eta: 0:28:55, time: 0.582, data_time: 0.044, memory: 4735, bbox_loss: 0.3480, cls_loss: 0.2030, loss: 0.5510, grad_norm: 1.6710
+2026-06-04 20:54:30,687 - mmdet - INFO - Epoch [11][350/1652]	lr: 1.000e-04, eta: 0:28:26, time: 0.554, data_time: 0.043, memory: 4735, bbox_loss: 0.3489, cls_loss: 0.2015, loss: 0.5504, grad_norm: 1.7014
+2026-06-04 20:54:59,667 - mmdet - INFO - Epoch [11][400/1652]	lr: 1.000e-04, eta: 0:27:57, time: 0.580, data_time: 0.043, memory: 4735, bbox_loss: 0.3496, cls_loss: 0.2036, loss: 0.5532, grad_norm: 1.6036
+2026-06-04 20:55:28,903 - mmdet - INFO - Epoch [11][450/1652]	lr: 1.000e-04, eta: 0:27:28, time: 0.585, data_time: 0.045, memory: 4735, bbox_loss: 0.3471, cls_loss: 0.1941, loss: 0.5412, grad_norm: 1.6449
+2026-06-04 20:55:58,753 - mmdet - INFO - Epoch [11][500/1652]	lr: 1.000e-04, eta: 0:26:59, time: 0.597, data_time: 0.046, memory: 4735, bbox_loss: 0.3478, cls_loss: 0.1978, loss: 0.5457, grad_norm: 1.5874
+2026-06-04 20:56:28,688 - mmdet - INFO - Epoch [11][550/1652]	lr: 1.000e-04, eta: 0:26:30, time: 0.599, data_time: 0.046, memory: 4735, bbox_loss: 0.3408, cls_loss: 0.1907, loss: 0.5315, grad_norm: 1.6050
+2026-06-04 20:56:58,349 - mmdet - INFO - Epoch [11][600/1652]	lr: 1.000e-04, eta: 0:26:02, time: 0.593, data_time: 0.045, memory: 4735, bbox_loss: 0.3607, cls_loss: 0.2094, loss: 0.5701, grad_norm: 1.6448
+2026-06-04 20:57:27,448 - mmdet - INFO - Epoch [11][650/1652]	lr: 1.000e-04, eta: 0:25:33, time: 0.582, data_time: 0.046, memory: 4735, bbox_loss: 0.3442, cls_loss: 0.1952, loss: 0.5394, grad_norm: 1.8000
+2026-06-04 20:57:57,579 - mmdet - INFO - Epoch [11][700/1652]	lr: 1.000e-04, eta: 0:25:04, time: 0.603, data_time: 0.047, memory: 4735, bbox_loss: 0.3484, cls_loss: 0.1971, loss: 0.5455, grad_norm: 1.6548
+2026-06-04 20:58:26,834 - mmdet - INFO - Epoch [11][750/1652]	lr: 1.000e-04, eta: 0:24:35, time: 0.585, data_time: 0.043, memory: 4735, bbox_loss: 0.3529, cls_loss: 0.1982, loss: 0.5510, grad_norm: 1.7584
+2026-06-04 20:58:56,125 - mmdet - INFO - Epoch [11][800/1652]	lr: 1.000e-04, eta: 0:24:06, time: 0.586, data_time: 0.043, memory: 4735, bbox_loss: 0.3463, cls_loss: 0.1966, loss: 0.5429, grad_norm: 1.6752
+2026-06-04 20:59:25,035 - mmdet - INFO - Epoch [11][850/1652]	lr: 1.000e-04, eta: 0:23:38, time: 0.578, data_time: 0.044, memory: 4735, bbox_loss: 0.3429, cls_loss: 0.1959, loss: 0.5388, grad_norm: 1.7331
+2026-06-04 20:59:54,635 - mmdet - INFO - Epoch [11][900/1652]	lr: 1.000e-04, eta: 0:23:09, time: 0.592, data_time: 0.044, memory: 4735, bbox_loss: 0.3503, cls_loss: 0.1955, loss: 0.5458, grad_norm: 1.6841
+2026-06-04 21:00:23,979 - mmdet - INFO - Epoch [11][950/1652]	lr: 1.000e-04, eta: 0:22:40, time: 0.587, data_time: 0.044, memory: 4735, bbox_loss: 0.3459, cls_loss: 0.2003, loss: 0.5462, grad_norm: 1.7856
+2026-06-04 21:00:52,402 - mmdet - INFO - Epoch [11][1000/1652]	lr: 1.000e-04, eta: 0:22:11, time: 0.568, data_time: 0.044, memory: 4735, bbox_loss: 0.3460, cls_loss: 0.2053, loss: 0.5513, grad_norm: 1.6652
+2026-06-04 21:01:20,421 - mmdet - INFO - Epoch [11][1050/1652]	lr: 1.000e-04, eta: 0:21:42, time: 0.560, data_time: 0.045, memory: 4735, bbox_loss: 0.3556, cls_loss: 0.1965, loss: 0.5521, grad_norm: 1.8522
+2026-06-04 21:01:48,144 - mmdet - INFO - Epoch [11][1100/1652]	lr: 1.000e-04, eta: 0:21:13, time: 0.554, data_time: 0.045, memory: 4735, bbox_loss: 0.3394, cls_loss: 0.1928, loss: 0.5322, grad_norm: 1.8148
+2026-06-04 21:02:15,814 - mmdet - INFO - Epoch [11][1150/1652]	lr: 1.000e-04, eta: 0:20:44, time: 0.553, data_time: 0.045, memory: 4735, bbox_loss: 0.3511, cls_loss: 0.1961, loss: 0.5473, grad_norm: 2.0110
+2026-06-04 21:02:43,852 - mmdet - INFO - Epoch [11][1200/1652]	lr: 1.000e-04, eta: 0:20:15, time: 0.561, data_time: 0.043, memory: 4735, bbox_loss: 0.3496, cls_loss: 0.1941, loss: 0.5438, grad_norm: 1.7468
+2026-06-04 21:03:12,012 - mmdet - INFO - Epoch [11][1250/1652]	lr: 1.000e-04, eta: 0:19:46, time: 0.563, data_time: 0.044, memory: 4735, bbox_loss: 0.3493, cls_loss: 0.1958, loss: 0.5452, grad_norm: 1.6312
+2026-06-04 21:03:39,869 - mmdet - INFO - Epoch [11][1300/1652]	lr: 1.000e-04, eta: 0:19:17, time: 0.557, data_time: 0.043, memory: 4735, bbox_loss: 0.3481, cls_loss: 0.2000, loss: 0.5481, grad_norm: 1.6390
+2026-06-04 21:04:07,785 - mmdet - INFO - Epoch [11][1350/1652]	lr: 1.000e-04, eta: 0:18:48, time: 0.558, data_time: 0.044, memory: 4735, bbox_loss: 0.3439, cls_loss: 0.1943, loss: 0.5382, grad_norm: 1.7231
+2026-06-04 21:04:37,602 - mmdet - INFO - Epoch [11][1400/1652]	lr: 1.000e-04, eta: 0:18:19, time: 0.596, data_time: 0.044, memory: 4735, bbox_loss: 0.3374, cls_loss: 0.1928, loss: 0.5302, grad_norm: 1.8101
+2026-06-04 21:05:07,328 - mmdet - INFO - Epoch [11][1450/1652]	lr: 1.000e-04, eta: 0:17:50, time: 0.595, data_time: 0.045, memory: 4735, bbox_loss: 0.3437, cls_loss: 0.1973, loss: 0.5410, grad_norm: 1.7329
+2026-06-04 21:05:36,618 - mmdet - INFO - Epoch [11][1500/1652]	lr: 1.000e-04, eta: 0:17:22, time: 0.586, data_time: 0.042, memory: 4735, bbox_loss: 0.3439, cls_loss: 0.1945, loss: 0.5384, grad_norm: 1.7414
+2026-06-04 21:06:06,448 - mmdet - INFO - Epoch [11][1550/1652]	lr: 1.000e-04, eta: 0:16:53, time: 0.597, data_time: 0.044, memory: 4735, bbox_loss: 0.3373, cls_loss: 0.1908, loss: 0.5281, grad_norm: 1.7789
+2026-06-04 21:06:35,630 - mmdet - INFO - Epoch [11][1600/1652]	lr: 1.000e-04, eta: 0:16:24, time: 0.584, data_time: 0.043, memory: 4735, bbox_loss: 0.3549, cls_loss: 0.2021, loss: 0.5570, grad_norm: 1.8160
+2026-06-04 21:07:05,328 - mmdet - INFO - Epoch [11][1650/1652]	lr: 1.000e-04, eta: 0:15:55, time: 0.594, data_time: 0.044, memory: 4735, bbox_loss: 0.3468, cls_loss: 0.1951, loss: 0.5419, grad_norm: 1.7591
+2026-06-04 21:07:06,608 - mmdet - INFO - Saving checkpoint at 11 epochs
+2026-06-04 21:07:38,548 - mmdet - INFO - Epoch [12][50/1652]	lr: 1.000e-05, eta: 0:15:25, time: 0.624, data_time: 0.093, memory: 4735, bbox_loss: 0.3427, cls_loss: 0.1911, loss: 0.5338, grad_norm: 1.4908
+2026-06-04 21:08:06,773 - mmdet - INFO - Epoch [12][100/1652]	lr: 1.000e-05, eta: 0:14:56, time: 0.565, data_time: 0.044, memory: 4735, bbox_loss: 0.3462, cls_loss: 0.1950, loss: 0.5411, grad_norm: 1.6545
+2026-06-04 21:08:34,478 - mmdet - INFO - Epoch [12][150/1652]	lr: 1.000e-05, eta: 0:14:27, time: 0.554, data_time: 0.043, memory: 4735, bbox_loss: 0.3511, cls_loss: 0.1979, loss: 0.5490, grad_norm: 1.6810
+2026-06-04 21:09:02,266 - mmdet - INFO - Epoch [12][200/1652]	lr: 1.000e-05, eta: 0:13:58, time: 0.556, data_time: 0.044, memory: 4735, bbox_loss: 0.3465, cls_loss: 0.1941, loss: 0.5406, grad_norm: 1.5719
+2026-06-04 21:09:29,825 - mmdet - INFO - Epoch [12][250/1652]	lr: 1.000e-05, eta: 0:13:29, time: 0.551, data_time: 0.044, memory: 4735, bbox_loss: 0.3411, cls_loss: 0.1924, loss: 0.5335, grad_norm: 1.7596
+2026-06-04 21:09:57,497 - mmdet - INFO - Epoch [12][300/1652]	lr: 1.000e-05, eta: 0:13:00, time: 0.553, data_time: 0.043, memory: 4735, bbox_loss: 0.3407, cls_loss: 0.1887, loss: 0.5294, grad_norm: 1.5477
+2026-06-04 21:10:25,662 - mmdet - INFO - Epoch [12][350/1652]	lr: 1.000e-05, eta: 0:12:31, time: 0.563, data_time: 0.045, memory: 4735, bbox_loss: 0.3413, cls_loss: 0.1915, loss: 0.5328, grad_norm: 1.6199
+2026-06-04 21:10:53,840 - mmdet - INFO - Epoch [12][400/1652]	lr: 1.000e-05, eta: 0:12:02, time: 0.564, data_time: 0.043, memory: 4735, bbox_loss: 0.3485, cls_loss: 0.1975, loss: 0.5459, grad_norm: 1.5887
+2026-06-04 21:11:21,246 - mmdet - INFO - Epoch [12][450/1652]	lr: 1.000e-05, eta: 0:11:33, time: 0.548, data_time: 0.042, memory: 4735, bbox_loss: 0.3456, cls_loss: 0.1929, loss: 0.5385, grad_norm: 1.7150
+2026-06-04 21:11:49,288 - mmdet - INFO - Epoch [12][500/1652]	lr: 1.000e-05, eta: 0:11:05, time: 0.561, data_time: 0.043, memory: 4735, bbox_loss: 0.3589, cls_loss: 0.2016, loss: 0.5605, grad_norm: 1.5889
+2026-06-04 21:12:17,192 - mmdet - INFO - Epoch [12][550/1652]	lr: 1.000e-05, eta: 0:10:36, time: 0.558, data_time: 0.041, memory: 4735, bbox_loss: 0.3403, cls_loss: 0.1892, loss: 0.5294, grad_norm: 1.6641
+2026-06-04 21:12:44,770 - mmdet - INFO - Epoch [12][600/1652]	lr: 1.000e-05, eta: 0:10:07, time: 0.552, data_time: 0.042, memory: 4735, bbox_loss: 0.3506, cls_loss: 0.1938, loss: 0.5444, grad_norm: 1.6994
+2026-06-04 21:13:12,723 - mmdet - INFO - Epoch [12][650/1652]	lr: 1.000e-05, eta: 0:09:38, time: 0.559, data_time: 0.042, memory: 4735, bbox_loss: 0.3465, cls_loss: 0.1950, loss: 0.5416, grad_norm: 1.5045
+2026-06-04 21:13:40,556 - mmdet - INFO - Epoch [12][700/1652]	lr: 1.000e-05, eta: 0:09:09, time: 0.557, data_time: 0.043, memory: 4735, bbox_loss: 0.3504, cls_loss: 0.1948, loss: 0.5452, grad_norm: 1.5475
+2026-06-04 21:14:08,466 - mmdet - INFO - Epoch [12][750/1652]	lr: 1.000e-05, eta: 0:08:40, time: 0.558, data_time: 0.045, memory: 4735, bbox_loss: 0.3474, cls_loss: 0.1985, loss: 0.5459, grad_norm: 1.7227
+2026-06-04 21:14:36,335 - mmdet - INFO - Epoch [12][800/1652]	lr: 1.000e-05, eta: 0:08:11, time: 0.557, data_time: 0.043, memory: 4735, bbox_loss: 0.3491, cls_loss: 0.2018, loss: 0.5508, grad_norm: 1.6370
+2026-06-04 21:15:03,913 - mmdet - INFO - Epoch [12][850/1652]	lr: 1.000e-05, eta: 0:07:42, time: 0.552, data_time: 0.041, memory: 4735, bbox_loss: 0.3488, cls_loss: 0.1996, loss: 0.5484, grad_norm: 1.6034
+2026-06-04 21:15:32,152 - mmdet - INFO - Epoch [12][900/1652]	lr: 1.000e-05, eta: 0:07:13, time: 0.565, data_time: 0.042, memory: 4735, bbox_loss: 0.3437, cls_loss: 0.1956, loss: 0.5393, grad_norm: 1.6285
+2026-06-04 21:16:00,079 - mmdet - INFO - Epoch [12][950/1652]	lr: 1.000e-05, eta: 0:06:44, time: 0.559, data_time: 0.043, memory: 4735, bbox_loss: 0.3456, cls_loss: 0.1974, loss: 0.5430, grad_norm: 1.6863
+2026-06-04 21:16:28,019 - mmdet - INFO - Epoch [12][1000/1652]	lr: 1.000e-05, eta: 0:06:16, time: 0.559, data_time: 0.042, memory: 4735, bbox_loss: 0.3400, cls_loss: 0.1880, loss: 0.5280, grad_norm: 1.6478
+2026-06-04 21:16:55,888 - mmdet - INFO - Epoch [12][1050/1652]	lr: 1.000e-05, eta: 0:05:47, time: 0.557, data_time: 0.044, memory: 4735, bbox_loss: 0.3507, cls_loss: 0.2004, loss: 0.5511, grad_norm: 1.7483
+2026-06-04 21:17:23,952 - mmdet - INFO - Epoch [12][1100/1652]	lr: 1.000e-05, eta: 0:05:18, time: 0.561, data_time: 0.047, memory: 4735, bbox_loss: 0.3459, cls_loss: 0.1997, loss: 0.5456, grad_norm: 1.7402
+2026-06-04 21:17:52,393 - mmdet - INFO - Epoch [12][1150/1652]	lr: 1.000e-05, eta: 0:04:49, time: 0.569, data_time: 0.044, memory: 4735, bbox_loss: 0.3446, cls_loss: 0.1902, loss: 0.5348, grad_norm: 1.7051
+2026-06-04 21:18:20,379 - mmdet - INFO - Epoch [12][1200/1652]	lr: 1.000e-05, eta: 0:04:20, time: 0.560, data_time: 0.044, memory: 4735, bbox_loss: 0.3446, cls_loss: 0.1998, loss: 0.5444, grad_norm: 1.7166
+2026-06-04 21:18:48,315 - mmdet - INFO - Epoch [12][1250/1652]	lr: 1.000e-05, eta: 0:03:51, time: 0.559, data_time: 0.043, memory: 4735, bbox_loss: 0.3462, cls_loss: 0.1921, loss: 0.5383, grad_norm: 1.5215
+2026-06-04 21:19:16,310 - mmdet - INFO - Epoch [12][1300/1652]	lr: 1.000e-05, eta: 0:03:22, time: 0.560, data_time: 0.044, memory: 4735, bbox_loss: 0.3439, cls_loss: 0.1926, loss: 0.5365, grad_norm: 1.6185
+2026-06-04 21:19:44,029 - mmdet - INFO - Epoch [12][1350/1652]	lr: 1.000e-05, eta: 0:02:54, time: 0.554, data_time: 0.042, memory: 4735, bbox_loss: 0.3462, cls_loss: 0.1952, loss: 0.5413, grad_norm: 1.6002
+2026-06-04 21:20:12,196 - mmdet - INFO - Epoch [12][1400/1652]	lr: 1.000e-05, eta: 0:02:25, time: 0.563, data_time: 0.044, memory: 4735, bbox_loss: 0.3391, cls_loss: 0.1895, loss: 0.5286, grad_norm: 1.6462
+2026-06-04 21:20:39,763 - mmdet - INFO - Epoch [12][1450/1652]	lr: 1.000e-05, eta: 0:01:56, time: 0.551, data_time: 0.044, memory: 4735, bbox_loss: 0.3429, cls_loss: 0.1920, loss: 0.5349, grad_norm: 1.6703
+2026-06-04 21:21:06,994 - mmdet - INFO - Epoch [12][1500/1652]	lr: 1.000e-05, eta: 0:01:27, time: 0.545, data_time: 0.041, memory: 4735, bbox_loss: 0.3446, cls_loss: 0.1910, loss: 0.5356, grad_norm: 1.8273
+2026-06-04 21:21:34,757 - mmdet - INFO - Epoch [12][1550/1652]	lr: 1.000e-05, eta: 0:00:58, time: 0.555, data_time: 0.041, memory: 4735, bbox_loss: 0.3540, cls_loss: 0.1886, loss: 0.5426, grad_norm: 1.5877
+2026-06-04 21:22:02,026 - mmdet - INFO - Epoch [12][1600/1652]	lr: 1.000e-05, eta: 0:00:29, time: 0.545, data_time: 0.044, memory: 4735, bbox_loss: 0.3351, cls_loss: 0.1917, loss: 0.5269, grad_norm: 1.7129
+2026-06-04 21:22:30,064 - mmdet - INFO - Epoch [12][1650/1652]	lr: 1.000e-05, eta: 0:00:01, time: 0.561, data_time: 0.043, memory: 4735, bbox_loss: 0.3471, cls_loss: 0.1961, loss: 0.5431, grad_norm: 1.5750
+2026-06-04 21:22:31,206 - mmdet - INFO - Saving checkpoint at 12 epochs
+2026-06-04 21:26:33,361 - mmdet - INFO - 
++-------------+---------+---------+---------+---------+
+| classes     | AP_0.25 | AR_0.25 | AP_0.50 | AR_0.50 |
++-------------+---------+---------+---------+---------+
+| bed         | 0.8998  | 0.9922  | 0.7148  | 0.8214  |
+| table       | 0.5850  | 0.9732  | 0.4008  | 0.7598  |
+| sofa        | 0.7416  | 0.9825  | 0.6491  | 0.8517  |
+| chair       | 0.8481  | 0.9779  | 0.7263  | 0.8786  |
+| toilet      | 0.9696  | 0.9931  | 0.8061  | 0.8759  |
+| desk        | 0.4517  | 0.9548  | 0.2485  | 0.6695  |
+| dresser     | 0.4800  | 0.9495  | 0.3653  | 0.7156  |
+| night_stand | 0.7458  | 0.9765  | 0.6516  | 0.8824  |
+| bookshelf   | 0.4531  | 0.9007  | 0.1502  | 0.4397  |
+| bathtub     | 0.8327  | 0.9796  | 0.6189  | 0.7551  |
++-------------+---------+---------+---------+---------+
+| Overall     | 0.7007  | 0.9680  | 0.5332  | 0.7650  |
++-------------+---------+---------+---------+---------+
+2026-06-04 21:26:34,510 - mmdet - INFO - Exp name: tr3d-ff_sunrgbd-3d-10class.py
+2026-06-04 21:26:34,510 - mmdet - INFO - Epoch(val) [12][5050]	bed_AP_0.25: 0.8998, table_AP_0.25: 0.5850, sofa_AP_0.25: 0.7416, chair_AP_0.25: 0.8481, toilet_AP_0.25: 0.9696, desk_AP_0.25: 0.4517, dresser_AP_0.25: 0.4800, night_stand_AP_0.25: 0.7458, bookshelf_AP_0.25: 0.4531, bathtub_AP_0.25: 0.8327, mAP_0.25: 0.7007, bed_rec_0.25: 0.9922, table_rec_0.25: 0.9732, sofa_rec_0.25: 0.9825, chair_rec_0.25: 0.9779, toilet_rec_0.25: 0.9931, desk_rec_0.25: 0.9548, dresser_rec_0.25: 0.9495, night_stand_rec_0.25: 0.9765, bookshelf_rec_0.25: 0.9007, bathtub_rec_0.25: 0.9796, mAR_0.25: 0.9680, bed_AP_0.50: 0.7148, table_AP_0.50: 0.4008, sofa_AP_0.50: 0.6491, chair_AP_0.50: 0.7263, toilet_AP_0.50: 0.8061, desk_AP_0.50: 0.2485, dresser_AP_0.50: 0.3653, night_stand_AP_0.50: 0.6516, bookshelf_AP_0.50: 0.1502, bathtub_AP_0.50: 0.6189, mAP_0.50: 0.5332, bed_rec_0.50: 0.8214, table_rec_0.50: 0.7598, sofa_rec_0.50: 0.8517, chair_rec_0.50: 0.8786, toilet_rec_0.50: 0.8759, desk_rec_0.50: 0.6695, dresser_rec_0.50: 0.7156, night_stand_rec_0.50: 0.8824, bookshelf_rec_0.50: 0.4397, bathtub_rec_0.50: 0.7551, mAR_0.50: 0.7650
