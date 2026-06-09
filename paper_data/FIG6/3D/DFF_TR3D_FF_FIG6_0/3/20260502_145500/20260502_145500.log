@@ -1,0 +1,1507 @@
+2026/05/02 14:55:00 - mmengine - INFO - 
+------------------------------------------------------------
+System environment:
+    sys.platform: linux
+    Python: 3.8.20 (default, Oct  3 2024, 15:24:27) [GCC 11.2.0]
+    CUDA available: True
+    MUSA available: False
+    numpy_random_seed: 1403656923
+    GPU 0: NVIDIA L40
+    CUDA_HOME: /usr/local/cuda-11.8
+    NVCC: Cuda compilation tools, release 11.8, V11.8.89
+    GCC: gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0
+    PyTorch: 2.0.0+cu118
+    PyTorch compiling details: PyTorch built with:
+  - GCC 9.3
+  - C++ Version: 201703
+  - Intel(R) oneAPI Math Kernel Library Version 2023.1-Product Build 20230303 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v2.7.3 (Git Hash 6dbeffbae1f23cbbeae17adb7b5b13f1f37c080e)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 11.8
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_90,code=sm_90
+  - CuDNN 8.7
+  - Magma 2.6.1
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.8, CUDNN_VERSION=8.7.0, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -Wno-deprecated -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOROCTRACER -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wunused-local-typedefs -Wno-unused-parameter -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-psabi -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Werror=cast-function-type -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_DISABLE_GPU_ASSERTS=ON, TORCH_VERSION=2.0.0, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=1, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, 
+
+    TorchVision: 0.15.1+cu118
+    OpenCV: 4.13.0
+    MMEngine: 0.10.7
+
+Runtime environment:
+    cudnn_benchmark: False
+    mp_cfg: {'mp_start_method': 'fork', 'opencv_num_threads': 0}
+    dist_cfg: {'backend': 'nccl'}
+    seed: 1403656923
+    Distributed launcher: none
+    Distributed training: False
+    GPU number: 1
+------------------------------------------------------------
+
+2026/05/02 14:55:00 - mmengine - INFO - Config:
+backend_args = None
+class_names = (
+    'bed',
+    'table',
+    'sofa',
+    'chair',
+    'toilet',
+    'desk',
+    'dresser',
+    'night_stand',
+    'bookshelf',
+    'bathtub',
+)
+custom_hooks = [
+    dict(after_iter=True, type='EmptyCacheHook'),
+]
+custom_imports = dict(imports=[
+    'projects.TR3D.tr3d',
+])
+data_root = '/home/zero/USER/HEYU/DATA/sunrgbd_matlab'
+dataset_type = 'SUNRGBDDataset'
+default_hooks = dict(
+    checkpoint=dict(interval=-1, type='CheckpointHook'),
+    logger=dict(interval=50, type='LoggerHook'),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    timer=dict(type='IterTimerHook'),
+    visualization=dict(type='Det3DVisualizationHook'))
+default_scope = 'mmdet3d'
+env_cfg = dict(
+    cudnn_benchmark=False,
+    dist_cfg=dict(backend='nccl'),
+    mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0))
+launcher = 'none'
+load_from = None
+log_level = 'INFO'
+log_processor = dict(by_epoch=True, type='LogProcessor', window_size=50)
+metainfo = dict(
+    classes=(
+        'bed',
+        'table',
+        'sofa',
+        'chair',
+        'toilet',
+        'desk',
+        'dresser',
+        'night_stand',
+        'bookshelf',
+        'bathtub',
+    ))
+model = dict(
+    backbone=dict(
+        depth=34,
+        in_channels=3,
+        norm='batch',
+        num_planes=(
+            64,
+            128,
+            128,
+            128,
+        ),
+        type='TR3DMinkResNet'),
+    bbox_head=dict(
+        bbox_loss=dict(
+            mode='diou', reduction='none', type='TR3DRotatedIoU3DLoss'),
+        in_channels=128,
+        label2level=[
+            1,
+            1,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+        ],
+        num_reg_outs=8,
+        pts_center_threshold=6,
+        type='TR3DHead',
+        voxel_size=0.01),
+    data_preprocessor=dict(type='Det3DDataPreprocessor'),
+    neck=dict(
+        in_channels=(
+            64,
+            128,
+            128,
+            128,
+        ), out_channels=128, type='TR3DNeck'),
+    test_cfg=dict(iou_thr=0.5, nms_pre=1000, score_thr=0.01),
+    train_cfg=dict(),
+    type='MinkSingleStage3DDetector')
+optim_wrapper = dict(
+    clip_grad=dict(max_norm=10, norm_type=2),
+    optimizer=dict(lr=0.001, type='AdamW', weight_decay=0.0001),
+    type='OptimWrapper')
+param_scheduler = dict(
+    begin=0,
+    by_epoch=True,
+    end=12,
+    gamma=0.1,
+    milestones=[
+        8,
+        11,
+    ],
+    type='MultiStepLR')
+resume = False
+test_cfg = dict(type='TestLoop')
+test_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        _scope_='mmdet3d',
+        ann_file='sunrgbd_infos_val.pkl',
+        backend_args=None,
+        box_type_3d='Depth',
+        data_root='/home/zero/USER/HEYU/DATA/sunrgbd_matlab',
+        metainfo=dict(
+            classes=(
+                'bed',
+                'table',
+                'sofa',
+                'chair',
+                'toilet',
+                'desk',
+                'dresser',
+                'night_stand',
+                'bookshelf',
+                'bathtub',
+            )),
+        pipeline=[
+            dict(
+                coord_type='DEPTH',
+                load_dim=6,
+                shift_height=False,
+                type='LoadPointsFromFile',
+                use_color=True,
+                use_dim=[
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                ]),
+            dict(
+                flip=False,
+                img_scale=(
+                    1333,
+                    800,
+                ),
+                pts_scale_ratio=1,
+                transforms=[
+                    dict(num_points=100000, type='PointSample'),
+                ],
+                type='MultiScaleFlipAug3D'),
+            dict(keys=[
+                'points',
+            ], type='Pack3DDetInputs'),
+        ],
+        test_mode=True,
+        type='SUNRGBDDataset'),
+    num_workers=1,
+    sampler=dict(_scope_='mmdet3d', shuffle=False, type='DefaultSampler'))
+test_evaluator = dict(_scope_='mmdet3d', type='IndoorMetric')
+test_pipeline = [
+    dict(
+        coord_type='DEPTH',
+        load_dim=6,
+        shift_height=False,
+        type='LoadPointsFromFile',
+        use_color=True,
+        use_dim=[
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+        ]),
+    dict(
+        flip=False,
+        img_scale=(
+            1333,
+            800,
+        ),
+        pts_scale_ratio=1,
+        transforms=[
+            dict(num_points=100000, type='PointSample'),
+        ],
+        type='MultiScaleFlipAug3D'),
+    dict(keys=[
+        'points',
+    ], type='Pack3DDetInputs'),
+]
+train_cfg = dict(max_epochs=12, type='EpochBasedTrainLoop', val_interval=12)
+train_dataloader = dict(
+    batch_size=16,
+    dataset=dict(
+        _scope_='mmdet3d',
+        dataset=dict(
+            ann_file='sunrgbd_infos_train.pkl',
+            backend_args=None,
+            box_type_3d='Depth',
+            data_root='/home/zero/USER/HEYU/DATA/sunrgbd_matlab',
+            filter_empty_gt=False,
+            metainfo=dict(
+                classes=(
+                    'bed',
+                    'table',
+                    'sofa',
+                    'chair',
+                    'toilet',
+                    'desk',
+                    'dresser',
+                    'night_stand',
+                    'bookshelf',
+                    'bathtub',
+                )),
+            pipeline=[
+                dict(
+                    coord_type='DEPTH',
+                    load_dim=6,
+                    shift_height=False,
+                    type='LoadPointsFromFile',
+                    use_color=True,
+                    use_dim=[
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                    ]),
+                dict(type='LoadAnnotations3D'),
+                dict(num_points=100000, type='PointSample'),
+                dict(
+                    flip_ratio_bev_horizontal=0.5,
+                    flip_ratio_bev_vertical=0,
+                    sync_2d=False,
+                    type='RandomFlip3D'),
+                dict(
+                    rot_range=[
+                        -0.523599,
+                        0.523599,
+                    ],
+                    scale_ratio_range=[
+                        0.85,
+                        1.15,
+                    ],
+                    shift_height=False,
+                    translation_std=[
+                        0.1,
+                        0.1,
+                        0.1,
+                    ],
+                    type='GlobalRotScaleTrans'),
+                dict(
+                    keys=[
+                        'points',
+                        'gt_bboxes_3d',
+                        'gt_labels_3d',
+                    ],
+                    type='Pack3DDetInputs'),
+            ],
+            type='SUNRGBDDataset'),
+        times=5,
+        type='RepeatDataset'),
+    num_workers=8,
+    sampler=dict(_scope_='mmdet3d', shuffle=True, type='DefaultSampler'))
+train_pipeline = [
+    dict(
+        coord_type='DEPTH',
+        load_dim=6,
+        shift_height=False,
+        type='LoadPointsFromFile',
+        use_color=True,
+        use_dim=[
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+        ]),
+    dict(type='LoadAnnotations3D'),
+    dict(num_points=100000, type='PointSample'),
+    dict(
+        flip_ratio_bev_horizontal=0.5,
+        flip_ratio_bev_vertical=0,
+        sync_2d=False,
+        type='RandomFlip3D'),
+    dict(
+        rot_range=[
+            -0.523599,
+            0.523599,
+        ],
+        scale_ratio_range=[
+            0.85,
+            1.15,
+        ],
+        shift_height=False,
+        translation_std=[
+            0.1,
+            0.1,
+            0.1,
+        ],
+        type='GlobalRotScaleTrans'),
+    dict(
+        keys=[
+            'points',
+            'gt_bboxes_3d',
+            'gt_labels_3d',
+        ],
+        type='Pack3DDetInputs'),
+]
+val_cfg = dict(type='ValLoop')
+val_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        _scope_='mmdet3d',
+        ann_file='sunrgbd_infos_val.pkl',
+        backend_args=None,
+        box_type_3d='Depth',
+        data_root='/home/zero/USER/HEYU/DATA/sunrgbd_matlab',
+        metainfo=dict(
+            classes=(
+                'bed',
+                'table',
+                'sofa',
+                'chair',
+                'toilet',
+                'desk',
+                'dresser',
+                'night_stand',
+                'bookshelf',
+                'bathtub',
+            )),
+        pipeline=[
+            dict(
+                coord_type='DEPTH',
+                load_dim=6,
+                shift_height=False,
+                type='LoadPointsFromFile',
+                use_color=True,
+                use_dim=[
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                ]),
+            dict(
+                flip=False,
+                img_scale=(
+                    1333,
+                    800,
+                ),
+                pts_scale_ratio=1,
+                transforms=[
+                    dict(num_points=100000, type='PointSample'),
+                ],
+                type='MultiScaleFlipAug3D'),
+            dict(keys=[
+                'points',
+            ], type='Pack3DDetInputs'),
+        ],
+        test_mode=True,
+        type='SUNRGBDDataset'),
+    num_workers=1,
+    sampler=dict(_scope_='mmdet3d', shuffle=False, type='DefaultSampler'))
+val_evaluator = dict(_scope_='mmdet3d', type='IndoorMetric')
+vis_backends = [
+    dict(_scope_='mmdet3d', type='LocalVisBackend'),
+]
+visualizer = dict(
+    _scope_='mmdet3d',
+    name='visualizer',
+    type='Det3DLocalVisualizer',
+    vis_backends=[
+        dict(type='LocalVisBackend'),
+    ])
+work_dir = '/home/zero/USER/HEYU/mmdetection3d/work_dirs/tr3d/JX_1GPU_matlab/3/'
+
+2026/05/02 14:55:03 - mmengine - INFO - Distributed training is not used, all SyncBatchNorm (SyncBN) layers in the model will be automatically reverted to BatchNormXd layers if they are used.
+2026/05/02 14:55:03 - mmengine - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+before_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) DistSamplerSeedHook                
+(NORMAL      ) EmptyCacheHook                     
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) EmptyCacheHook                     
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) EmptyCacheHook                     
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) EmptyCacheHook                     
+ -------------------- 
+before_val_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) Det3DVisualizationHook             
+(NORMAL      ) EmptyCacheHook                     
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_val_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) EmptyCacheHook                     
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_test_epoch:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) EmptyCacheHook                     
+ -------------------- 
+before_test_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_test_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) Det3DVisualizationHook             
+(NORMAL      ) EmptyCacheHook                     
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) EmptyCacheHook                     
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_run:
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+2026/05/02 14:55:04 - mmengine - INFO - ------------------------------
+2026/05/02 14:55:04 - mmengine - INFO - The length of training dataset: 5285
+2026/05/02 14:55:04 - mmengine - INFO - The number of instances per category in the dataset:
++-------------+--------+
+| category    | number |
++-------------+--------+
+| bed         | 771    |
+| table       | 2539   |
+| sofa        | 706    |
+| chair       | 9278   |
+| toilet      | 171    |
+| desk        | 933    |
+| dresser     | 182    |
+| night_stand | 293    |
+| bookshelf   | 204    |
+| bathtub     | 67     |
++-------------+--------+
+2026/05/02 14:55:05 - mmengine - INFO - ------------------------------
+2026/05/02 14:55:05 - mmengine - INFO - The length of test dataset: 5050
+2026/05/02 14:55:05 - mmengine - INFO - The number of instances per category in the dataset:
++-------------+--------+
+| category    | number |
++-------------+--------+
+| bed         | 515    |
+| table       | 2348   |
+| sofa        | 627    |
+| chair       | 10016  |
+| toilet      | 145    |
+| desk        | 1882   |
+| dresser     | 218    |
+| night_stand | 255    |
+| bookshelf   | 282    |
+| bathtub     | 49     |
++-------------+--------+
+2026/05/02 14:55:05 - mmengine - WARNING - The prefix is not set in metric class IndoorMetric.
+Name of parameter - Initialization information
+
+backbone.conv1.kernel - torch.Size([27, 3, 64]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.norm1.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.norm1.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.0.conv1.kernel - torch.Size([27, 64, 64]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer1.0.norm1.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.0.norm1.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.0.conv2.kernel - torch.Size([27, 64, 64]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer1.0.norm2.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.0.norm2.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.0.downsample.0.kernel - torch.Size([1, 64, 64]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer1.0.downsample.1.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.0.downsample.1.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.1.conv1.kernel - torch.Size([27, 64, 64]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer1.1.norm1.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.1.norm1.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.1.conv2.kernel - torch.Size([27, 64, 64]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer1.1.norm2.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.1.norm2.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.2.conv1.kernel - torch.Size([27, 64, 64]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer1.2.norm1.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.2.norm1.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.2.conv2.kernel - torch.Size([27, 64, 64]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer1.2.norm2.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer1.2.norm2.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.0.conv1.kernel - torch.Size([27, 64, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer2.0.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.0.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.0.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer2.0.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.0.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.0.downsample.0.kernel - torch.Size([1, 64, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer2.0.downsample.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.0.downsample.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.1.conv1.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer2.1.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.1.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.1.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer2.1.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.1.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.2.conv1.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer2.2.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.2.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.2.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer2.2.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.2.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.3.conv1.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer2.3.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.3.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.3.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer2.3.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer2.3.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.0.conv1.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.0.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.0.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.0.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.0.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.0.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.0.downsample.0.kernel - torch.Size([1, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.0.downsample.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.0.downsample.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.1.conv1.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.1.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.1.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.1.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.1.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.1.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.2.conv1.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.2.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.2.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.2.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.2.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.2.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.3.conv1.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.3.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.3.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.3.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.3.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.3.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.4.conv1.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.4.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.4.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.4.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.4.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.4.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.5.conv1.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.5.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.5.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.5.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer3.5.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer3.5.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.0.conv1.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer4.0.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.0.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.0.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer4.0.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.0.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.0.downsample.0.kernel - torch.Size([1, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer4.0.downsample.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.0.downsample.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.1.conv1.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer4.1.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.1.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.1.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer4.1.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.1.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.2.conv1.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer4.2.norm1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.2.norm1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.2.conv2.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DMinkResNet  
+
+backbone.layer4.2.norm2.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+backbone.layer4.2.norm2.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.lateral_block_0.0.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DNeck  
+
+neck.lateral_block_0.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.lateral_block_0.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.out_block_0.0.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DNeck  
+
+neck.out_block_0.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.out_block_0.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.up_block_1.0.kernel - torch.Size([27, 128, 128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.up_block_1.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.up_block_1.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.lateral_block_1.0.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DNeck  
+
+neck.lateral_block_1.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.lateral_block_1.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.out_block_1.0.kernel - torch.Size([27, 128, 128]): 
+Initialized by user-defined `init_weights` in TR3DNeck  
+
+neck.out_block_1.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.out_block_1.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.up_block_2.0.kernel - torch.Size([27, 128, 128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.up_block_2.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+neck.up_block_2.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+bbox_head.conv_reg.kernel - torch.Size([128, 8]): 
+Initialized by user-defined `init_weights` in TR3DHead  
+
+bbox_head.conv_reg.bias - torch.Size([1, 8]): 
+The value is the same before and after calling `init_weights` of MinkSingleStage3DDetector  
+
+bbox_head.conv_cls.kernel - torch.Size([128, 10]): 
+Initialized by user-defined `init_weights` in TR3DHead  
+
+bbox_head.conv_cls.bias - torch.Size([1, 10]): 
+Initialized by user-defined `init_weights` in TR3DHead  
+2026/05/02 14:55:05 - mmengine - WARNING - "FileClient" will be deprecated in future. Please use io functions in https://mmengine.readthedocs.io/en/latest/api/fileio.html#file-io
+2026/05/02 14:55:05 - mmengine - WARNING - "HardDiskBackend" is the alias of "LocalBackend" and the former will be deprecated in future.
+2026/05/02 14:55:05 - mmengine - INFO - Checkpoints will be saved to /home/zero/USER/HEYU/mmdetection3d/work_dirs/tr3d/JX_1GPU_matlab/3.
+2026/05/02 14:55:27 - mmengine - INFO - Epoch(train)  [1][  50/1652]  lr: 1.0000e-03  eta: 2:20:56  time: 0.4276  data_time: 0.0570  memory: 2395  grad_norm: 5.8823  loss: 1.3464  bbox_loss: 0.6423  cls_loss: 0.7041
+2026/05/02 14:55:46 - mmengine - INFO - Epoch(train)  [1][ 100/1652]  lr: 1.0000e-03  eta: 2:13:09  time: 0.3824  data_time: 0.0421  memory: 2128  grad_norm: 6.2338  loss: 1.0996  bbox_loss: 0.5914  cls_loss: 0.5082
+2026/05/02 14:56:06 - mmengine - INFO - Epoch(train)  [1][ 150/1652]  lr: 1.0000e-03  eta: 2:12:44  time: 0.4044  data_time: 0.0450  memory: 2149  grad_norm: 7.4560  loss: 1.0453  bbox_loss: 0.5685  cls_loss: 0.4768
+2026/05/02 14:56:26 - mmengine - INFO - Epoch(train)  [1][ 200/1652]  lr: 1.0000e-03  eta: 2:11:38  time: 0.3954  data_time: 0.0419  memory: 2195  grad_norm: 7.7977  loss: 1.0297  bbox_loss: 0.5691  cls_loss: 0.4605
+2026/05/02 14:56:46 - mmengine - INFO - Epoch(train)  [1][ 250/1652]  lr: 1.0000e-03  eta: 2:11:14  time: 0.4016  data_time: 0.0452  memory: 2486  grad_norm: 7.5615  loss: 0.9815  bbox_loss: 0.5465  cls_loss: 0.4350
+2026/05/02 14:57:07 - mmengine - INFO - Epoch(train)  [1][ 300/1652]  lr: 1.0000e-03  eta: 2:11:45  time: 0.4180  data_time: 0.0446  memory: 2194  grad_norm: 6.3504  loss: 0.9752  bbox_loss: 0.5410  cls_loss: 0.4342
+2026/05/02 14:57:27 - mmengine - INFO - Epoch(train)  [1][ 350/1652]  lr: 1.0000e-03  eta: 2:11:30  time: 0.4068  data_time: 0.0443  memory: 2394  grad_norm: 7.3128  loss: 0.9704  bbox_loss: 0.5443  cls_loss: 0.4260
+2026/05/02 14:57:48 - mmengine - INFO - Epoch(train)  [1][ 400/1652]  lr: 1.0000e-03  eta: 2:11:34  time: 0.4151  data_time: 0.0453  memory: 2368  grad_norm: 5.9958  loss: 0.9294  bbox_loss: 0.5280  cls_loss: 0.4014
+2026/05/02 14:58:10 - mmengine - INFO - Epoch(train)  [1][ 450/1652]  lr: 1.0000e-03  eta: 2:12:10  time: 0.4325  data_time: 0.0449  memory: 2222  grad_norm: 6.6374  loss: 0.9164  bbox_loss: 0.5264  cls_loss: 0.3900
+2026/05/02 14:58:31 - mmengine - INFO - Epoch(train)  [1][ 500/1652]  lr: 1.0000e-03  eta: 2:12:15  time: 0.4225  data_time: 0.0530  memory: 2240  grad_norm: 7.0331  loss: 0.9165  bbox_loss: 0.5233  cls_loss: 0.3931
+2026/05/02 14:58:51 - mmengine - INFO - Epoch(train)  [1][ 550/1652]  lr: 1.0000e-03  eta: 2:11:47  time: 0.4063  data_time: 0.0460  memory: 2345  grad_norm: 6.4960  loss: 0.9076  bbox_loss: 0.5223  cls_loss: 0.3853
+2026/05/02 14:59:10 - mmengine - INFO - Epoch(train)  [1][ 600/1652]  lr: 1.0000e-03  eta: 2:10:51  time: 0.3884  data_time: 0.0413  memory: 2093  grad_norm: 7.1562  loss: 0.9121  bbox_loss: 0.5246  cls_loss: 0.3875
+2026/05/02 14:59:30 - mmengine - INFO - Epoch(train)  [1][ 650/1652]  lr: 1.0000e-03  eta: 2:09:58  time: 0.3862  data_time: 0.0426  memory: 2031  grad_norm: 5.4306  loss: 0.9030  bbox_loss: 0.5210  cls_loss: 0.3820
+2026/05/02 14:59:50 - mmengine - INFO - Epoch(train)  [1][ 700/1652]  lr: 1.0000e-03  eta: 2:09:30  time: 0.4013  data_time: 0.0454  memory: 2141  grad_norm: 5.7838  loss: 0.8788  bbox_loss: 0.5062  cls_loss: 0.3726
+2026/05/02 15:00:10 - mmengine - INFO - Epoch(train)  [1][ 750/1652]  lr: 1.0000e-03  eta: 2:08:59  time: 0.3977  data_time: 0.0454  memory: 2167  grad_norm: 6.7594  loss: 0.8641  bbox_loss: 0.5055  cls_loss: 0.3586
+2026/05/02 15:00:31 - mmengine - INFO - Epoch(train)  [1][ 800/1652]  lr: 1.0000e-03  eta: 2:09:02  time: 0.4256  data_time: 0.0452  memory: 2197  grad_norm: 5.6703  loss: 0.8839  bbox_loss: 0.5053  cls_loss: 0.3786
+2026/05/02 15:00:52 - mmengine - INFO - Epoch(train)  [1][ 850/1652]  lr: 1.0000e-03  eta: 2:09:07  time: 0.4292  data_time: 0.0442  memory: 2119  grad_norm: 5.4196  loss: 0.8702  bbox_loss: 0.5040  cls_loss: 0.3661
+2026/05/02 15:01:13 - mmengine - INFO - Epoch(train)  [1][ 900/1652]  lr: 1.0000e-03  eta: 2:08:43  time: 0.4050  data_time: 0.0456  memory: 2257  grad_norm: 4.8762  loss: 0.8606  bbox_loss: 0.5019  cls_loss: 0.3587
+2026/05/02 15:01:32 - mmengine - INFO - Epoch(train)  [1][ 950/1652]  lr: 1.0000e-03  eta: 2:08:00  time: 0.3856  data_time: 0.0430  memory: 2334  grad_norm: 4.8715  loss: 0.8733  bbox_loss: 0.5049  cls_loss: 0.3684
+2026/05/02 15:01:52 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:01:52 - mmengine - INFO - Epoch(train)  [1][1000/1652]  lr: 1.0000e-03  eta: 2:07:40  time: 0.4072  data_time: 0.0451  memory: 2255  grad_norm: 5.3834  loss: 0.8537  bbox_loss: 0.4979  cls_loss: 0.3558
+2026/05/02 15:02:14 - mmengine - INFO - Epoch(train)  [1][1050/1652]  lr: 1.0000e-03  eta: 2:07:39  time: 0.4294  data_time: 0.0454  memory: 2091  grad_norm: 5.4244  loss: 0.8568  bbox_loss: 0.4966  cls_loss: 0.3602
+2026/05/02 15:02:35 - mmengine - INFO - Epoch(train)  [1][1100/1652]  lr: 1.0000e-03  eta: 2:07:33  time: 0.4242  data_time: 0.0538  memory: 2154  grad_norm: 5.2704  loss: 0.8377  bbox_loss: 0.4961  cls_loss: 0.3416
+2026/05/02 15:02:55 - mmengine - INFO - Epoch(train)  [1][1150/1652]  lr: 1.0000e-03  eta: 2:07:04  time: 0.3989  data_time: 0.0446  memory: 2248  grad_norm: 4.7652  loss: 0.8401  bbox_loss: 0.4922  cls_loss: 0.3480
+2026/05/02 15:03:15 - mmengine - INFO - Epoch(train)  [1][1200/1652]  lr: 1.0000e-03  eta: 2:06:38  time: 0.4011  data_time: 0.0441  memory: 2245  grad_norm: 4.8347  loss: 0.8455  bbox_loss: 0.4903  cls_loss: 0.3552
+2026/05/02 15:03:35 - mmengine - INFO - Epoch(train)  [1][1250/1652]  lr: 1.0000e-03  eta: 2:06:11  time: 0.3992  data_time: 0.0456  memory: 2194  grad_norm: 5.4626  loss: 0.8461  bbox_loss: 0.4967  cls_loss: 0.3493
+2026/05/02 15:03:56 - mmengine - INFO - Epoch(train)  [1][1300/1652]  lr: 1.0000e-03  eta: 2:06:07  time: 0.4300  data_time: 0.0444  memory: 2137  grad_norm: 4.7736  loss: 0.8336  bbox_loss: 0.4881  cls_loss: 0.3455
+2026/05/02 15:04:17 - mmengine - INFO - Epoch(train)  [1][1350/1652]  lr: 1.0000e-03  eta: 2:05:45  time: 0.4060  data_time: 0.0450  memory: 2104  grad_norm: 5.0093  loss: 0.8162  bbox_loss: 0.4803  cls_loss: 0.3360
+2026/05/02 15:04:37 - mmengine - INFO - Epoch(train)  [1][1400/1652]  lr: 1.0000e-03  eta: 2:05:16  time: 0.3961  data_time: 0.0447  memory: 2209  grad_norm: 4.8182  loss: 0.8297  bbox_loss: 0.4847  cls_loss: 0.3450
+2026/05/02 15:04:56 - mmengine - INFO - Epoch(train)  [1][1450/1652]  lr: 1.0000e-03  eta: 2:04:49  time: 0.3977  data_time: 0.0446  memory: 2239  grad_norm: 5.1080  loss: 0.8155  bbox_loss: 0.4861  cls_loss: 0.3294
+2026/05/02 15:05:17 - mmengine - INFO - Epoch(train)  [1][1500/1652]  lr: 1.0000e-03  eta: 2:04:25  time: 0.4015  data_time: 0.0447  memory: 2170  grad_norm: 4.6228  loss: 0.8087  bbox_loss: 0.4754  cls_loss: 0.3334
+2026/05/02 15:05:37 - mmengine - INFO - Epoch(train)  [1][1550/1652]  lr: 1.0000e-03  eta: 2:04:00  time: 0.3993  data_time: 0.0455  memory: 2103  grad_norm: 4.3939  loss: 0.8285  bbox_loss: 0.4791  cls_loss: 0.3494
+2026/05/02 15:05:57 - mmengine - INFO - Epoch(train)  [1][1600/1652]  lr: 1.0000e-03  eta: 2:03:37  time: 0.4017  data_time: 0.0441  memory: 2323  grad_norm: 4.8595  loss: 0.8007  bbox_loss: 0.4734  cls_loss: 0.3274
+2026/05/02 15:06:17 - mmengine - INFO - Epoch(train)  [1][1650/1652]  lr: 1.0000e-03  eta: 2:03:12  time: 0.3995  data_time: 0.0452  memory: 2107  grad_norm: 4.4058  loss: 0.8281  bbox_loss: 0.4912  cls_loss: 0.3369
+2026/05/02 15:06:17 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:06:39 - mmengine - INFO - Epoch(train)  [2][  50/1652]  lr: 1.0000e-03  eta: 2:03:02  time: 0.4299  data_time: 0.0552  memory: 2334  grad_norm: 4.5371  loss: 0.8318  bbox_loss: 0.4900  cls_loss: 0.3418
+2026/05/02 15:06:59 - mmengine - INFO - Epoch(train)  [2][ 100/1652]  lr: 1.0000e-03  eta: 2:02:39  time: 0.4013  data_time: 0.0435  memory: 2431  grad_norm: 4.5503  loss: 0.7919  bbox_loss: 0.4744  cls_loss: 0.3175
+2026/05/02 15:07:20 - mmengine - INFO - Epoch(train)  [2][ 150/1652]  lr: 1.0000e-03  eta: 2:02:22  time: 0.4141  data_time: 0.0431  memory: 2284  grad_norm: 5.7110  loss: 0.8048  bbox_loss: 0.4788  cls_loss: 0.3260
+2026/05/02 15:07:41 - mmengine - INFO - Epoch(train)  [2][ 200/1652]  lr: 1.0000e-03  eta: 2:02:07  time: 0.4198  data_time: 0.0450  memory: 2293  grad_norm: 4.7826  loss: 0.7920  bbox_loss: 0.4704  cls_loss: 0.3216
+2026/05/02 15:08:01 - mmengine - INFO - Epoch(train)  [2][ 250/1652]  lr: 1.0000e-03  eta: 2:01:46  time: 0.4051  data_time: 0.0436  memory: 2204  grad_norm: 5.3054  loss: 0.8153  bbox_loss: 0.4790  cls_loss: 0.3363
+2026/05/02 15:08:21 - mmengine - INFO - Epoch(train)  [2][ 300/1652]  lr: 1.0000e-03  eta: 2:01:20  time: 0.3953  data_time: 0.0407  memory: 2383  grad_norm: 4.1037  loss: 0.8176  bbox_loss: 0.4785  cls_loss: 0.3391
+2026/05/02 15:08:40 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:08:41 - mmengine - INFO - Epoch(train)  [2][ 350/1652]  lr: 1.0000e-03  eta: 2:00:57  time: 0.4020  data_time: 0.0428  memory: 2463  grad_norm: 4.1763  loss: 0.7843  bbox_loss: 0.4715  cls_loss: 0.3128
+2026/05/02 15:09:02 - mmengine - INFO - Epoch(train)  [2][ 400/1652]  lr: 1.0000e-03  eta: 2:00:43  time: 0.4212  data_time: 0.0432  memory: 2254  grad_norm: 4.2428  loss: 0.7909  bbox_loss: 0.4644  cls_loss: 0.3265
+2026/05/02 15:09:22 - mmengine - INFO - Epoch(train)  [2][ 450/1652]  lr: 1.0000e-03  eta: 2:00:20  time: 0.4012  data_time: 0.0449  memory: 2312  grad_norm: 3.9988  loss: 0.7909  bbox_loss: 0.4666  cls_loss: 0.3244
+2026/05/02 15:09:42 - mmengine - INFO - Epoch(train)  [2][ 500/1652]  lr: 1.0000e-03  eta: 1:59:54  time: 0.3954  data_time: 0.0439  memory: 2223  grad_norm: 3.9261  loss: 0.7677  bbox_loss: 0.4631  cls_loss: 0.3046
+2026/05/02 15:10:01 - mmengine - INFO - Epoch(train)  [2][ 550/1652]  lr: 1.0000e-03  eta: 1:59:28  time: 0.3925  data_time: 0.0460  memory: 2245  grad_norm: 4.4201  loss: 0.7907  bbox_loss: 0.4687  cls_loss: 0.3219
+2026/05/02 15:10:21 - mmengine - INFO - Epoch(train)  [2][ 600/1652]  lr: 1.0000e-03  eta: 1:59:03  time: 0.3935  data_time: 0.0411  memory: 2237  grad_norm: 4.5205  loss: 0.7884  bbox_loss: 0.4754  cls_loss: 0.3131
+2026/05/02 15:10:41 - mmengine - INFO - Epoch(train)  [2][ 650/1652]  lr: 1.0000e-03  eta: 1:58:39  time: 0.3991  data_time: 0.0469  memory: 2144  grad_norm: 3.4681  loss: 0.7793  bbox_loss: 0.4644  cls_loss: 0.3149
+2026/05/02 15:11:01 - mmengine - INFO - Epoch(train)  [2][ 700/1652]  lr: 1.0000e-03  eta: 1:58:17  time: 0.4013  data_time: 0.0418  memory: 2272  grad_norm: 3.7328  loss: 0.7891  bbox_loss: 0.4712  cls_loss: 0.3179
+2026/05/02 15:11:21 - mmengine - INFO - Epoch(train)  [2][ 750/1652]  lr: 1.0000e-03  eta: 1:57:56  time: 0.4027  data_time: 0.0422  memory: 2101  grad_norm: 4.7720  loss: 0.7708  bbox_loss: 0.4682  cls_loss: 0.3026
+2026/05/02 15:11:41 - mmengine - INFO - Epoch(train)  [2][ 800/1652]  lr: 1.0000e-03  eta: 1:57:32  time: 0.3957  data_time: 0.0442  memory: 2211  grad_norm: 4.1853  loss: 0.7864  bbox_loss: 0.4659  cls_loss: 0.3205
+2026/05/02 15:12:01 - mmengine - INFO - Epoch(train)  [2][ 850/1652]  lr: 1.0000e-03  eta: 1:57:12  time: 0.4079  data_time: 0.0473  memory: 2344  grad_norm: 3.9260  loss: 0.7839  bbox_loss: 0.4660  cls_loss: 0.3179
+2026/05/02 15:12:22 - mmengine - INFO - Epoch(train)  [2][ 900/1652]  lr: 1.0000e-03  eta: 1:56:57  time: 0.4230  data_time: 0.0450  memory: 2257  grad_norm: 4.2588  loss: 0.7821  bbox_loss: 0.4665  cls_loss: 0.3157
+2026/05/02 15:12:42 - mmengine - INFO - Epoch(train)  [2][ 950/1652]  lr: 1.0000e-03  eta: 1:56:34  time: 0.3962  data_time: 0.0400  memory: 2124  grad_norm: 3.8320  loss: 0.7755  bbox_loss: 0.4618  cls_loss: 0.3138
+2026/05/02 15:13:03 - mmengine - INFO - Epoch(train)  [2][1000/1652]  lr: 1.0000e-03  eta: 1:56:15  time: 0.4103  data_time: 0.0444  memory: 2112  grad_norm: 3.6456  loss: 0.7645  bbox_loss: 0.4575  cls_loss: 0.3070
+2026/05/02 15:13:22 - mmengine - INFO - Epoch(train)  [2][1050/1652]  lr: 1.0000e-03  eta: 1:55:50  time: 0.3915  data_time: 0.0437  memory: 2152  grad_norm: 3.7454  loss: 0.7629  bbox_loss: 0.4554  cls_loss: 0.3075
+2026/05/02 15:13:42 - mmengine - INFO - Epoch(train)  [2][1100/1652]  lr: 1.0000e-03  eta: 1:55:27  time: 0.3986  data_time: 0.0470  memory: 2408  grad_norm: 3.9447  loss: 0.7713  bbox_loss: 0.4609  cls_loss: 0.3104
+2026/05/02 15:14:02 - mmengine - INFO - Epoch(train)  [2][1150/1652]  lr: 1.0000e-03  eta: 1:55:06  time: 0.4018  data_time: 0.0426  memory: 2098  grad_norm: 4.1632  loss: 0.7751  bbox_loss: 0.4626  cls_loss: 0.3125
+2026/05/02 15:14:22 - mmengine - INFO - Epoch(train)  [2][1200/1652]  lr: 1.0000e-03  eta: 1:54:44  time: 0.4018  data_time: 0.0412  memory: 2075  grad_norm: 3.7462  loss: 0.7687  bbox_loss: 0.4567  cls_loss: 0.3120
+2026/05/02 15:14:42 - mmengine - INFO - Epoch(train)  [2][1250/1652]  lr: 1.0000e-03  eta: 1:54:22  time: 0.3998  data_time: 0.0439  memory: 2143  grad_norm: 3.8051  loss: 0.7579  bbox_loss: 0.4557  cls_loss: 0.3022
+2026/05/02 15:15:03 - mmengine - INFO - Epoch(train)  [2][1300/1652]  lr: 1.0000e-03  eta: 1:54:05  time: 0.4162  data_time: 0.0444  memory: 2428  grad_norm: 4.1876  loss: 0.7568  bbox_loss: 0.4511  cls_loss: 0.3056
+2026/05/02 15:15:22 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:15:23 - mmengine - INFO - Epoch(train)  [2][1350/1652]  lr: 1.0000e-03  eta: 1:53:42  time: 0.3949  data_time: 0.0419  memory: 2223  grad_norm: 4.5548  loss: 0.7623  bbox_loss: 0.4557  cls_loss: 0.3066
+2026/05/02 15:15:43 - mmengine - INFO - Epoch(train)  [2][1400/1652]  lr: 1.0000e-03  eta: 1:53:19  time: 0.3949  data_time: 0.0416  memory: 2234  grad_norm: 3.6081  loss: 0.7661  bbox_loss: 0.4615  cls_loss: 0.3046
+2026/05/02 15:16:03 - mmengine - INFO - Epoch(train)  [2][1450/1652]  lr: 1.0000e-03  eta: 1:52:57  time: 0.4012  data_time: 0.0442  memory: 2179  grad_norm: 4.1297  loss: 0.7592  bbox_loss: 0.4520  cls_loss: 0.3072
+2026/05/02 15:16:23 - mmengine - INFO - Epoch(train)  [2][1500/1652]  lr: 1.0000e-03  eta: 1:52:36  time: 0.4028  data_time: 0.0425  memory: 2286  grad_norm: 3.4366  loss: 0.7505  bbox_loss: 0.4481  cls_loss: 0.3024
+2026/05/02 15:16:43 - mmengine - INFO - Epoch(train)  [2][1550/1652]  lr: 1.0000e-03  eta: 1:52:17  time: 0.4093  data_time: 0.0414  memory: 2254  grad_norm: 3.5974  loss: 0.7628  bbox_loss: 0.4517  cls_loss: 0.3110
+2026/05/02 15:17:03 - mmengine - INFO - Epoch(train)  [2][1600/1652]  lr: 1.0000e-03  eta: 1:51:52  time: 0.3871  data_time: 0.0420  memory: 2362  grad_norm: 3.9239  loss: 0.7563  bbox_loss: 0.4521  cls_loss: 0.3042
+2026/05/02 15:17:23 - mmengine - INFO - Epoch(train)  [2][1650/1652]  lr: 1.0000e-03  eta: 1:51:29  time: 0.3947  data_time: 0.0426  memory: 2212  grad_norm: 3.8068  loss: 0.7475  bbox_loss: 0.4513  cls_loss: 0.2963
+2026/05/02 15:17:23 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:17:44 - mmengine - INFO - Epoch(train)  [3][  50/1652]  lr: 1.0000e-03  eta: 1:51:10  time: 0.4166  data_time: 0.0546  memory: 2300  grad_norm: 3.5725  loss: 0.7510  bbox_loss: 0.4426  cls_loss: 0.3084
+2026/05/02 15:18:04 - mmengine - INFO - Epoch(train)  [3][ 100/1652]  lr: 1.0000e-03  eta: 1:50:50  time: 0.4038  data_time: 0.0440  memory: 2234  grad_norm: 4.0742  loss: 0.7303  bbox_loss: 0.4410  cls_loss: 0.2893
+2026/05/02 15:18:24 - mmengine - INFO - Epoch(train)  [3][ 150/1652]  lr: 1.0000e-03  eta: 1:50:28  time: 0.4008  data_time: 0.0423  memory: 2358  grad_norm: 3.5580  loss: 0.7561  bbox_loss: 0.4479  cls_loss: 0.3083
+2026/05/02 15:18:45 - mmengine - INFO - Epoch(train)  [3][ 200/1652]  lr: 1.0000e-03  eta: 1:50:08  time: 0.4048  data_time: 0.0438  memory: 2274  grad_norm: 3.6139  loss: 0.7259  bbox_loss: 0.4437  cls_loss: 0.2823
+2026/05/02 15:19:05 - mmengine - INFO - Epoch(train)  [3][ 250/1652]  lr: 1.0000e-03  eta: 1:49:47  time: 0.4012  data_time: 0.0449  memory: 2273  grad_norm: 4.1790  loss: 0.7440  bbox_loss: 0.4442  cls_loss: 0.2998
+2026/05/02 15:19:25 - mmengine - INFO - Epoch(train)  [3][ 300/1652]  lr: 1.0000e-03  eta: 1:49:26  time: 0.3999  data_time: 0.0442  memory: 2127  grad_norm: 3.5350  loss: 0.7489  bbox_loss: 0.4438  cls_loss: 0.3051
+2026/05/02 15:19:45 - mmengine - INFO - Epoch(train)  [3][ 350/1652]  lr: 1.0000e-03  eta: 1:49:06  time: 0.4055  data_time: 0.0448  memory: 2115  grad_norm: 3.4143  loss: 0.7328  bbox_loss: 0.4401  cls_loss: 0.2927
+2026/05/02 15:20:05 - mmengine - INFO - Epoch(train)  [3][ 400/1652]  lr: 1.0000e-03  eta: 1:48:45  time: 0.4015  data_time: 0.0429  memory: 2066  grad_norm: 3.9558  loss: 0.7210  bbox_loss: 0.4347  cls_loss: 0.2863
+2026/05/02 15:20:25 - mmengine - INFO - Epoch(train)  [3][ 450/1652]  lr: 1.0000e-03  eta: 1:48:24  time: 0.4023  data_time: 0.0458  memory: 2276  grad_norm: 3.9479  loss: 0.7554  bbox_loss: 0.4521  cls_loss: 0.3033
+2026/05/02 15:20:44 - mmengine - INFO - Epoch(train)  [3][ 500/1652]  lr: 1.0000e-03  eta: 1:48:00  time: 0.3860  data_time: 0.0423  memory: 2394  grad_norm: 3.9823  loss: 0.7475  bbox_loss: 0.4559  cls_loss: 0.2917
+2026/05/02 15:21:05 - mmengine - INFO - Epoch(train)  [3][ 550/1652]  lr: 1.0000e-03  eta: 1:47:40  time: 0.4046  data_time: 0.0434  memory: 2337  grad_norm: 3.6257  loss: 0.7403  bbox_loss: 0.4409  cls_loss: 0.2994
+2026/05/02 15:21:26 - mmengine - INFO - Epoch(train)  [3][ 600/1652]  lr: 1.0000e-03  eta: 1:47:23  time: 0.4241  data_time: 0.0438  memory: 2187  grad_norm: 3.7217  loss: 0.7206  bbox_loss: 0.4336  cls_loss: 0.2870
+2026/05/02 15:21:45 - mmengine - INFO - Epoch(train)  [3][ 650/1652]  lr: 1.0000e-03  eta: 1:47:00  time: 0.3887  data_time: 0.0410  memory: 2250  grad_norm: 3.7715  loss: 0.7242  bbox_loss: 0.4391  cls_loss: 0.2852
+2026/05/02 15:22:04 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:22:05 - mmengine - INFO - Epoch(train)  [3][ 700/1652]  lr: 1.0000e-03  eta: 1:46:39  time: 0.4019  data_time: 0.0442  memory: 2535  grad_norm: 3.6374  loss: 0.7478  bbox_loss: 0.4482  cls_loss: 0.2996
+2026/05/02 15:22:25 - mmengine - INFO - Epoch(train)  [3][ 750/1652]  lr: 1.0000e-03  eta: 1:46:17  time: 0.3945  data_time: 0.0435  memory: 2226  grad_norm: 3.4930  loss: 0.7172  bbox_loss: 0.4314  cls_loss: 0.2858
+2026/05/02 15:22:45 - mmengine - INFO - Epoch(train)  [3][ 800/1652]  lr: 1.0000e-03  eta: 1:45:54  time: 0.3906  data_time: 0.0411  memory: 2139  grad_norm: 3.5871  loss: 0.7260  bbox_loss: 0.4356  cls_loss: 0.2904
+2026/05/02 15:23:04 - mmengine - INFO - Epoch(train)  [3][ 850/1652]  lr: 1.0000e-03  eta: 1:45:31  time: 0.3917  data_time: 0.0431  memory: 2148  grad_norm: 3.7058  loss: 0.7331  bbox_loss: 0.4336  cls_loss: 0.2995
+2026/05/02 15:23:24 - mmengine - INFO - Epoch(train)  [3][ 900/1652]  lr: 1.0000e-03  eta: 1:45:10  time: 0.3982  data_time: 0.0437  memory: 2211  grad_norm: 3.5702  loss: 0.7288  bbox_loss: 0.4350  cls_loss: 0.2938
+2026/05/02 15:23:44 - mmengine - INFO - Epoch(train)  [3][ 950/1652]  lr: 1.0000e-03  eta: 1:44:49  time: 0.3999  data_time: 0.0433  memory: 2240  grad_norm: 3.5647  loss: 0.7217  bbox_loss: 0.4317  cls_loss: 0.2900
+2026/05/02 15:24:04 - mmengine - INFO - Epoch(train)  [3][1000/1652]  lr: 1.0000e-03  eta: 1:44:29  time: 0.4026  data_time: 0.0437  memory: 2188  grad_norm: 3.5737  loss: 0.7266  bbox_loss: 0.4361  cls_loss: 0.2905
+2026/05/02 15:24:24 - mmengine - INFO - Epoch(train)  [3][1050/1652]  lr: 1.0000e-03  eta: 1:44:07  time: 0.3972  data_time: 0.0479  memory: 2155  grad_norm: 3.4327  loss: 0.7297  bbox_loss: 0.4386  cls_loss: 0.2911
+2026/05/02 15:24:44 - mmengine - INFO - Epoch(train)  [3][1100/1652]  lr: 1.0000e-03  eta: 1:43:47  time: 0.4005  data_time: 0.0432  memory: 2260  grad_norm: 3.1692  loss: 0.7193  bbox_loss: 0.4352  cls_loss: 0.2841
+2026/05/02 15:25:04 - mmengine - INFO - Epoch(train)  [3][1150/1652]  lr: 1.0000e-03  eta: 1:43:27  time: 0.4066  data_time: 0.0449  memory: 2238  grad_norm: 3.0058  loss: 0.7323  bbox_loss: 0.4365  cls_loss: 0.2958
+2026/05/02 15:25:25 - mmengine - INFO - Epoch(train)  [3][1200/1652]  lr: 1.0000e-03  eta: 1:43:06  time: 0.4003  data_time: 0.0442  memory: 2315  grad_norm: 3.4126  loss: 0.7147  bbox_loss: 0.4287  cls_loss: 0.2860
+2026/05/02 15:25:44 - mmengine - INFO - Epoch(train)  [3][1250/1652]  lr: 1.0000e-03  eta: 1:42:43  time: 0.3892  data_time: 0.0428  memory: 2262  grad_norm: 3.5541  loss: 0.7198  bbox_loss: 0.4306  cls_loss: 0.2892
+2026/05/02 15:26:04 - mmengine - INFO - Epoch(train)  [3][1300/1652]  lr: 1.0000e-03  eta: 1:42:23  time: 0.4013  data_time: 0.0427  memory: 2132  grad_norm: 3.3646  loss: 0.7199  bbox_loss: 0.4303  cls_loss: 0.2896
+2026/05/02 15:26:24 - mmengine - INFO - Epoch(train)  [3][1350/1652]  lr: 1.0000e-03  eta: 1:42:02  time: 0.3992  data_time: 0.0435  memory: 2341  grad_norm: 3.7530  loss: 0.7154  bbox_loss: 0.4333  cls_loss: 0.2821
+2026/05/02 15:26:45 - mmengine - INFO - Epoch(train)  [3][1400/1652]  lr: 1.0000e-03  eta: 1:41:43  time: 0.4127  data_time: 0.0444  memory: 2441  grad_norm: 3.0437  loss: 0.7155  bbox_loss: 0.4310  cls_loss: 0.2845
+2026/05/02 15:27:05 - mmengine - INFO - Epoch(train)  [3][1450/1652]  lr: 1.0000e-03  eta: 1:41:23  time: 0.4057  data_time: 0.0438  memory: 2304  grad_norm: 3.2461  loss: 0.7119  bbox_loss: 0.4310  cls_loss: 0.2809
+2026/05/02 15:27:25 - mmengine - INFO - Epoch(train)  [3][1500/1652]  lr: 1.0000e-03  eta: 1:41:03  time: 0.4008  data_time: 0.0432  memory: 2453  grad_norm: 3.0325  loss: 0.7193  bbox_loss: 0.4312  cls_loss: 0.2881
+2026/05/02 15:27:45 - mmengine - INFO - Epoch(train)  [3][1550/1652]  lr: 1.0000e-03  eta: 1:40:42  time: 0.4029  data_time: 0.0428  memory: 2089  grad_norm: 3.1094  loss: 0.7169  bbox_loss: 0.4294  cls_loss: 0.2875
+2026/05/02 15:28:04 - mmengine - INFO - Epoch(train)  [3][1600/1652]  lr: 1.0000e-03  eta: 1:40:19  time: 0.3834  data_time: 0.0415  memory: 2160  grad_norm: 4.0713  loss: 0.7104  bbox_loss: 0.4302  cls_loss: 0.2801
+2026/05/02 15:28:24 - mmengine - INFO - Epoch(train)  [3][1650/1652]  lr: 1.0000e-03  eta: 1:39:58  time: 0.3986  data_time: 0.0423  memory: 2257  grad_norm: 3.8125  loss: 0.7058  bbox_loss: 0.4297  cls_loss: 0.2761
+2026/05/02 15:28:25 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:28:43 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:28:46 - mmengine - INFO - Epoch(train)  [4][  50/1652]  lr: 1.0000e-03  eta: 1:39:39  time: 0.4211  data_time: 0.0586  memory: 2190  grad_norm: 3.3416  loss: 0.7037  bbox_loss: 0.4232  cls_loss: 0.2805
+2026/05/02 15:29:06 - mmengine - INFO - Epoch(train)  [4][ 100/1652]  lr: 1.0000e-03  eta: 1:39:18  time: 0.3974  data_time: 0.0440  memory: 2318  grad_norm: 3.5917  loss: 0.7211  bbox_loss: 0.4338  cls_loss: 0.2873
+2026/05/02 15:29:26 - mmengine - INFO - Epoch(train)  [4][ 150/1652]  lr: 1.0000e-03  eta: 1:38:58  time: 0.4036  data_time: 0.0429  memory: 2304  grad_norm: 3.0614  loss: 0.7073  bbox_loss: 0.4281  cls_loss: 0.2792
+2026/05/02 15:29:46 - mmengine - INFO - Epoch(train)  [4][ 200/1652]  lr: 1.0000e-03  eta: 1:38:37  time: 0.3960  data_time: 0.0423  memory: 2134  grad_norm: 3.2564  loss: 0.6937  bbox_loss: 0.4213  cls_loss: 0.2725
+2026/05/02 15:30:06 - mmengine - INFO - Epoch(train)  [4][ 250/1652]  lr: 1.0000e-03  eta: 1:38:17  time: 0.4048  data_time: 0.0444  memory: 2129  grad_norm: 2.9382  loss: 0.6992  bbox_loss: 0.4279  cls_loss: 0.2714
+2026/05/02 15:30:26 - mmengine - INFO - Epoch(train)  [4][ 300/1652]  lr: 1.0000e-03  eta: 1:37:56  time: 0.3966  data_time: 0.0450  memory: 2159  grad_norm: 2.9591  loss: 0.7134  bbox_loss: 0.4290  cls_loss: 0.2844
+2026/05/02 15:30:46 - mmengine - INFO - Epoch(train)  [4][ 350/1652]  lr: 1.0000e-03  eta: 1:37:35  time: 0.3999  data_time: 0.0435  memory: 2314  grad_norm: 3.3048  loss: 0.6858  bbox_loss: 0.4199  cls_loss: 0.2659
+2026/05/02 15:31:06 - mmengine - INFO - Epoch(train)  [4][ 400/1652]  lr: 1.0000e-03  eta: 1:37:14  time: 0.3975  data_time: 0.0442  memory: 2374  grad_norm: 3.0994  loss: 0.7101  bbox_loss: 0.4292  cls_loss: 0.2809
+2026/05/02 15:31:26 - mmengine - INFO - Epoch(train)  [4][ 450/1652]  lr: 1.0000e-03  eta: 1:36:54  time: 0.3991  data_time: 0.0442  memory: 2194  grad_norm: 3.4306  loss: 0.6993  bbox_loss: 0.4249  cls_loss: 0.2744
+2026/05/02 15:31:46 - mmengine - INFO - Epoch(train)  [4][ 500/1652]  lr: 1.0000e-03  eta: 1:36:33  time: 0.3972  data_time: 0.0455  memory: 2497  grad_norm: 3.3558  loss: 0.7061  bbox_loss: 0.4260  cls_loss: 0.2801
+2026/05/02 15:32:06 - mmengine - INFO - Epoch(train)  [4][ 550/1652]  lr: 1.0000e-03  eta: 1:36:12  time: 0.4033  data_time: 0.0440  memory: 2117  grad_norm: 2.9332  loss: 0.7168  bbox_loss: 0.4298  cls_loss: 0.2870
+2026/05/02 15:32:25 - mmengine - INFO - Epoch(train)  [4][ 600/1652]  lr: 1.0000e-03  eta: 1:35:50  time: 0.3875  data_time: 0.0432  memory: 2099  grad_norm: 3.5151  loss: 0.7000  bbox_loss: 0.4214  cls_loss: 0.2785
+2026/05/02 15:32:45 - mmengine - INFO - Epoch(train)  [4][ 650/1652]  lr: 1.0000e-03  eta: 1:35:30  time: 0.4020  data_time: 0.0441  memory: 2205  grad_norm: 3.2859  loss: 0.6751  bbox_loss: 0.4161  cls_loss: 0.2590
+2026/05/02 15:33:05 - mmengine - INFO - Epoch(train)  [4][ 700/1652]  lr: 1.0000e-03  eta: 1:35:09  time: 0.3957  data_time: 0.0462  memory: 2129  grad_norm: 3.3358  loss: 0.6803  bbox_loss: 0.4102  cls_loss: 0.2702
+2026/05/02 15:33:25 - mmengine - INFO - Epoch(train)  [4][ 750/1652]  lr: 1.0000e-03  eta: 1:34:47  time: 0.3918  data_time: 0.0432  memory: 2200  grad_norm: 3.0595  loss: 0.7002  bbox_loss: 0.4201  cls_loss: 0.2801
+2026/05/02 15:33:45 - mmengine - INFO - Epoch(train)  [4][ 800/1652]  lr: 1.0000e-03  eta: 1:34:27  time: 0.3980  data_time: 0.0426  memory: 2191  grad_norm: 3.0940  loss: 0.6971  bbox_loss: 0.4212  cls_loss: 0.2759
+2026/05/02 15:34:04 - mmengine - INFO - Epoch(train)  [4][ 850/1652]  lr: 1.0000e-03  eta: 1:34:06  time: 0.3958  data_time: 0.0439  memory: 2212  grad_norm: 3.3595  loss: 0.6905  bbox_loss: 0.4178  cls_loss: 0.2726
+2026/05/02 15:34:24 - mmengine - INFO - Epoch(train)  [4][ 900/1652]  lr: 1.0000e-03  eta: 1:33:45  time: 0.3980  data_time: 0.0444  memory: 2229  grad_norm: 3.0954  loss: 0.6951  bbox_loss: 0.4214  cls_loss: 0.2737
+2026/05/02 15:34:44 - mmengine - INFO - Epoch(train)  [4][ 950/1652]  lr: 1.0000e-03  eta: 1:33:25  time: 0.4045  data_time: 0.0436  memory: 2211  grad_norm: 3.1693  loss: 0.6846  bbox_loss: 0.4127  cls_loss: 0.2719
+2026/05/02 15:35:04 - mmengine - INFO - Epoch(train)  [4][1000/1652]  lr: 1.0000e-03  eta: 1:33:04  time: 0.3971  data_time: 0.0425  memory: 2114  grad_norm: 2.9132  loss: 0.6785  bbox_loss: 0.4103  cls_loss: 0.2682
+2026/05/02 15:35:22 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:35:24 - mmengine - INFO - Epoch(train)  [4][1050/1652]  lr: 1.0000e-03  eta: 1:32:43  time: 0.3945  data_time: 0.0420  memory: 2097  grad_norm: 3.3958  loss: 0.6872  bbox_loss: 0.4197  cls_loss: 0.2675
+2026/05/02 15:35:44 - mmengine - INFO - Epoch(train)  [4][1100/1652]  lr: 1.0000e-03  eta: 1:32:22  time: 0.3894  data_time: 0.0448  memory: 2124  grad_norm: 3.4632  loss: 0.6903  bbox_loss: 0.4193  cls_loss: 0.2710
+2026/05/02 15:36:04 - mmengine - INFO - Epoch(train)  [4][1150/1652]  lr: 1.0000e-03  eta: 1:32:01  time: 0.4032  data_time: 0.0439  memory: 2240  grad_norm: 2.9699  loss: 0.7020  bbox_loss: 0.4251  cls_loss: 0.2770
+2026/05/02 15:36:24 - mmengine - INFO - Epoch(train)  [4][1200/1652]  lr: 1.0000e-03  eta: 1:31:41  time: 0.3994  data_time: 0.0427  memory: 2134  grad_norm: 3.2108  loss: 0.6923  bbox_loss: 0.4221  cls_loss: 0.2702
+2026/05/02 15:36:44 - mmengine - INFO - Epoch(train)  [4][1250/1652]  lr: 1.0000e-03  eta: 1:31:21  time: 0.4070  data_time: 0.0440  memory: 2284  grad_norm: 3.0100  loss: 0.6905  bbox_loss: 0.4147  cls_loss: 0.2758
+2026/05/02 15:37:04 - mmengine - INFO - Epoch(train)  [4][1300/1652]  lr: 1.0000e-03  eta: 1:31:02  time: 0.4066  data_time: 0.0472  memory: 2248  grad_norm: 2.8087  loss: 0.7019  bbox_loss: 0.4221  cls_loss: 0.2798
+2026/05/02 15:37:25 - mmengine - INFO - Epoch(train)  [4][1350/1652]  lr: 1.0000e-03  eta: 1:30:42  time: 0.4039  data_time: 0.0436  memory: 2263  grad_norm: 2.9635  loss: 0.7043  bbox_loss: 0.4203  cls_loss: 0.2841
+2026/05/02 15:37:44 - mmengine - INFO - Epoch(train)  [4][1400/1652]  lr: 1.0000e-03  eta: 1:30:21  time: 0.3976  data_time: 0.0423  memory: 2076  grad_norm: 2.9732  loss: 0.6830  bbox_loss: 0.4167  cls_loss: 0.2663
+2026/05/02 15:38:04 - mmengine - INFO - Epoch(train)  [4][1450/1652]  lr: 1.0000e-03  eta: 1:30:00  time: 0.3955  data_time: 0.0437  memory: 2343  grad_norm: 2.8279  loss: 0.6775  bbox_loss: 0.4083  cls_loss: 0.2691
+2026/05/02 15:38:25 - mmengine - INFO - Epoch(train)  [4][1500/1652]  lr: 1.0000e-03  eta: 1:29:41  time: 0.4090  data_time: 0.0480  memory: 2260  grad_norm: 2.8865  loss: 0.6934  bbox_loss: 0.4173  cls_loss: 0.2760
+2026/05/02 15:38:45 - mmengine - INFO - Epoch(train)  [4][1550/1652]  lr: 1.0000e-03  eta: 1:29:21  time: 0.4058  data_time: 0.0437  memory: 2299  grad_norm: 2.8259  loss: 0.6857  bbox_loss: 0.4179  cls_loss: 0.2678
+2026/05/02 15:39:05 - mmengine - INFO - Epoch(train)  [4][1600/1652]  lr: 1.0000e-03  eta: 1:29:01  time: 0.4012  data_time: 0.0427  memory: 2406  grad_norm: 2.8910  loss: 0.6625  bbox_loss: 0.4055  cls_loss: 0.2571
+2026/05/02 15:39:25 - mmengine - INFO - Epoch(train)  [4][1650/1652]  lr: 1.0000e-03  eta: 1:28:40  time: 0.3932  data_time: 0.0435  memory: 2156  grad_norm: 2.9918  loss: 0.6960  bbox_loss: 0.4170  cls_loss: 0.2790
+2026/05/02 15:39:25 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:39:46 - mmengine - INFO - Epoch(train)  [5][  50/1652]  lr: 1.0000e-03  eta: 1:28:20  time: 0.4207  data_time: 0.0518  memory: 2211  grad_norm: 2.7494  loss: 0.6692  bbox_loss: 0.4089  cls_loss: 0.2604
+2026/05/02 15:40:07 - mmengine - INFO - Epoch(train)  [5][ 100/1652]  lr: 1.0000e-03  eta: 1:28:00  time: 0.4039  data_time: 0.0496  memory: 2105  grad_norm: 2.7755  loss: 0.6996  bbox_loss: 0.4208  cls_loss: 0.2789
+2026/05/02 15:40:27 - mmengine - INFO - Epoch(train)  [5][ 150/1652]  lr: 1.0000e-03  eta: 1:27:40  time: 0.4045  data_time: 0.0420  memory: 2288  grad_norm: 2.7859  loss: 0.6705  bbox_loss: 0.4077  cls_loss: 0.2628
+2026/05/02 15:40:47 - mmengine - INFO - Epoch(train)  [5][ 200/1652]  lr: 1.0000e-03  eta: 1:27:20  time: 0.3993  data_time: 0.0432  memory: 2292  grad_norm: 2.8020  loss: 0.6789  bbox_loss: 0.4129  cls_loss: 0.2660
+2026/05/02 15:41:07 - mmengine - INFO - Epoch(train)  [5][ 250/1652]  lr: 1.0000e-03  eta: 1:27:00  time: 0.4053  data_time: 0.0417  memory: 2261  grad_norm: 2.7648  loss: 0.6746  bbox_loss: 0.4102  cls_loss: 0.2644
+2026/05/02 15:41:27 - mmengine - INFO - Epoch(train)  [5][ 300/1652]  lr: 1.0000e-03  eta: 1:26:40  time: 0.4024  data_time: 0.0464  memory: 2317  grad_norm: 2.6196  loss: 0.6653  bbox_loss: 0.4069  cls_loss: 0.2584
+2026/05/02 15:41:47 - mmengine - INFO - Epoch(train)  [5][ 350/1652]  lr: 1.0000e-03  eta: 1:26:19  time: 0.4022  data_time: 0.0432  memory: 2345  grad_norm: 2.5941  loss: 0.6806  bbox_loss: 0.4139  cls_loss: 0.2667
+2026/05/02 15:42:04 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:42:07 - mmengine - INFO - Epoch(train)  [5][ 400/1652]  lr: 1.0000e-03  eta: 1:25:59  time: 0.3992  data_time: 0.0431  memory: 2284  grad_norm: 3.2624  loss: 0.6624  bbox_loss: 0.4060  cls_loss: 0.2564
+2026/05/02 15:42:27 - mmengine - INFO - Epoch(train)  [5][ 450/1652]  lr: 1.0000e-03  eta: 1:25:38  time: 0.3915  data_time: 0.0424  memory: 1990  grad_norm: 2.6180  loss: 0.6801  bbox_loss: 0.4101  cls_loss: 0.2701
+2026/05/02 15:42:47 - mmengine - INFO - Epoch(train)  [5][ 500/1652]  lr: 1.0000e-03  eta: 1:25:17  time: 0.3979  data_time: 0.0458  memory: 2533  grad_norm: 2.9986  loss: 0.6779  bbox_loss: 0.4103  cls_loss: 0.2675
+2026/05/02 15:43:07 - mmengine - INFO - Epoch(train)  [5][ 550/1652]  lr: 1.0000e-03  eta: 1:24:57  time: 0.3982  data_time: 0.0418  memory: 2279  grad_norm: 2.9763  loss: 0.6523  bbox_loss: 0.4009  cls_loss: 0.2514
+2026/05/02 15:43:26 - mmengine - INFO - Epoch(train)  [5][ 600/1652]  lr: 1.0000e-03  eta: 1:24:36  time: 0.3891  data_time: 0.0407  memory: 2101  grad_norm: 2.8249  loss: 0.6667  bbox_loss: 0.4098  cls_loss: 0.2569
+2026/05/02 15:43:46 - mmengine - INFO - Epoch(train)  [5][ 650/1652]  lr: 1.0000e-03  eta: 1:24:15  time: 0.3976  data_time: 0.0430  memory: 2109  grad_norm: 2.8617  loss: 0.6589  bbox_loss: 0.4041  cls_loss: 0.2548
+2026/05/02 15:44:06 - mmengine - INFO - Epoch(train)  [5][ 700/1652]  lr: 1.0000e-03  eta: 1:23:55  time: 0.4046  data_time: 0.0450  memory: 2289  grad_norm: 3.0340  loss: 0.6736  bbox_loss: 0.4140  cls_loss: 0.2597
+2026/05/02 15:44:26 - mmengine - INFO - Epoch(train)  [5][ 750/1652]  lr: 1.0000e-03  eta: 1:23:35  time: 0.3984  data_time: 0.0422  memory: 2172  grad_norm: 2.7499  loss: 0.6608  bbox_loss: 0.4034  cls_loss: 0.2574
+2026/05/02 15:44:46 - mmengine - INFO - Epoch(train)  [5][ 800/1652]  lr: 1.0000e-03  eta: 1:23:14  time: 0.3911  data_time: 0.0429  memory: 2122  grad_norm: 2.8676  loss: 0.6671  bbox_loss: 0.4076  cls_loss: 0.2595
+2026/05/02 15:45:06 - mmengine - INFO - Epoch(train)  [5][ 850/1652]  lr: 1.0000e-03  eta: 1:22:53  time: 0.3982  data_time: 0.0411  memory: 2446  grad_norm: 2.6249  loss: 0.6702  bbox_loss: 0.4105  cls_loss: 0.2597
+2026/05/02 15:45:26 - mmengine - INFO - Epoch(train)  [5][ 900/1652]  lr: 1.0000e-03  eta: 1:22:33  time: 0.4076  data_time: 0.0441  memory: 2298  grad_norm: 2.6679  loss: 0.6860  bbox_loss: 0.4138  cls_loss: 0.2722
+2026/05/02 15:45:46 - mmengine - INFO - Epoch(train)  [5][ 950/1652]  lr: 1.0000e-03  eta: 1:22:14  time: 0.4047  data_time: 0.0406  memory: 2267  grad_norm: 2.7762  loss: 0.6700  bbox_loss: 0.4069  cls_loss: 0.2631
+2026/05/02 15:46:06 - mmengine - INFO - Epoch(train)  [5][1000/1652]  lr: 1.0000e-03  eta: 1:21:52  time: 0.3899  data_time: 0.0429  memory: 2165  grad_norm: 2.8437  loss: 0.6775  bbox_loss: 0.4109  cls_loss: 0.2666
+2026/05/02 15:46:25 - mmengine - INFO - Epoch(train)  [5][1050/1652]  lr: 1.0000e-03  eta: 1:21:31  time: 0.3811  data_time: 0.0421  memory: 2296  grad_norm: 3.0778  loss: 0.6829  bbox_loss: 0.4147  cls_loss: 0.2682
+2026/05/02 15:46:45 - mmengine - INFO - Epoch(train)  [5][1100/1652]  lr: 1.0000e-03  eta: 1:21:11  time: 0.4050  data_time: 0.0459  memory: 2352  grad_norm: 2.8549  loss: 0.6554  bbox_loss: 0.4009  cls_loss: 0.2546
+2026/05/02 15:47:05 - mmengine - INFO - Epoch(train)  [5][1150/1652]  lr: 1.0000e-03  eta: 1:20:50  time: 0.3910  data_time: 0.0430  memory: 2156  grad_norm: 2.7115  loss: 0.6751  bbox_loss: 0.4119  cls_loss: 0.2633
+2026/05/02 15:47:24 - mmengine - INFO - Epoch(train)  [5][1200/1652]  lr: 1.0000e-03  eta: 1:20:29  time: 0.3865  data_time: 0.0422  memory: 2313  grad_norm: 2.6714  loss: 0.6570  bbox_loss: 0.4025  cls_loss: 0.2545
+2026/05/02 15:47:44 - mmengine - INFO - Epoch(train)  [5][1250/1652]  lr: 1.0000e-03  eta: 1:20:08  time: 0.4018  data_time: 0.0434  memory: 2265  grad_norm: 2.6516  loss: 0.6773  bbox_loss: 0.4107  cls_loss: 0.2666
+2026/05/02 15:48:04 - mmengine - INFO - Epoch(train)  [5][1300/1652]  lr: 1.0000e-03  eta: 1:19:48  time: 0.4021  data_time: 0.0445  memory: 2318  grad_norm: 2.5290  loss: 0.6677  bbox_loss: 0.4104  cls_loss: 0.2572
+2026/05/02 15:48:24 - mmengine - INFO - Epoch(train)  [5][1350/1652]  lr: 1.0000e-03  eta: 1:19:27  time: 0.3896  data_time: 0.0411  memory: 2196  grad_norm: 2.7228  loss: 0.6823  bbox_loss: 0.4147  cls_loss: 0.2676
+2026/05/02 15:48:40 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:48:43 - mmengine - INFO - Epoch(train)  [5][1400/1652]  lr: 1.0000e-03  eta: 1:19:06  time: 0.3842  data_time: 0.0419  memory: 2227  grad_norm: 2.7724  loss: 0.6807  bbox_loss: 0.4130  cls_loss: 0.2677
+2026/05/02 15:49:03 - mmengine - INFO - Epoch(train)  [5][1450/1652]  lr: 1.0000e-03  eta: 1:18:46  time: 0.3975  data_time: 0.0459  memory: 2247  grad_norm: 2.7361  loss: 0.6696  bbox_loss: 0.4116  cls_loss: 0.2580
+2026/05/02 15:49:23 - mmengine - INFO - Epoch(train)  [5][1500/1652]  lr: 1.0000e-03  eta: 1:18:26  time: 0.4055  data_time: 0.0433  memory: 2303  grad_norm: 2.3682  loss: 0.6574  bbox_loss: 0.4011  cls_loss: 0.2563
+2026/05/02 15:49:43 - mmengine - INFO - Epoch(train)  [5][1550/1652]  lr: 1.0000e-03  eta: 1:18:05  time: 0.3958  data_time: 0.0420  memory: 2154  grad_norm: 2.5622  loss: 0.6655  bbox_loss: 0.4074  cls_loss: 0.2581
+2026/05/02 15:50:03 - mmengine - INFO - Epoch(train)  [5][1600/1652]  lr: 1.0000e-03  eta: 1:17:45  time: 0.4034  data_time: 0.0423  memory: 2170  grad_norm: 2.5498  loss: 0.6559  bbox_loss: 0.4002  cls_loss: 0.2556
+2026/05/02 15:50:22 - mmengine - INFO - Epoch(train)  [5][1650/1652]  lr: 1.0000e-03  eta: 1:17:24  time: 0.3874  data_time: 0.0398  memory: 2424  grad_norm: 2.3861  loss: 0.6613  bbox_loss: 0.4075  cls_loss: 0.2538
+2026/05/02 15:50:23 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:50:44 - mmengine - INFO - Epoch(train)  [6][  50/1652]  lr: 1.0000e-03  eta: 1:17:04  time: 0.4129  data_time: 0.0554  memory: 2195  grad_norm: 2.4837  loss: 0.6564  bbox_loss: 0.4006  cls_loss: 0.2558
+2026/05/02 15:51:03 - mmengine - INFO - Epoch(train)  [6][ 100/1652]  lr: 1.0000e-03  eta: 1:16:43  time: 0.3933  data_time: 0.0435  memory: 2483  grad_norm: 2.6821  loss: 0.6643  bbox_loss: 0.4044  cls_loss: 0.2599
+2026/05/02 15:51:24 - mmengine - INFO - Epoch(train)  [6][ 150/1652]  lr: 1.0000e-03  eta: 1:16:24  time: 0.4077  data_time: 0.0429  memory: 2184  grad_norm: 2.4895  loss: 0.6660  bbox_loss: 0.4072  cls_loss: 0.2588
+2026/05/02 15:51:44 - mmengine - INFO - Epoch(train)  [6][ 200/1652]  lr: 1.0000e-03  eta: 1:16:03  time: 0.3979  data_time: 0.0430  memory: 2196  grad_norm: 2.6262  loss: 0.6480  bbox_loss: 0.3978  cls_loss: 0.2503
+2026/05/02 15:52:04 - mmengine - INFO - Epoch(train)  [6][ 250/1652]  lr: 1.0000e-03  eta: 1:15:43  time: 0.4016  data_time: 0.0455  memory: 2298  grad_norm: 2.5026  loss: 0.6464  bbox_loss: 0.3944  cls_loss: 0.2519
+2026/05/02 15:52:24 - mmengine - INFO - Epoch(train)  [6][ 300/1652]  lr: 1.0000e-03  eta: 1:15:23  time: 0.3983  data_time: 0.0432  memory: 2183  grad_norm: 2.6333  loss: 0.6468  bbox_loss: 0.3955  cls_loss: 0.2513
+2026/05/02 15:52:44 - mmengine - INFO - Epoch(train)  [6][ 350/1652]  lr: 1.0000e-03  eta: 1:15:03  time: 0.4048  data_time: 0.0471  memory: 2227  grad_norm: 2.5414  loss: 0.6560  bbox_loss: 0.3994  cls_loss: 0.2566
+2026/05/02 15:53:03 - mmengine - INFO - Epoch(train)  [6][ 400/1652]  lr: 1.0000e-03  eta: 1:14:42  time: 0.3894  data_time: 0.0413  memory: 2154  grad_norm: 2.7880  loss: 0.6331  bbox_loss: 0.3905  cls_loss: 0.2426
+2026/05/02 15:53:23 - mmengine - INFO - Epoch(train)  [6][ 450/1652]  lr: 1.0000e-03  eta: 1:14:22  time: 0.3948  data_time: 0.0455  memory: 2432  grad_norm: 2.7973  loss: 0.6479  bbox_loss: 0.3973  cls_loss: 0.2506
+2026/05/02 15:53:43 - mmengine - INFO - Epoch(train)  [6][ 500/1652]  lr: 1.0000e-03  eta: 1:14:01  time: 0.3926  data_time: 0.0443  memory: 2212  grad_norm: 2.2019  loss: 0.6683  bbox_loss: 0.4111  cls_loss: 0.2572
+2026/05/02 15:54:03 - mmengine - INFO - Epoch(train)  [6][ 550/1652]  lr: 1.0000e-03  eta: 1:13:41  time: 0.4035  data_time: 0.0413  memory: 2359  grad_norm: 2.3856  loss: 0.6536  bbox_loss: 0.4006  cls_loss: 0.2530
+2026/05/02 15:54:23 - mmengine - INFO - Epoch(train)  [6][ 600/1652]  lr: 1.0000e-03  eta: 1:13:21  time: 0.3959  data_time: 0.0441  memory: 2221  grad_norm: 2.5169  loss: 0.6427  bbox_loss: 0.3989  cls_loss: 0.2438
+2026/05/02 15:54:43 - mmengine - INFO - Epoch(train)  [6][ 650/1652]  lr: 1.0000e-03  eta: 1:13:00  time: 0.3973  data_time: 0.0452  memory: 2210  grad_norm: 2.7672  loss: 0.6400  bbox_loss: 0.3917  cls_loss: 0.2483
+2026/05/02 15:55:02 - mmengine - INFO - Epoch(train)  [6][ 700/1652]  lr: 1.0000e-03  eta: 1:12:40  time: 0.3965  data_time: 0.0421  memory: 2168  grad_norm: 2.8416  loss: 0.6736  bbox_loss: 0.4126  cls_loss: 0.2610
+2026/05/02 15:55:18 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 15:55:22 - mmengine - INFO - Epoch(train)  [6][ 750/1652]  lr: 1.0000e-03  eta: 1:12:20  time: 0.3972  data_time: 0.0411  memory: 2144  grad_norm: 2.5392  loss: 0.6497  bbox_loss: 0.3992  cls_loss: 0.2506
+2026/05/02 15:55:42 - mmengine - INFO - Epoch(train)  [6][ 800/1652]  lr: 1.0000e-03  eta: 1:12:00  time: 0.4036  data_time: 0.0429  memory: 2244  grad_norm: 2.3816  loss: 0.6756  bbox_loss: 0.4106  cls_loss: 0.2649
+2026/05/02 15:56:02 - mmengine - INFO - Epoch(train)  [6][ 850/1652]  lr: 1.0000e-03  eta: 1:11:39  time: 0.3925  data_time: 0.0437  memory: 2278  grad_norm: 2.5856  loss: 0.6467  bbox_loss: 0.3977  cls_loss: 0.2490
+2026/05/02 15:56:22 - mmengine - INFO - Epoch(train)  [6][ 900/1652]  lr: 1.0000e-03  eta: 1:11:18  time: 0.3911  data_time: 0.0407  memory: 2193  grad_norm: 2.3398  loss: 0.6386  bbox_loss: 0.3944  cls_loss: 0.2442
+2026/05/02 15:56:41 - mmengine - INFO - Epoch(train)  [6][ 950/1652]  lr: 1.0000e-03  eta: 1:10:58  time: 0.3964  data_time: 0.0437  memory: 2214  grad_norm: 2.2275  loss: 0.6433  bbox_loss: 0.3924  cls_loss: 0.2509
+2026/05/02 15:57:01 - mmengine - INFO - Epoch(train)  [6][1000/1652]  lr: 1.0000e-03  eta: 1:10:38  time: 0.3934  data_time: 0.0417  memory: 2092  grad_norm: 2.6205  loss: 0.6489  bbox_loss: 0.3980  cls_loss: 0.2509
+2026/05/02 15:57:21 - mmengine - INFO - Epoch(train)  [6][1050/1652]  lr: 1.0000e-03  eta: 1:10:18  time: 0.4043  data_time: 0.0454  memory: 2203  grad_norm: 2.2221  loss: 0.6510  bbox_loss: 0.3992  cls_loss: 0.2518
+2026/05/02 15:57:42 - mmengine - INFO - Epoch(train)  [6][1100/1652]  lr: 1.0000e-03  eta: 1:09:58  time: 0.4034  data_time: 0.0418  memory: 2190  grad_norm: 2.6676  loss: 0.6416  bbox_loss: 0.3977  cls_loss: 0.2439
+2026/05/02 15:58:01 - mmengine - INFO - Epoch(train)  [6][1150/1652]  lr: 1.0000e-03  eta: 1:09:38  time: 0.3977  data_time: 0.0430  memory: 2323  grad_norm: 2.5438  loss: 0.6301  bbox_loss: 0.3891  cls_loss: 0.2410
+2026/05/02 15:58:21 - mmengine - INFO - Epoch(train)  [6][1200/1652]  lr: 1.0000e-03  eta: 1:09:17  time: 0.3980  data_time: 0.0436  memory: 2199  grad_norm: 2.5302  loss: 0.6512  bbox_loss: 0.3976  cls_loss: 0.2536
+2026/05/02 15:58:40 - mmengine - INFO - Epoch(train)  [6][1250/1652]  lr: 1.0000e-03  eta: 1:08:56  time: 0.3821  data_time: 0.0453  memory: 2250  grad_norm: 2.3055  loss: 0.6469  bbox_loss: 0.4008  cls_loss: 0.2461
+2026/05/02 15:59:01 - mmengine - INFO - Epoch(train)  [6][1300/1652]  lr: 1.0000e-03  eta: 1:08:37  time: 0.4072  data_time: 0.0415  memory: 2145  grad_norm: 2.4099  loss: 0.6504  bbox_loss: 0.3997  cls_loss: 0.2507
+2026/05/02 15:59:22 - mmengine - INFO - Epoch(train)  [6][1350/1652]  lr: 1.0000e-03  eta: 1:08:17  time: 0.4180  data_time: 0.0434  memory: 2280  grad_norm: 2.3295  loss: 0.6456  bbox_loss: 0.3973  cls_loss: 0.2483
+2026/05/02 15:59:42 - mmengine - INFO - Epoch(train)  [6][1400/1652]  lr: 1.0000e-03  eta: 1:07:57  time: 0.3995  data_time: 0.0431  memory: 2115  grad_norm: 2.3663  loss: 0.6553  bbox_loss: 0.4032  cls_loss: 0.2522
+2026/05/02 16:00:03 - mmengine - INFO - Epoch(train)  [6][1450/1652]  lr: 1.0000e-03  eta: 1:07:38  time: 0.4187  data_time: 0.0433  memory: 2428  grad_norm: 2.1555  loss: 0.6484  bbox_loss: 0.3952  cls_loss: 0.2531
+2026/05/02 16:00:23 - mmengine - INFO - Epoch(train)  [6][1500/1652]  lr: 1.0000e-03  eta: 1:07:19  time: 0.4143  data_time: 0.0470  memory: 2053  grad_norm: 2.4913  loss: 0.6346  bbox_loss: 0.3901  cls_loss: 0.2445
+2026/05/02 16:00:43 - mmengine - INFO - Epoch(train)  [6][1550/1652]  lr: 1.0000e-03  eta: 1:06:59  time: 0.4026  data_time: 0.0422  memory: 2153  grad_norm: 2.5247  loss: 0.6460  bbox_loss: 0.3996  cls_loss: 0.2464
+2026/05/02 16:01:03 - mmengine - INFO - Epoch(train)  [6][1600/1652]  lr: 1.0000e-03  eta: 1:06:38  time: 0.3985  data_time: 0.0416  memory: 2179  grad_norm: 2.4069  loss: 0.6478  bbox_loss: 0.3988  cls_loss: 0.2490
+2026/05/02 16:01:23 - mmengine - INFO - Epoch(train)  [6][1650/1652]  lr: 1.0000e-03  eta: 1:06:18  time: 0.3972  data_time: 0.0435  memory: 2198  grad_norm: 2.2209  loss: 0.6377  bbox_loss: 0.3933  cls_loss: 0.2443
+2026/05/02 16:01:24 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:01:45 - mmengine - INFO - Epoch(train)  [7][  50/1652]  lr: 1.0000e-03  eta: 1:05:58  time: 0.4243  data_time: 0.0527  memory: 2221  grad_norm: 2.4207  loss: 0.6307  bbox_loss: 0.3922  cls_loss: 0.2385
+2026/05/02 16:02:01 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:02:06 - mmengine - INFO - Epoch(train)  [7][ 100/1652]  lr: 1.0000e-03  eta: 1:05:39  time: 0.4198  data_time: 0.0505  memory: 2237  grad_norm: 2.3945  loss: 0.6635  bbox_loss: 0.4126  cls_loss: 0.2509
+2026/05/02 16:02:26 - mmengine - INFO - Epoch(train)  [7][ 150/1652]  lr: 1.0000e-03  eta: 1:05:19  time: 0.3994  data_time: 0.0440  memory: 2651  grad_norm: 2.2672  loss: 0.6373  bbox_loss: 0.3899  cls_loss: 0.2474
+2026/05/02 16:02:46 - mmengine - INFO - Epoch(train)  [7][ 200/1652]  lr: 1.0000e-03  eta: 1:04:59  time: 0.3984  data_time: 0.0447  memory: 2037  grad_norm: 2.3481  loss: 0.6381  bbox_loss: 0.3952  cls_loss: 0.2428
+2026/05/02 16:03:07 - mmengine - INFO - Epoch(train)  [7][ 250/1652]  lr: 1.0000e-03  eta: 1:04:39  time: 0.4099  data_time: 0.0445  memory: 2323  grad_norm: 2.6770  loss: 0.6226  bbox_loss: 0.3896  cls_loss: 0.2330
+2026/05/02 16:03:27 - mmengine - INFO - Epoch(train)  [7][ 300/1652]  lr: 1.0000e-03  eta: 1:04:20  time: 0.4184  data_time: 0.0451  memory: 2146  grad_norm: 2.2473  loss: 0.6427  bbox_loss: 0.3969  cls_loss: 0.2458
+2026/05/02 16:03:48 - mmengine - INFO - Epoch(train)  [7][ 350/1652]  lr: 1.0000e-03  eta: 1:04:00  time: 0.4075  data_time: 0.0446  memory: 2286  grad_norm: 2.3875  loss: 0.6365  bbox_loss: 0.3924  cls_loss: 0.2441
+2026/05/02 16:04:09 - mmengine - INFO - Epoch(train)  [7][ 400/1652]  lr: 1.0000e-03  eta: 1:03:41  time: 0.4163  data_time: 0.0439  memory: 2118  grad_norm: 2.3358  loss: 0.6349  bbox_loss: 0.3918  cls_loss: 0.2431
+2026/05/02 16:04:29 - mmengine - INFO - Epoch(train)  [7][ 450/1652]  lr: 1.0000e-03  eta: 1:03:21  time: 0.4041  data_time: 0.0445  memory: 2250  grad_norm: 2.4069  loss: 0.6374  bbox_loss: 0.3951  cls_loss: 0.2423
+2026/05/02 16:04:49 - mmengine - INFO - Epoch(train)  [7][ 500/1652]  lr: 1.0000e-03  eta: 1:03:01  time: 0.4038  data_time: 0.0448  memory: 2268  grad_norm: 2.4514  loss: 0.6506  bbox_loss: 0.3975  cls_loss: 0.2531
+2026/05/02 16:05:10 - mmengine - INFO - Epoch(train)  [7][ 550/1652]  lr: 1.0000e-03  eta: 1:02:41  time: 0.4109  data_time: 0.0455  memory: 2142  grad_norm: 2.1817  loss: 0.6238  bbox_loss: 0.3859  cls_loss: 0.2379
+2026/05/02 16:05:30 - mmengine - INFO - Epoch(train)  [7][ 600/1652]  lr: 1.0000e-03  eta: 1:02:21  time: 0.4117  data_time: 0.0461  memory: 2081  grad_norm: 2.3286  loss: 0.6378  bbox_loss: 0.3964  cls_loss: 0.2414
+2026/05/02 16:05:50 - mmengine - INFO - Epoch(train)  [7][ 650/1652]  lr: 1.0000e-03  eta: 1:02:01  time: 0.4009  data_time: 0.0442  memory: 2047  grad_norm: 2.3272  loss: 0.6380  bbox_loss: 0.3927  cls_loss: 0.2453
+2026/05/02 16:06:11 - mmengine - INFO - Epoch(train)  [7][ 700/1652]  lr: 1.0000e-03  eta: 1:01:42  time: 0.4189  data_time: 0.0451  memory: 2329  grad_norm: 2.2799  loss: 0.6377  bbox_loss: 0.3917  cls_loss: 0.2460
+2026/05/02 16:06:31 - mmengine - INFO - Epoch(train)  [7][ 750/1652]  lr: 1.0000e-03  eta: 1:01:22  time: 0.4030  data_time: 0.0456  memory: 2298  grad_norm: 2.3587  loss: 0.6260  bbox_loss: 0.3874  cls_loss: 0.2386
+2026/05/02 16:06:52 - mmengine - INFO - Epoch(train)  [7][ 800/1652]  lr: 1.0000e-03  eta: 1:01:02  time: 0.4137  data_time: 0.0503  memory: 2351  grad_norm: 2.1527  loss: 0.6518  bbox_loss: 0.4024  cls_loss: 0.2494
+2026/05/02 16:07:12 - mmengine - INFO - Epoch(train)  [7][ 850/1652]  lr: 1.0000e-03  eta: 1:00:42  time: 0.4051  data_time: 0.0451  memory: 2264  grad_norm: 2.2725  loss: 0.6320  bbox_loss: 0.3950  cls_loss: 0.2370
+2026/05/02 16:07:32 - mmengine - INFO - Epoch(train)  [7][ 900/1652]  lr: 1.0000e-03  eta: 1:00:22  time: 0.4029  data_time: 0.0434  memory: 2312  grad_norm: 2.1860  loss: 0.6293  bbox_loss: 0.3895  cls_loss: 0.2398
+2026/05/02 16:07:52 - mmengine - INFO - Epoch(train)  [7][ 950/1652]  lr: 1.0000e-03  eta: 1:00:02  time: 0.3944  data_time: 0.0443  memory: 2186  grad_norm: 2.2049  loss: 0.6253  bbox_loss: 0.3878  cls_loss: 0.2375
+2026/05/02 16:08:12 - mmengine - INFO - Epoch(train)  [7][1000/1652]  lr: 1.0000e-03  eta: 0:59:42  time: 0.4034  data_time: 0.0452  memory: 2316  grad_norm: 2.1369  loss: 0.6404  bbox_loss: 0.3942  cls_loss: 0.2462
+2026/05/02 16:08:33 - mmengine - INFO - Epoch(train)  [7][1050/1652]  lr: 1.0000e-03  eta: 0:59:22  time: 0.4140  data_time: 0.0486  memory: 2216  grad_norm: 2.2682  loss: 0.6400  bbox_loss: 0.3920  cls_loss: 0.2480
+2026/05/02 16:08:49 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:08:53 - mmengine - INFO - Epoch(train)  [7][1100/1652]  lr: 1.0000e-03  eta: 0:59:02  time: 0.4047  data_time: 0.0435  memory: 2169  grad_norm: 2.0921  loss: 0.6264  bbox_loss: 0.3879  cls_loss: 0.2385
+2026/05/02 16:09:14 - mmengine - INFO - Epoch(train)  [7][1150/1652]  lr: 1.0000e-03  eta: 0:58:42  time: 0.4092  data_time: 0.0451  memory: 2364  grad_norm: 2.0945  loss: 0.6262  bbox_loss: 0.3898  cls_loss: 0.2365
+2026/05/02 16:09:34 - mmengine - INFO - Epoch(train)  [7][1200/1652]  lr: 1.0000e-03  eta: 0:58:22  time: 0.4105  data_time: 0.0449  memory: 2204  grad_norm: 2.1324  loss: 0.6235  bbox_loss: 0.3894  cls_loss: 0.2341
+2026/05/02 16:09:54 - mmengine - INFO - Epoch(train)  [7][1250/1652]  lr: 1.0000e-03  eta: 0:58:02  time: 0.3945  data_time: 0.0443  memory: 2204  grad_norm: 2.2334  loss: 0.6034  bbox_loss: 0.3749  cls_loss: 0.2285
+2026/05/02 16:10:15 - mmengine - INFO - Epoch(train)  [7][1300/1652]  lr: 1.0000e-03  eta: 0:57:42  time: 0.4118  data_time: 0.0443  memory: 2274  grad_norm: 2.5150  loss: 0.6234  bbox_loss: 0.3899  cls_loss: 0.2335
+2026/05/02 16:10:35 - mmengine - INFO - Epoch(train)  [7][1350/1652]  lr: 1.0000e-03  eta: 0:57:22  time: 0.3996  data_time: 0.0449  memory: 1989  grad_norm: 2.1127  loss: 0.6292  bbox_loss: 0.3875  cls_loss: 0.2417
+2026/05/02 16:10:55 - mmengine - INFO - Epoch(train)  [7][1400/1652]  lr: 1.0000e-03  eta: 0:57:02  time: 0.4065  data_time: 0.0439  memory: 2372  grad_norm: 2.5353  loss: 0.6292  bbox_loss: 0.3945  cls_loss: 0.2347
+2026/05/02 16:11:15 - mmengine - INFO - Epoch(train)  [7][1450/1652]  lr: 1.0000e-03  eta: 0:56:42  time: 0.4009  data_time: 0.0435  memory: 2321  grad_norm: 2.1872  loss: 0.6198  bbox_loss: 0.3874  cls_loss: 0.2324
+2026/05/02 16:11:35 - mmengine - INFO - Epoch(train)  [7][1500/1652]  lr: 1.0000e-03  eta: 0:56:22  time: 0.3957  data_time: 0.0443  memory: 2131  grad_norm: 2.2026  loss: 0.6225  bbox_loss: 0.3863  cls_loss: 0.2362
+2026/05/02 16:11:55 - mmengine - INFO - Epoch(train)  [7][1550/1652]  lr: 1.0000e-03  eta: 0:56:02  time: 0.4125  data_time: 0.0442  memory: 2342  grad_norm: 2.3718  loss: 0.6204  bbox_loss: 0.3890  cls_loss: 0.2314
+2026/05/02 16:12:15 - mmengine - INFO - Epoch(train)  [7][1600/1652]  lr: 1.0000e-03  eta: 0:55:42  time: 0.3992  data_time: 0.0443  memory: 2203  grad_norm: 2.4456  loss: 0.6268  bbox_loss: 0.3917  cls_loss: 0.2350
+2026/05/02 16:12:35 - mmengine - INFO - Epoch(train)  [7][1650/1652]  lr: 1.0000e-03  eta: 0:55:22  time: 0.4035  data_time: 0.0455  memory: 2272  grad_norm: 2.3507  loss: 0.6273  bbox_loss: 0.3901  cls_loss: 0.2372
+2026/05/02 16:12:36 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:12:57 - mmengine - INFO - Epoch(train)  [8][  50/1652]  lr: 1.0000e-03  eta: 0:55:01  time: 0.4138  data_time: 0.0548  memory: 2257  grad_norm: 2.0433  loss: 0.6248  bbox_loss: 0.3875  cls_loss: 0.2373
+2026/05/02 16:13:17 - mmengine - INFO - Epoch(train)  [8][ 100/1652]  lr: 1.0000e-03  eta: 0:54:41  time: 0.3974  data_time: 0.0442  memory: 2356  grad_norm: 2.2279  loss: 0.6113  bbox_loss: 0.3853  cls_loss: 0.2260
+2026/05/02 16:13:37 - mmengine - INFO - Epoch(train)  [8][ 150/1652]  lr: 1.0000e-03  eta: 0:54:21  time: 0.4091  data_time: 0.0428  memory: 2129  grad_norm: 2.3034  loss: 0.6067  bbox_loss: 0.3764  cls_loss: 0.2303
+2026/05/02 16:13:57 - mmengine - INFO - Epoch(train)  [8][ 200/1652]  lr: 1.0000e-03  eta: 0:54:01  time: 0.3957  data_time: 0.0441  memory: 2255  grad_norm: 2.2017  loss: 0.6072  bbox_loss: 0.3819  cls_loss: 0.2252
+2026/05/02 16:14:17 - mmengine - INFO - Epoch(train)  [8][ 250/1652]  lr: 1.0000e-03  eta: 0:53:40  time: 0.3957  data_time: 0.0440  memory: 2350  grad_norm: 2.2356  loss: 0.6325  bbox_loss: 0.3960  cls_loss: 0.2365
+2026/05/02 16:14:37 - mmengine - INFO - Epoch(train)  [8][ 300/1652]  lr: 1.0000e-03  eta: 0:53:20  time: 0.3971  data_time: 0.0459  memory: 2235  grad_norm: 1.9242  loss: 0.6286  bbox_loss: 0.3903  cls_loss: 0.2383
+2026/05/02 16:14:56 - mmengine - INFO - Epoch(train)  [8][ 350/1652]  lr: 1.0000e-03  eta: 0:53:00  time: 0.3933  data_time: 0.0416  memory: 2059  grad_norm: 2.0838  loss: 0.6354  bbox_loss: 0.3970  cls_loss: 0.2384
+2026/05/02 16:15:16 - mmengine - INFO - Epoch(train)  [8][ 400/1652]  lr: 1.0000e-03  eta: 0:52:40  time: 0.3991  data_time: 0.0412  memory: 2343  grad_norm: 1.9480  loss: 0.6099  bbox_loss: 0.3821  cls_loss: 0.2278
+2026/05/02 16:15:31 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:15:37 - mmengine - INFO - Epoch(train)  [8][ 450/1652]  lr: 1.0000e-03  eta: 0:52:20  time: 0.4166  data_time: 0.0467  memory: 2319  grad_norm: 2.1218  loss: 0.6297  bbox_loss: 0.3932  cls_loss: 0.2365
+2026/05/02 16:15:58 - mmengine - INFO - Epoch(train)  [8][ 500/1652]  lr: 1.0000e-03  eta: 0:52:00  time: 0.4084  data_time: 0.0409  memory: 2124  grad_norm: 2.1790  loss: 0.6209  bbox_loss: 0.3887  cls_loss: 0.2321
+2026/05/02 16:16:17 - mmengine - INFO - Epoch(train)  [8][ 550/1652]  lr: 1.0000e-03  eta: 0:51:39  time: 0.3883  data_time: 0.0405  memory: 2165  grad_norm: 1.8391  loss: 0.6287  bbox_loss: 0.3904  cls_loss: 0.2383
+2026/05/02 16:16:38 - mmengine - INFO - Epoch(train)  [8][ 600/1652]  lr: 1.0000e-03  eta: 0:51:20  time: 0.4096  data_time: 0.0423  memory: 2324  grad_norm: 2.1600  loss: 0.6192  bbox_loss: 0.3842  cls_loss: 0.2350
+2026/05/02 16:16:57 - mmengine - INFO - Epoch(train)  [8][ 650/1652]  lr: 1.0000e-03  eta: 0:50:59  time: 0.3966  data_time: 0.0442  memory: 2106  grad_norm: 2.0367  loss: 0.6188  bbox_loss: 0.3865  cls_loss: 0.2322
+2026/05/02 16:17:18 - mmengine - INFO - Epoch(train)  [8][ 700/1652]  lr: 1.0000e-03  eta: 0:50:40  time: 0.4140  data_time: 0.0420  memory: 2257  grad_norm: 2.0315  loss: 0.6226  bbox_loss: 0.3882  cls_loss: 0.2345
+2026/05/02 16:17:38 - mmengine - INFO - Epoch(train)  [8][ 750/1652]  lr: 1.0000e-03  eta: 0:50:19  time: 0.3934  data_time: 0.0426  memory: 2152  grad_norm: 2.0166  loss: 0.6224  bbox_loss: 0.3875  cls_loss: 0.2349
+2026/05/02 16:17:57 - mmengine - INFO - Epoch(train)  [8][ 800/1652]  lr: 1.0000e-03  eta: 0:49:59  time: 0.3927  data_time: 0.0423  memory: 2174  grad_norm: 2.3958  loss: 0.6161  bbox_loss: 0.3824  cls_loss: 0.2337
+2026/05/02 16:18:17 - mmengine - INFO - Epoch(train)  [8][ 850/1652]  lr: 1.0000e-03  eta: 0:49:38  time: 0.3890  data_time: 0.0461  memory: 2132  grad_norm: 2.3085  loss: 0.6114  bbox_loss: 0.3839  cls_loss: 0.2275
+2026/05/02 16:18:37 - mmengine - INFO - Epoch(train)  [8][ 900/1652]  lr: 1.0000e-03  eta: 0:49:18  time: 0.3956  data_time: 0.0415  memory: 2224  grad_norm: 1.8318  loss: 0.6207  bbox_loss: 0.3847  cls_loss: 0.2360
+2026/05/02 16:18:56 - mmengine - INFO - Epoch(train)  [8][ 950/1652]  lr: 1.0000e-03  eta: 0:48:57  time: 0.3822  data_time: 0.0398  memory: 2242  grad_norm: 2.2600  loss: 0.6182  bbox_loss: 0.3814  cls_loss: 0.2368
+2026/05/02 16:19:16 - mmengine - INFO - Epoch(train)  [8][1000/1652]  lr: 1.0000e-03  eta: 0:48:37  time: 0.4088  data_time: 0.0420  memory: 2241  grad_norm: 1.7927  loss: 0.6199  bbox_loss: 0.3855  cls_loss: 0.2344
+2026/05/02 16:19:36 - mmengine - INFO - Epoch(train)  [8][1050/1652]  lr: 1.0000e-03  eta: 0:48:17  time: 0.4016  data_time: 0.0449  memory: 2294  grad_norm: 2.0385  loss: 0.5955  bbox_loss: 0.3758  cls_loss: 0.2197
+2026/05/02 16:19:56 - mmengine - INFO - Epoch(train)  [8][1100/1652]  lr: 1.0000e-03  eta: 0:47:57  time: 0.3885  data_time: 0.0402  memory: 2287  grad_norm: 2.0527  loss: 0.6225  bbox_loss: 0.3912  cls_loss: 0.2313
+2026/05/02 16:20:16 - mmengine - INFO - Epoch(train)  [8][1150/1652]  lr: 1.0000e-03  eta: 0:47:37  time: 0.3958  data_time: 0.0420  memory: 2249  grad_norm: 2.0235  loss: 0.6246  bbox_loss: 0.3866  cls_loss: 0.2380
+2026/05/02 16:20:35 - mmengine - INFO - Epoch(train)  [8][1200/1652]  lr: 1.0000e-03  eta: 0:47:16  time: 0.3953  data_time: 0.0452  memory: 2199  grad_norm: 2.0032  loss: 0.6111  bbox_loss: 0.3804  cls_loss: 0.2307
+2026/05/02 16:20:55 - mmengine - INFO - Epoch(train)  [8][1250/1652]  lr: 1.0000e-03  eta: 0:46:56  time: 0.4026  data_time: 0.0439  memory: 2245  grad_norm: 1.9721  loss: 0.6164  bbox_loss: 0.3820  cls_loss: 0.2343
+2026/05/02 16:21:15 - mmengine - INFO - Epoch(train)  [8][1300/1652]  lr: 1.0000e-03  eta: 0:46:36  time: 0.3986  data_time: 0.0419  memory: 2169  grad_norm: 1.8915  loss: 0.6107  bbox_loss: 0.3790  cls_loss: 0.2317
+2026/05/02 16:21:35 - mmengine - INFO - Epoch(train)  [8][1350/1652]  lr: 1.0000e-03  eta: 0:46:16  time: 0.3969  data_time: 0.0424  memory: 2318  grad_norm: 1.9056  loss: 0.6133  bbox_loss: 0.3816  cls_loss: 0.2317
+2026/05/02 16:21:55 - mmengine - INFO - Epoch(train)  [8][1400/1652]  lr: 1.0000e-03  eta: 0:45:56  time: 0.3946  data_time: 0.0411  memory: 2163  grad_norm: 2.0803  loss: 0.6102  bbox_loss: 0.3779  cls_loss: 0.2323
+2026/05/02 16:22:10 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:22:15 - mmengine - INFO - Epoch(train)  [8][1450/1652]  lr: 1.0000e-03  eta: 0:45:35  time: 0.3987  data_time: 0.0459  memory: 2498  grad_norm: 2.0123  loss: 0.6075  bbox_loss: 0.3787  cls_loss: 0.2288
+2026/05/02 16:22:35 - mmengine - INFO - Epoch(train)  [8][1500/1652]  lr: 1.0000e-03  eta: 0:45:15  time: 0.3979  data_time: 0.0424  memory: 2392  grad_norm: 1.8662  loss: 0.6214  bbox_loss: 0.3902  cls_loss: 0.2312
+2026/05/02 16:22:54 - mmengine - INFO - Epoch(train)  [8][1550/1652]  lr: 1.0000e-03  eta: 0:44:55  time: 0.3937  data_time: 0.0418  memory: 2175  grad_norm: 1.9864  loss: 0.6056  bbox_loss: 0.3775  cls_loss: 0.2281
+2026/05/02 16:23:15 - mmengine - INFO - Epoch(train)  [8][1600/1652]  lr: 1.0000e-03  eta: 0:44:35  time: 0.4021  data_time: 0.0435  memory: 2306  grad_norm: 2.0163  loss: 0.6066  bbox_loss: 0.3749  cls_loss: 0.2317
+2026/05/02 16:23:34 - mmengine - INFO - Epoch(train)  [8][1650/1652]  lr: 1.0000e-03  eta: 0:44:15  time: 0.3985  data_time: 0.0441  memory: 2264  grad_norm: 1.8704  loss: 0.6099  bbox_loss: 0.3837  cls_loss: 0.2262
+2026/05/02 16:23:35 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:23:55 - mmengine - INFO - Epoch(train)  [9][  50/1652]  lr: 1.0000e-04  eta: 0:43:54  time: 0.4056  data_time: 0.0530  memory: 2196  grad_norm: 1.7877  loss: 0.5866  bbox_loss: 0.3664  cls_loss: 0.2202
+2026/05/02 16:24:16 - mmengine - INFO - Epoch(train)  [9][ 100/1652]  lr: 1.0000e-04  eta: 0:43:34  time: 0.4073  data_time: 0.0524  memory: 2319  grad_norm: 1.6512  loss: 0.5927  bbox_loss: 0.3728  cls_loss: 0.2198
+2026/05/02 16:24:37 - mmengine - INFO - Epoch(train)  [9][ 150/1652]  lr: 1.0000e-04  eta: 0:43:14  time: 0.4271  data_time: 0.0429  memory: 2286  grad_norm: 1.5702  loss: 0.5897  bbox_loss: 0.3705  cls_loss: 0.2191
+2026/05/02 16:24:58 - mmengine - INFO - Epoch(train)  [9][ 200/1652]  lr: 1.0000e-04  eta: 0:42:55  time: 0.4253  data_time: 0.0431  memory: 2147  grad_norm: 1.5351  loss: 0.5813  bbox_loss: 0.3630  cls_loss: 0.2183
+2026/05/02 16:25:19 - mmengine - INFO - Epoch(train)  [9][ 250/1652]  lr: 1.0000e-04  eta: 0:42:35  time: 0.4098  data_time: 0.0455  memory: 2254  grad_norm: 1.6998  loss: 0.5815  bbox_loss: 0.3669  cls_loss: 0.2146
+2026/05/02 16:25:40 - mmengine - INFO - Epoch(train)  [9][ 300/1652]  lr: 1.0000e-04  eta: 0:42:15  time: 0.4203  data_time: 0.0516  memory: 2195  grad_norm: 1.6259  loss: 0.5816  bbox_loss: 0.3622  cls_loss: 0.2194
+2026/05/02 16:26:01 - mmengine - INFO - Epoch(train)  [9][ 350/1652]  lr: 1.0000e-04  eta: 0:41:55  time: 0.4143  data_time: 0.0444  memory: 2313  grad_norm: 1.6865  loss: 0.5876  bbox_loss: 0.3671  cls_loss: 0.2205
+2026/05/02 16:26:21 - mmengine - INFO - Epoch(train)  [9][ 400/1652]  lr: 1.0000e-04  eta: 0:41:35  time: 0.4070  data_time: 0.0450  memory: 2183  grad_norm: 1.6796  loss: 0.5778  bbox_loss: 0.3633  cls_loss: 0.2145
+2026/05/02 16:26:41 - mmengine - INFO - Epoch(train)  [9][ 450/1652]  lr: 1.0000e-04  eta: 0:41:15  time: 0.4038  data_time: 0.0441  memory: 2479  grad_norm: 1.6670  loss: 0.5888  bbox_loss: 0.3693  cls_loss: 0.2195
+2026/05/02 16:27:02 - mmengine - INFO - Epoch(train)  [9][ 500/1652]  lr: 1.0000e-04  eta: 0:40:55  time: 0.4062  data_time: 0.0499  memory: 2524  grad_norm: 1.8045  loss: 0.5844  bbox_loss: 0.3682  cls_loss: 0.2161
+2026/05/02 16:27:22 - mmengine - INFO - Epoch(train)  [9][ 550/1652]  lr: 1.0000e-04  eta: 0:40:35  time: 0.4027  data_time: 0.0426  memory: 2382  grad_norm: 1.6980  loss: 0.5648  bbox_loss: 0.3562  cls_loss: 0.2086
+2026/05/02 16:27:42 - mmengine - INFO - Epoch(train)  [9][ 600/1652]  lr: 1.0000e-04  eta: 0:40:15  time: 0.3977  data_time: 0.0423  memory: 2264  grad_norm: 1.6754  loss: 0.5648  bbox_loss: 0.3561  cls_loss: 0.2087
+2026/05/02 16:28:01 - mmengine - INFO - Epoch(train)  [9][ 650/1652]  lr: 1.0000e-04  eta: 0:39:55  time: 0.3930  data_time: 0.0412  memory: 2196  grad_norm: 1.6885  loss: 0.5667  bbox_loss: 0.3542  cls_loss: 0.2125
+2026/05/02 16:28:22 - mmengine - INFO - Epoch(train)  [9][ 700/1652]  lr: 1.0000e-04  eta: 0:39:35  time: 0.4113  data_time: 0.0484  memory: 2359  grad_norm: 1.6992  loss: 0.5647  bbox_loss: 0.3561  cls_loss: 0.2085
+2026/05/02 16:28:42 - mmengine - INFO - Epoch(train)  [9][ 750/1652]  lr: 1.0000e-04  eta: 0:39:15  time: 0.4084  data_time: 0.0441  memory: 2409  grad_norm: 1.7690  loss: 0.5815  bbox_loss: 0.3720  cls_loss: 0.2095
+2026/05/02 16:28:55 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:29:02 - mmengine - INFO - Epoch(train)  [9][ 800/1652]  lr: 1.0000e-04  eta: 0:38:55  time: 0.3877  data_time: 0.0423  memory: 2197  grad_norm: 1.5913  loss: 0.5837  bbox_loss: 0.3621  cls_loss: 0.2216
+2026/05/02 16:29:22 - mmengine - INFO - Epoch(train)  [9][ 850/1652]  lr: 1.0000e-04  eta: 0:38:34  time: 0.3992  data_time: 0.0432  memory: 2266  grad_norm: 1.6671  loss: 0.5745  bbox_loss: 0.3643  cls_loss: 0.2101
+2026/05/02 16:29:41 - mmengine - INFO - Epoch(train)  [9][ 900/1652]  lr: 1.0000e-04  eta: 0:38:14  time: 0.3963  data_time: 0.0441  memory: 2138  grad_norm: 1.8055  loss: 0.5792  bbox_loss: 0.3620  cls_loss: 0.2172
+2026/05/02 16:30:01 - mmengine - INFO - Epoch(train)  [9][ 950/1652]  lr: 1.0000e-04  eta: 0:37:54  time: 0.4000  data_time: 0.0431  memory: 2144  grad_norm: 1.6323  loss: 0.5766  bbox_loss: 0.3661  cls_loss: 0.2104
+2026/05/02 16:30:21 - mmengine - INFO - Epoch(train)  [9][1000/1652]  lr: 1.0000e-04  eta: 0:37:34  time: 0.3992  data_time: 0.0440  memory: 2189  grad_norm: 1.5523  loss: 0.5757  bbox_loss: 0.3602  cls_loss: 0.2155
+2026/05/02 16:30:41 - mmengine - INFO - Epoch(train)  [9][1050/1652]  lr: 1.0000e-04  eta: 0:37:14  time: 0.3995  data_time: 0.0415  memory: 2252  grad_norm: 1.8106  loss: 0.5656  bbox_loss: 0.3566  cls_loss: 0.2090
+2026/05/02 16:31:02 - mmengine - INFO - Epoch(train)  [9][1100/1652]  lr: 1.0000e-04  eta: 0:36:54  time: 0.4071  data_time: 0.0450  memory: 2227  grad_norm: 1.7401  loss: 0.5651  bbox_loss: 0.3602  cls_loss: 0.2050
+2026/05/02 16:31:21 - mmengine - INFO - Epoch(train)  [9][1150/1652]  lr: 1.0000e-04  eta: 0:36:33  time: 0.3910  data_time: 0.0432  memory: 2085  grad_norm: 1.9045  loss: 0.5730  bbox_loss: 0.3666  cls_loss: 0.2064
+2026/05/02 16:31:42 - mmengine - INFO - Epoch(train)  [9][1200/1652]  lr: 1.0000e-04  eta: 0:36:13  time: 0.4098  data_time: 0.0447  memory: 2441  grad_norm: 1.8155  loss: 0.5777  bbox_loss: 0.3652  cls_loss: 0.2125
+2026/05/02 16:32:02 - mmengine - INFO - Epoch(train)  [9][1250/1652]  lr: 1.0000e-04  eta: 0:35:53  time: 0.4010  data_time: 0.0423  memory: 2318  grad_norm: 1.6581  loss: 0.5738  bbox_loss: 0.3616  cls_loss: 0.2122
+2026/05/02 16:32:21 - mmengine - INFO - Epoch(train)  [9][1300/1652]  lr: 1.0000e-04  eta: 0:35:33  time: 0.3925  data_time: 0.0432  memory: 2286  grad_norm: 1.7534  loss: 0.5843  bbox_loss: 0.3675  cls_loss: 0.2169
+2026/05/02 16:32:42 - mmengine - INFO - Epoch(train)  [9][1350/1652]  lr: 1.0000e-04  eta: 0:35:13  time: 0.4051  data_time: 0.0465  memory: 2256  grad_norm: 1.7347  loss: 0.5774  bbox_loss: 0.3633  cls_loss: 0.2141
+2026/05/02 16:33:02 - mmengine - INFO - Epoch(train)  [9][1400/1652]  lr: 1.0000e-04  eta: 0:34:53  time: 0.4035  data_time: 0.0426  memory: 2144  grad_norm: 1.8184  loss: 0.5640  bbox_loss: 0.3571  cls_loss: 0.2069
+2026/05/02 16:33:22 - mmengine - INFO - Epoch(train)  [9][1450/1652]  lr: 1.0000e-04  eta: 0:34:33  time: 0.3966  data_time: 0.0422  memory: 2236  grad_norm: 1.6685  loss: 0.5593  bbox_loss: 0.3543  cls_loss: 0.2050
+2026/05/02 16:33:42 - mmengine - INFO - Epoch(train)  [9][1500/1652]  lr: 1.0000e-04  eta: 0:34:13  time: 0.4071  data_time: 0.0421  memory: 2297  grad_norm: 1.6721  loss: 0.5791  bbox_loss: 0.3676  cls_loss: 0.2115
+2026/05/02 16:34:02 - mmengine - INFO - Epoch(train)  [9][1550/1652]  lr: 1.0000e-04  eta: 0:33:53  time: 0.3987  data_time: 0.0458  memory: 2382  grad_norm: 1.8388  loss: 0.5598  bbox_loss: 0.3534  cls_loss: 0.2065
+2026/05/02 16:34:22 - mmengine - INFO - Epoch(train)  [9][1600/1652]  lr: 1.0000e-04  eta: 0:33:32  time: 0.3946  data_time: 0.0419  memory: 2074  grad_norm: 1.8052  loss: 0.5740  bbox_loss: 0.3624  cls_loss: 0.2117
+2026/05/02 16:34:41 - mmengine - INFO - Epoch(train)  [9][1650/1652]  lr: 1.0000e-04  eta: 0:33:12  time: 0.3960  data_time: 0.0418  memory: 2141  grad_norm: 1.7594  loss: 0.5516  bbox_loss: 0.3507  cls_loss: 0.2009
+2026/05/02 16:34:42 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:35:03 - mmengine - INFO - Epoch(train) [10][  50/1652]  lr: 1.0000e-04  eta: 0:32:51  time: 0.4148  data_time: 0.0547  memory: 2351  grad_norm: 1.6414  loss: 0.5684  bbox_loss: 0.3623  cls_loss: 0.2061
+2026/05/02 16:35:24 - mmengine - INFO - Epoch(train) [10][ 100/1652]  lr: 1.0000e-04  eta: 0:32:32  time: 0.4150  data_time: 0.0444  memory: 2350  grad_norm: 1.6906  loss: 0.5569  bbox_loss: 0.3544  cls_loss: 0.2024
+2026/05/02 16:35:36 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:35:44 - mmengine - INFO - Epoch(train) [10][ 150/1652]  lr: 1.0000e-04  eta: 0:32:11  time: 0.3999  data_time: 0.0444  memory: 2301  grad_norm: 1.8465  loss: 0.5398  bbox_loss: 0.3469  cls_loss: 0.1929
+2026/05/02 16:36:04 - mmengine - INFO - Epoch(train) [10][ 200/1652]  lr: 1.0000e-04  eta: 0:31:51  time: 0.4035  data_time: 0.0438  memory: 2124  grad_norm: 1.7374  loss: 0.5619  bbox_loss: 0.3545  cls_loss: 0.2074
+2026/05/02 16:36:24 - mmengine - INFO - Epoch(train) [10][ 250/1652]  lr: 1.0000e-04  eta: 0:31:31  time: 0.3991  data_time: 0.0495  memory: 2178  grad_norm: 1.7267  loss: 0.5678  bbox_loss: 0.3593  cls_loss: 0.2085
+2026/05/02 16:36:44 - mmengine - INFO - Epoch(train) [10][ 300/1652]  lr: 1.0000e-04  eta: 0:31:11  time: 0.4011  data_time: 0.0432  memory: 2242  grad_norm: 1.8358  loss: 0.5818  bbox_loss: 0.3670  cls_loss: 0.2148
+2026/05/02 16:37:05 - mmengine - INFO - Epoch(train) [10][ 350/1652]  lr: 1.0000e-04  eta: 0:30:51  time: 0.4151  data_time: 0.0452  memory: 2257  grad_norm: 1.7097  loss: 0.5722  bbox_loss: 0.3621  cls_loss: 0.2101
+2026/05/02 16:37:25 - mmengine - INFO - Epoch(train) [10][ 400/1652]  lr: 1.0000e-04  eta: 0:30:31  time: 0.3988  data_time: 0.0420  memory: 2269  grad_norm: 1.7451  loss: 0.5558  bbox_loss: 0.3551  cls_loss: 0.2006
+2026/05/02 16:37:45 - mmengine - INFO - Epoch(train) [10][ 450/1652]  lr: 1.0000e-04  eta: 0:30:11  time: 0.4108  data_time: 0.0459  memory: 2484  grad_norm: 1.9084  loss: 0.5692  bbox_loss: 0.3586  cls_loss: 0.2106
+2026/05/02 16:38:05 - mmengine - INFO - Epoch(train) [10][ 500/1652]  lr: 1.0000e-04  eta: 0:29:51  time: 0.3967  data_time: 0.0426  memory: 2206  grad_norm: 1.8273  loss: 0.5645  bbox_loss: 0.3585  cls_loss: 0.2059
+2026/05/02 16:38:26 - mmengine - INFO - Epoch(train) [10][ 550/1652]  lr: 1.0000e-04  eta: 0:29:31  time: 0.4287  data_time: 0.0449  memory: 2369  grad_norm: 1.6760  loss: 0.5703  bbox_loss: 0.3583  cls_loss: 0.2119
+2026/05/02 16:38:46 - mmengine - INFO - Epoch(train) [10][ 600/1652]  lr: 1.0000e-04  eta: 0:29:11  time: 0.3997  data_time: 0.0423  memory: 2147  grad_norm: 1.6717  loss: 0.5494  bbox_loss: 0.3505  cls_loss: 0.1989
+2026/05/02 16:39:07 - mmengine - INFO - Epoch(train) [10][ 650/1652]  lr: 1.0000e-04  eta: 0:28:51  time: 0.4084  data_time: 0.0490  memory: 2389  grad_norm: 1.7346  loss: 0.5629  bbox_loss: 0.3584  cls_loss: 0.2045
+2026/05/02 16:39:27 - mmengine - INFO - Epoch(train) [10][ 700/1652]  lr: 1.0000e-04  eta: 0:28:31  time: 0.4081  data_time: 0.0441  memory: 2096  grad_norm: 1.8084  loss: 0.5662  bbox_loss: 0.3555  cls_loss: 0.2107
+2026/05/02 16:39:47 - mmengine - INFO - Epoch(train) [10][ 750/1652]  lr: 1.0000e-04  eta: 0:28:11  time: 0.4001  data_time: 0.0426  memory: 2133  grad_norm: 1.6893  loss: 0.5676  bbox_loss: 0.3591  cls_loss: 0.2084
+2026/05/02 16:40:08 - mmengine - INFO - Epoch(train) [10][ 800/1652]  lr: 1.0000e-04  eta: 0:27:51  time: 0.4153  data_time: 0.0437  memory: 2377  grad_norm: 1.9690  loss: 0.5515  bbox_loss: 0.3515  cls_loss: 0.2000
+2026/05/02 16:40:28 - mmengine - INFO - Epoch(train) [10][ 850/1652]  lr: 1.0000e-04  eta: 0:27:31  time: 0.4053  data_time: 0.0455  memory: 2171  grad_norm: 1.7937  loss: 0.5548  bbox_loss: 0.3531  cls_loss: 0.2017
+2026/05/02 16:40:48 - mmengine - INFO - Epoch(train) [10][ 900/1652]  lr: 1.0000e-04  eta: 0:27:11  time: 0.4006  data_time: 0.0428  memory: 2304  grad_norm: 1.6929  loss: 0.5668  bbox_loss: 0.3570  cls_loss: 0.2098
+2026/05/02 16:41:08 - mmengine - INFO - Epoch(train) [10][ 950/1652]  lr: 1.0000e-04  eta: 0:26:51  time: 0.4005  data_time: 0.0440  memory: 2205  grad_norm: 1.7659  loss: 0.5816  bbox_loss: 0.3657  cls_loss: 0.2159
+2026/05/02 16:41:28 - mmengine - INFO - Epoch(train) [10][1000/1652]  lr: 1.0000e-04  eta: 0:26:30  time: 0.3925  data_time: 0.0422  memory: 2258  grad_norm: 1.7701  loss: 0.5685  bbox_loss: 0.3567  cls_loss: 0.2118
+2026/05/02 16:41:48 - mmengine - INFO - Epoch(train) [10][1050/1652]  lr: 1.0000e-04  eta: 0:26:10  time: 0.4029  data_time: 0.0442  memory: 2042  grad_norm: 1.7706  loss: 0.5533  bbox_loss: 0.3530  cls_loss: 0.2002
+2026/05/02 16:42:08 - mmengine - INFO - Epoch(train) [10][1100/1652]  lr: 1.0000e-04  eta: 0:25:50  time: 0.4066  data_time: 0.0430  memory: 2311  grad_norm: 1.7679  loss: 0.5663  bbox_loss: 0.3565  cls_loss: 0.2098
+2026/05/02 16:42:21 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:42:29 - mmengine - INFO - Epoch(train) [10][1150/1652]  lr: 1.0000e-04  eta: 0:25:30  time: 0.4014  data_time: 0.0430  memory: 2284  grad_norm: 1.7457  loss: 0.5565  bbox_loss: 0.3573  cls_loss: 0.1992
+2026/05/02 16:42:49 - mmengine - INFO - Epoch(train) [10][1200/1652]  lr: 1.0000e-04  eta: 0:25:10  time: 0.4006  data_time: 0.0423  memory: 2249  grad_norm: 1.7161  loss: 0.5715  bbox_loss: 0.3638  cls_loss: 0.2077
+2026/05/02 16:43:09 - mmengine - INFO - Epoch(train) [10][1250/1652]  lr: 1.0000e-04  eta: 0:24:50  time: 0.4036  data_time: 0.0435  memory: 2202  grad_norm: 1.7827  loss: 0.5637  bbox_loss: 0.3590  cls_loss: 0.2047
+2026/05/02 16:43:29 - mmengine - INFO - Epoch(train) [10][1300/1652]  lr: 1.0000e-04  eta: 0:24:30  time: 0.3959  data_time: 0.0430  memory: 2159  grad_norm: 1.6436  loss: 0.5664  bbox_loss: 0.3605  cls_loss: 0.2058
+2026/05/02 16:43:49 - mmengine - INFO - Epoch(train) [10][1350/1652]  lr: 1.0000e-04  eta: 0:24:10  time: 0.4089  data_time: 0.0437  memory: 2138  grad_norm: 1.7041  loss: 0.5654  bbox_loss: 0.3560  cls_loss: 0.2094
+2026/05/02 16:44:09 - mmengine - INFO - Epoch(train) [10][1400/1652]  lr: 1.0000e-04  eta: 0:23:50  time: 0.3961  data_time: 0.0415  memory: 2198  grad_norm: 1.8152  loss: 0.5582  bbox_loss: 0.3492  cls_loss: 0.2090
+2026/05/02 16:44:29 - mmengine - INFO - Epoch(train) [10][1450/1652]  lr: 1.0000e-04  eta: 0:23:29  time: 0.4076  data_time: 0.0450  memory: 2429  grad_norm: 1.6605  loss: 0.5663  bbox_loss: 0.3598  cls_loss: 0.2065
+2026/05/02 16:44:49 - mmengine - INFO - Epoch(train) [10][1500/1652]  lr: 1.0000e-04  eta: 0:23:09  time: 0.4049  data_time: 0.0447  memory: 2365  grad_norm: 1.8193  loss: 0.5608  bbox_loss: 0.3554  cls_loss: 0.2053
+2026/05/02 16:45:10 - mmengine - INFO - Epoch(train) [10][1550/1652]  lr: 1.0000e-04  eta: 0:22:49  time: 0.4079  data_time: 0.0442  memory: 2181  grad_norm: 1.6163  loss: 0.5658  bbox_loss: 0.3608  cls_loss: 0.2050
+2026/05/02 16:45:30 - mmengine - INFO - Epoch(train) [10][1600/1652]  lr: 1.0000e-04  eta: 0:22:29  time: 0.4126  data_time: 0.0447  memory: 2450  grad_norm: 1.6322  loss: 0.5628  bbox_loss: 0.3556  cls_loss: 0.2072
+2026/05/02 16:45:51 - mmengine - INFO - Epoch(train) [10][1650/1652]  lr: 1.0000e-04  eta: 0:22:09  time: 0.4087  data_time: 0.0489  memory: 2265  grad_norm: 1.8591  loss: 0.5680  bbox_loss: 0.3623  cls_loss: 0.2057
+2026/05/02 16:45:51 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:46:12 - mmengine - INFO - Epoch(train) [11][  50/1652]  lr: 1.0000e-04  eta: 0:21:48  time: 0.4152  data_time: 0.0537  memory: 2634  grad_norm: 1.8371  loss: 0.5619  bbox_loss: 0.3539  cls_loss: 0.2080
+2026/05/02 16:46:32 - mmengine - INFO - Epoch(train) [11][ 100/1652]  lr: 1.0000e-04  eta: 0:21:28  time: 0.3993  data_time: 0.0440  memory: 2296  grad_norm: 1.8153  loss: 0.5570  bbox_loss: 0.3547  cls_loss: 0.2022
+2026/05/02 16:46:52 - mmengine - INFO - Epoch(train) [11][ 150/1652]  lr: 1.0000e-04  eta: 0:21:08  time: 0.4005  data_time: 0.0437  memory: 2270  grad_norm: 1.7005  loss: 0.5686  bbox_loss: 0.3637  cls_loss: 0.2048
+2026/05/02 16:47:13 - mmengine - INFO - Epoch(train) [11][ 200/1652]  lr: 1.0000e-04  eta: 0:20:48  time: 0.4091  data_time: 0.0483  memory: 2179  grad_norm: 1.6410  loss: 0.5449  bbox_loss: 0.3485  cls_loss: 0.1964
+2026/05/02 16:47:33 - mmengine - INFO - Epoch(train) [11][ 250/1652]  lr: 1.0000e-04  eta: 0:20:28  time: 0.4028  data_time: 0.0436  memory: 2270  grad_norm: 1.6758  loss: 0.5620  bbox_loss: 0.3568  cls_loss: 0.2052
+2026/05/02 16:47:53 - mmengine - INFO - Epoch(train) [11][ 300/1652]  lr: 1.0000e-04  eta: 0:20:08  time: 0.4037  data_time: 0.0448  memory: 2396  grad_norm: 1.6539  loss: 0.5521  bbox_loss: 0.3494  cls_loss: 0.2028
+2026/05/02 16:48:14 - mmengine - INFO - Epoch(train) [11][ 350/1652]  lr: 1.0000e-04  eta: 0:19:48  time: 0.4108  data_time: 0.0440  memory: 2383  grad_norm: 1.7706  loss: 0.5517  bbox_loss: 0.3474  cls_loss: 0.2043
+2026/05/02 16:48:34 - mmengine - INFO - Epoch(train) [11][ 400/1652]  lr: 1.0000e-04  eta: 0:19:28  time: 0.4098  data_time: 0.0453  memory: 2292  grad_norm: 1.7964  loss: 0.5641  bbox_loss: 0.3563  cls_loss: 0.2078
+2026/05/02 16:48:55 - mmengine - INFO - Epoch(train) [11][ 450/1652]  lr: 1.0000e-04  eta: 0:19:08  time: 0.4071  data_time: 0.0446  memory: 2187  grad_norm: 1.7832  loss: 0.5433  bbox_loss: 0.3477  cls_loss: 0.1956
+2026/05/02 16:49:06 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:49:14 - mmengine - INFO - Epoch(train) [11][ 500/1652]  lr: 1.0000e-04  eta: 0:18:48  time: 0.3975  data_time: 0.0444  memory: 2198  grad_norm: 1.9038  loss: 0.5637  bbox_loss: 0.3626  cls_loss: 0.2011
+2026/05/02 16:49:34 - mmengine - INFO - Epoch(train) [11][ 550/1652]  lr: 1.0000e-04  eta: 0:18:27  time: 0.4010  data_time: 0.0445  memory: 2211  grad_norm: 1.7892  loss: 0.5605  bbox_loss: 0.3571  cls_loss: 0.2034
+2026/05/02 16:49:55 - mmengine - INFO - Epoch(train) [11][ 600/1652]  lr: 1.0000e-04  eta: 0:18:07  time: 0.4032  data_time: 0.0443  memory: 2253  grad_norm: 1.7514  loss: 0.5475  bbox_loss: 0.3483  cls_loss: 0.1992
+2026/05/02 16:50:15 - mmengine - INFO - Epoch(train) [11][ 650/1652]  lr: 1.0000e-04  eta: 0:17:47  time: 0.3999  data_time: 0.0444  memory: 2202  grad_norm: 1.7837  loss: 0.5712  bbox_loss: 0.3609  cls_loss: 0.2103
+2026/05/02 16:50:35 - mmengine - INFO - Epoch(train) [11][ 700/1652]  lr: 1.0000e-04  eta: 0:17:27  time: 0.3987  data_time: 0.0443  memory: 2248  grad_norm: 1.6799  loss: 0.5587  bbox_loss: 0.3555  cls_loss: 0.2033
+2026/05/02 16:50:54 - mmengine - INFO - Epoch(train) [11][ 750/1652]  lr: 1.0000e-04  eta: 0:17:07  time: 0.3953  data_time: 0.0437  memory: 2217  grad_norm: 1.7743  loss: 0.5741  bbox_loss: 0.3665  cls_loss: 0.2076
+2026/05/02 16:51:14 - mmengine - INFO - Epoch(train) [11][ 800/1652]  lr: 1.0000e-04  eta: 0:16:47  time: 0.4016  data_time: 0.0449  memory: 2305  grad_norm: 1.7338  loss: 0.5634  bbox_loss: 0.3590  cls_loss: 0.2044
+2026/05/02 16:51:35 - mmengine - INFO - Epoch(train) [11][ 850/1652]  lr: 1.0000e-04  eta: 0:16:27  time: 0.4022  data_time: 0.0441  memory: 2184  grad_norm: 1.7211  loss: 0.5541  bbox_loss: 0.3536  cls_loss: 0.2005
+2026/05/02 16:51:54 - mmengine - INFO - Epoch(train) [11][ 900/1652]  lr: 1.0000e-04  eta: 0:16:07  time: 0.3955  data_time: 0.0442  memory: 2123  grad_norm: 1.7632  loss: 0.5546  bbox_loss: 0.3486  cls_loss: 0.2059
+2026/05/02 16:52:14 - mmengine - INFO - Epoch(train) [11][ 950/1652]  lr: 1.0000e-04  eta: 0:15:46  time: 0.3921  data_time: 0.0428  memory: 2246  grad_norm: 1.7362  loss: 0.5641  bbox_loss: 0.3558  cls_loss: 0.2083
+2026/05/02 16:52:34 - mmengine - INFO - Epoch(train) [11][1000/1652]  lr: 1.0000e-04  eta: 0:15:26  time: 0.4077  data_time: 0.0485  memory: 2307  grad_norm: 1.7069  loss: 0.5668  bbox_loss: 0.3623  cls_loss: 0.2045
+2026/05/02 16:52:55 - mmengine - INFO - Epoch(train) [11][1050/1652]  lr: 1.0000e-04  eta: 0:15:06  time: 0.4047  data_time: 0.0441  memory: 2282  grad_norm: 1.7700  loss: 0.5680  bbox_loss: 0.3589  cls_loss: 0.2090
+2026/05/02 16:53:15 - mmengine - INFO - Epoch(train) [11][1100/1652]  lr: 1.0000e-04  eta: 0:14:46  time: 0.4103  data_time: 0.0449  memory: 2323  grad_norm: 1.6939  loss: 0.5456  bbox_loss: 0.3502  cls_loss: 0.1954
+2026/05/02 16:53:35 - mmengine - INFO - Epoch(train) [11][1150/1652]  lr: 1.0000e-04  eta: 0:14:26  time: 0.4049  data_time: 0.0434  memory: 2232  grad_norm: 1.7273  loss: 0.5613  bbox_loss: 0.3537  cls_loss: 0.2076
+2026/05/02 16:53:55 - mmengine - INFO - Epoch(train) [11][1200/1652]  lr: 1.0000e-04  eta: 0:14:06  time: 0.3992  data_time: 0.0439  memory: 2299  grad_norm: 1.7417  loss: 0.5528  bbox_loss: 0.3537  cls_loss: 0.1990
+2026/05/02 16:54:15 - mmengine - INFO - Epoch(train) [11][1250/1652]  lr: 1.0000e-04  eta: 0:13:46  time: 0.3859  data_time: 0.0415  memory: 2075  grad_norm: 1.8778  loss: 0.5620  bbox_loss: 0.3605  cls_loss: 0.2015
+2026/05/02 16:54:34 - mmengine - INFO - Epoch(train) [11][1300/1652]  lr: 1.0000e-04  eta: 0:13:26  time: 0.3951  data_time: 0.0440  memory: 2102  grad_norm: 1.7898  loss: 0.5466  bbox_loss: 0.3469  cls_loss: 0.1998
+2026/05/02 16:54:55 - mmengine - INFO - Epoch(train) [11][1350/1652]  lr: 1.0000e-04  eta: 0:13:05  time: 0.4064  data_time: 0.0428  memory: 2440  grad_norm: 1.6943  loss: 0.5617  bbox_loss: 0.3570  cls_loss: 0.2047
+2026/05/02 16:55:14 - mmengine - INFO - Epoch(train) [11][1400/1652]  lr: 1.0000e-04  eta: 0:12:45  time: 0.3957  data_time: 0.0429  memory: 2333  grad_norm: 1.8346  loss: 0.5523  bbox_loss: 0.3528  cls_loss: 0.1995
+2026/05/02 16:55:35 - mmengine - INFO - Epoch(train) [11][1450/1652]  lr: 1.0000e-04  eta: 0:12:25  time: 0.4078  data_time: 0.0476  memory: 2212  grad_norm: 1.7706  loss: 0.5410  bbox_loss: 0.3452  cls_loss: 0.1958
+2026/05/02 16:55:46 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:55:55 - mmengine - INFO - Epoch(train) [11][1500/1652]  lr: 1.0000e-04  eta: 0:12:05  time: 0.3947  data_time: 0.0442  memory: 2153  grad_norm: 1.6365  loss: 0.5526  bbox_loss: 0.3517  cls_loss: 0.2009
+2026/05/02 16:56:15 - mmengine - INFO - Epoch(train) [11][1550/1652]  lr: 1.0000e-04  eta: 0:11:45  time: 0.4001  data_time: 0.0442  memory: 2182  grad_norm: 1.7561  loss: 0.5537  bbox_loss: 0.3537  cls_loss: 0.2000
+2026/05/02 16:56:35 - mmengine - INFO - Epoch(train) [11][1600/1652]  lr: 1.0000e-04  eta: 0:11:25  time: 0.4002  data_time: 0.0438  memory: 2373  grad_norm: 1.8235  loss: 0.5434  bbox_loss: 0.3462  cls_loss: 0.1972
+2026/05/02 16:56:54 - mmengine - INFO - Epoch(train) [11][1650/1652]  lr: 1.0000e-04  eta: 0:11:05  time: 0.3937  data_time: 0.0437  memory: 2126  grad_norm: 1.7734  loss: 0.5528  bbox_loss: 0.3567  cls_loss: 0.1961
+2026/05/02 16:56:55 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 16:57:16 - mmengine - INFO - Epoch(train) [12][  50/1652]  lr: 1.0000e-05  eta: 0:10:44  time: 0.4287  data_time: 0.0594  memory: 2355  grad_norm: 1.6874  loss: 0.5478  bbox_loss: 0.3490  cls_loss: 0.1988
+2026/05/02 16:57:37 - mmengine - INFO - Epoch(train) [12][ 100/1652]  lr: 1.0000e-05  eta: 0:10:24  time: 0.4139  data_time: 0.0472  memory: 2120  grad_norm: 1.7039  loss: 0.5432  bbox_loss: 0.3480  cls_loss: 0.1952
+2026/05/02 16:57:57 - mmengine - INFO - Epoch(train) [12][ 150/1652]  lr: 1.0000e-05  eta: 0:10:04  time: 0.4021  data_time: 0.0419  memory: 2177  grad_norm: 1.7229  loss: 0.5509  bbox_loss: 0.3483  cls_loss: 0.2027
+2026/05/02 16:58:17 - mmengine - INFO - Epoch(train) [12][ 200/1652]  lr: 1.0000e-05  eta: 0:09:44  time: 0.3956  data_time: 0.0442  memory: 2095  grad_norm: 1.5904  loss: 0.5426  bbox_loss: 0.3502  cls_loss: 0.1924
+2026/05/02 16:58:37 - mmengine - INFO - Epoch(train) [12][ 250/1652]  lr: 1.0000e-05  eta: 0:09:23  time: 0.4102  data_time: 0.0490  memory: 2270  grad_norm: 1.6619  loss: 0.5505  bbox_loss: 0.3497  cls_loss: 0.2007
+2026/05/02 16:58:58 - mmengine - INFO - Epoch(train) [12][ 300/1652]  lr: 1.0000e-05  eta: 0:09:03  time: 0.4056  data_time: 0.0449  memory: 2218  grad_norm: 1.5972  loss: 0.5554  bbox_loss: 0.3497  cls_loss: 0.2057
+2026/05/02 16:59:17 - mmengine - INFO - Epoch(train) [12][ 350/1652]  lr: 1.0000e-05  eta: 0:08:43  time: 0.3887  data_time: 0.0411  memory: 2193  grad_norm: 1.7629  loss: 0.5438  bbox_loss: 0.3460  cls_loss: 0.1978
+2026/05/02 16:59:37 - mmengine - INFO - Epoch(train) [12][ 400/1652]  lr: 1.0000e-05  eta: 0:08:23  time: 0.4031  data_time: 0.0441  memory: 2230  grad_norm: 1.6773  loss: 0.5437  bbox_loss: 0.3490  cls_loss: 0.1947
+2026/05/02 16:59:58 - mmengine - INFO - Epoch(train) [12][ 450/1652]  lr: 1.0000e-05  eta: 0:08:03  time: 0.4102  data_time: 0.0434  memory: 2455  grad_norm: 1.7805  loss: 0.5628  bbox_loss: 0.3588  cls_loss: 0.2040
+2026/05/02 17:00:18 - mmengine - INFO - Epoch(train) [12][ 500/1652]  lr: 1.0000e-05  eta: 0:07:43  time: 0.4001  data_time: 0.0439  memory: 2060  grad_norm: 1.6520  loss: 0.5503  bbox_loss: 0.3484  cls_loss: 0.2020
+2026/05/02 17:00:38 - mmengine - INFO - Epoch(train) [12][ 550/1652]  lr: 1.0000e-05  eta: 0:07:23  time: 0.3948  data_time: 0.0421  memory: 2264  grad_norm: 1.7501  loss: 0.5496  bbox_loss: 0.3487  cls_loss: 0.2010
+2026/05/02 17:00:57 - mmengine - INFO - Epoch(train) [12][ 600/1652]  lr: 1.0000e-05  eta: 0:07:03  time: 0.3928  data_time: 0.0428  memory: 2035  grad_norm: 1.6455  loss: 0.5427  bbox_loss: 0.3450  cls_loss: 0.1977
+2026/05/02 17:01:18 - mmengine - INFO - Epoch(train) [12][ 650/1652]  lr: 1.0000e-05  eta: 0:06:43  time: 0.4075  data_time: 0.0431  memory: 2213  grad_norm: 1.5730  loss: 0.5520  bbox_loss: 0.3544  cls_loss: 0.1976
+2026/05/02 17:01:38 - mmengine - INFO - Epoch(train) [12][ 700/1652]  lr: 1.0000e-05  eta: 0:06:22  time: 0.4043  data_time: 0.0440  memory: 2291  grad_norm: 1.8356  loss: 0.5595  bbox_loss: 0.3573  cls_loss: 0.2022
+2026/05/02 17:01:58 - mmengine - INFO - Epoch(train) [12][ 750/1652]  lr: 1.0000e-05  eta: 0:06:02  time: 0.3982  data_time: 0.0474  memory: 2307  grad_norm: 1.7145  loss: 0.5542  bbox_loss: 0.3529  cls_loss: 0.2013
+2026/05/02 17:02:17 - mmengine - INFO - Epoch(train) [12][ 800/1652]  lr: 1.0000e-05  eta: 0:05:42  time: 0.3927  data_time: 0.0424  memory: 2214  grad_norm: 1.7380  loss: 0.5536  bbox_loss: 0.3495  cls_loss: 0.2041
+2026/05/02 17:02:29 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 17:02:37 - mmengine - INFO - Epoch(train) [12][ 850/1652]  lr: 1.0000e-05  eta: 0:05:22  time: 0.3972  data_time: 0.0411  memory: 2212  grad_norm: 1.6187  loss: 0.5588  bbox_loss: 0.3599  cls_loss: 0.1990
+2026/05/02 17:02:57 - mmengine - INFO - Epoch(train) [12][ 900/1652]  lr: 1.0000e-05  eta: 0:05:02  time: 0.4012  data_time: 0.0451  memory: 2324  grad_norm: 1.6049  loss: 0.5525  bbox_loss: 0.3555  cls_loss: 0.1971
+2026/05/02 17:03:17 - mmengine - INFO - Epoch(train) [12][ 950/1652]  lr: 1.0000e-05  eta: 0:04:42  time: 0.3987  data_time: 0.0424  memory: 2171  grad_norm: 1.7499  loss: 0.5459  bbox_loss: 0.3484  cls_loss: 0.1975
+2026/05/02 17:03:36 - mmengine - INFO - Epoch(train) [12][1000/1652]  lr: 1.0000e-05  eta: 0:04:22  time: 0.3812  data_time: 0.0397  memory: 2175  grad_norm: 1.7789  loss: 0.5473  bbox_loss: 0.3455  cls_loss: 0.2018
+2026/05/02 17:03:56 - mmengine - INFO - Epoch(train) [12][1050/1652]  lr: 1.0000e-05  eta: 0:04:02  time: 0.3953  data_time: 0.0412  memory: 2039  grad_norm: 1.7633  loss: 0.5538  bbox_loss: 0.3527  cls_loss: 0.2011
+2026/05/02 17:04:16 - mmengine - INFO - Epoch(train) [12][1100/1652]  lr: 1.0000e-05  eta: 0:03:41  time: 0.3916  data_time: 0.0460  memory: 2099  grad_norm: 1.6888  loss: 0.5375  bbox_loss: 0.3447  cls_loss: 0.1929
+2026/05/02 17:04:35 - mmengine - INFO - Epoch(train) [12][1150/1652]  lr: 1.0000e-05  eta: 0:03:21  time: 0.3951  data_time: 0.0411  memory: 2468  grad_norm: 1.6210  loss: 0.5471  bbox_loss: 0.3492  cls_loss: 0.1979
+2026/05/02 17:04:56 - mmengine - INFO - Epoch(train) [12][1200/1652]  lr: 1.0000e-05  eta: 0:03:01  time: 0.4051  data_time: 0.0446  memory: 2397  grad_norm: 1.7180  loss: 0.5541  bbox_loss: 0.3525  cls_loss: 0.2016
+2026/05/02 17:05:15 - mmengine - INFO - Epoch(train) [12][1250/1652]  lr: 1.0000e-05  eta: 0:02:41  time: 0.3959  data_time: 0.0416  memory: 2196  grad_norm: 1.6271  loss: 0.5492  bbox_loss: 0.3464  cls_loss: 0.2028
+2026/05/02 17:05:36 - mmengine - INFO - Epoch(train) [12][1300/1652]  lr: 1.0000e-05  eta: 0:02:21  time: 0.4009  data_time: 0.0429  memory: 2166  grad_norm: 1.5233  loss: 0.5587  bbox_loss: 0.3577  cls_loss: 0.2010
+2026/05/02 17:05:55 - mmengine - INFO - Epoch(train) [12][1350/1652]  lr: 1.0000e-05  eta: 0:02:01  time: 0.3981  data_time: 0.0431  memory: 2093  grad_norm: 1.6023  loss: 0.5597  bbox_loss: 0.3584  cls_loss: 0.2013
+2026/05/02 17:06:15 - mmengine - INFO - Epoch(train) [12][1400/1652]  lr: 1.0000e-05  eta: 0:01:41  time: 0.3946  data_time: 0.0441  memory: 2079  grad_norm: 1.6547  loss: 0.5506  bbox_loss: 0.3477  cls_loss: 0.2029
+2026/05/02 17:06:35 - mmengine - INFO - Epoch(train) [12][1450/1652]  lr: 1.0000e-05  eta: 0:01:21  time: 0.4050  data_time: 0.0427  memory: 2233  grad_norm: 1.6897  loss: 0.5532  bbox_loss: 0.3590  cls_loss: 0.1941
+2026/05/02 17:06:56 - mmengine - INFO - Epoch(train) [12][1500/1652]  lr: 1.0000e-05  eta: 0:01:01  time: 0.4017  data_time: 0.0426  memory: 2367  grad_norm: 1.6422  loss: 0.5510  bbox_loss: 0.3552  cls_loss: 0.1958
+2026/05/02 17:07:16 - mmengine - INFO - Epoch(train) [12][1550/1652]  lr: 1.0000e-05  eta: 0:00:41  time: 0.4141  data_time: 0.0420  memory: 2461  grad_norm: 1.6597  loss: 0.5556  bbox_loss: 0.3533  cls_loss: 0.2023
+2026/05/02 17:07:36 - mmengine - INFO - Epoch(train) [12][1600/1652]  lr: 1.0000e-05  eta: 0:00:20  time: 0.3981  data_time: 0.0411  memory: 2498  grad_norm: 1.7326  loss: 0.5451  bbox_loss: 0.3491  cls_loss: 0.1960
+2026/05/02 17:07:55 - mmengine - INFO - Epoch(train) [12][1650/1652]  lr: 1.0000e-05  eta: 0:00:00  time: 0.3836  data_time: 0.0391  memory: 2194  grad_norm: 1.6511  loss: 0.5619  bbox_loss: 0.3613  cls_loss: 0.2005
+2026/05/02 17:07:56 - mmengine - INFO - Exp name: tr3d_1xb16_sunrgbd-3d-10class_20260502_145500
+2026/05/02 17:07:56 - mmengine - INFO - Saving checkpoint at 12 epochs
+2026/05/02 17:07:59 - mmengine - INFO - Epoch(val) [12][  50/5050]    eta: 0:03:46  time: 0.0453  data_time: 0.0049  memory: 1895  
+2026/05/02 17:08:01 - mmengine - INFO - Epoch(val) [12][ 100/5050]    eta: 0:03:24  time: 0.0372  data_time: 0.0015  memory: 278  
+2026/05/02 17:08:03 - mmengine - INFO - Epoch(val) [12][ 150/5050]    eta: 0:03:06  time: 0.0316  data_time: 0.0012  memory: 296  
+2026/05/02 17:08:04 - mmengine - INFO - Epoch(val) [12][ 200/5050]    eta: 0:02:55  time: 0.0307  data_time: 0.0011  memory: 293  
+2026/05/02 17:08:06 - mmengine - INFO - Epoch(val) [12][ 250/5050]    eta: 0:02:47  time: 0.0299  data_time: 0.0011  memory: 283  
+2026/05/02 17:08:07 - mmengine - INFO - Epoch(val) [12][ 300/5050]    eta: 0:02:42  time: 0.0307  data_time: 0.0012  memory: 292  
+2026/05/02 17:08:09 - mmengine - INFO - Epoch(val) [12][ 350/5050]    eta: 0:02:38  time: 0.0300  data_time: 0.0011  memory: 278  
+2026/05/02 17:08:10 - mmengine - INFO - Epoch(val) [12][ 400/5050]    eta: 0:02:34  time: 0.0296  data_time: 0.0010  memory: 286  
+2026/05/02 17:08:12 - mmengine - INFO - Epoch(val) [12][ 450/5050]    eta: 0:02:30  time: 0.0296  data_time: 0.0011  memory: 281  
+2026/05/02 17:08:13 - mmengine - INFO - Epoch(val) [12][ 500/5050]    eta: 0:02:27  time: 0.0292  data_time: 0.0010  memory: 281  
+2026/05/02 17:08:15 - mmengine - INFO - Epoch(val) [12][ 550/5050]    eta: 0:02:24  time: 0.0296  data_time: 0.0010  memory: 276  
+2026/05/02 17:08:16 - mmengine - INFO - Epoch(val) [12][ 600/5050]    eta: 0:02:22  time: 0.0301  data_time: 0.0012  memory: 270  
+2026/05/02 17:08:18 - mmengine - INFO - Epoch(val) [12][ 650/5050]    eta: 0:02:20  time: 0.0302  data_time: 0.0011  memory: 302  
+2026/05/02 17:08:19 - mmengine - INFO - Epoch(val) [12][ 700/5050]    eta: 0:02:18  time: 0.0312  data_time: 0.0011  memory: 301  
+2026/05/02 17:08:21 - mmengine - INFO - Epoch(val) [12][ 750/5050]    eta: 0:02:16  time: 0.0307  data_time: 0.0011  memory: 303  
+2026/05/02 17:08:22 - mmengine - INFO - Epoch(val) [12][ 800/5050]    eta: 0:02:14  time: 0.0303  data_time: 0.0011  memory: 265  
+2026/05/02 17:08:24 - mmengine - INFO - Epoch(val) [12][ 850/5050]    eta: 0:02:12  time: 0.0307  data_time: 0.0011  memory: 279  
+2026/05/02 17:08:25 - mmengine - INFO - Epoch(val) [12][ 900/5050]    eta: 0:02:10  time: 0.0307  data_time: 0.0012  memory: 283  
+2026/05/02 17:08:27 - mmengine - INFO - Epoch(val) [12][ 950/5050]    eta: 0:02:08  time: 0.0297  data_time: 0.0012  memory: 286  
+2026/05/02 17:08:28 - mmengine - INFO - Epoch(val) [12][1000/5050]    eta: 0:02:06  time: 0.0287  data_time: 0.0011  memory: 282  
+2026/05/02 17:08:30 - mmengine - INFO - Epoch(val) [12][1050/5050]    eta: 0:02:04  time: 0.0287  data_time: 0.0011  memory: 251  
+2026/05/02 17:08:31 - mmengine - INFO - Epoch(val) [12][1100/5050]    eta: 0:02:02  time: 0.0292  data_time: 0.0011  memory: 269  
+2026/05/02 17:08:33 - mmengine - INFO - Epoch(val) [12][1150/5050]    eta: 0:02:01  time: 0.0308  data_time: 0.0018  memory: 269  
+2026/05/02 17:08:34 - mmengine - INFO - Epoch(val) [12][1200/5050]    eta: 0:01:59  time: 0.0297  data_time: 0.0011  memory: 288  
+2026/05/02 17:08:36 - mmengine - INFO - Epoch(val) [12][1250/5050]    eta: 0:01:57  time: 0.0312  data_time: 0.0012  memory: 304  
+2026/05/02 17:08:37 - mmengine - INFO - Epoch(val) [12][1300/5050]    eta: 0:01:56  time: 0.0308  data_time: 0.0011  memory: 290  
+2026/05/02 17:08:39 - mmengine - INFO - Epoch(val) [12][1350/5050]    eta: 0:01:54  time: 0.0295  data_time: 0.0011  memory: 272  
+2026/05/02 17:08:40 - mmengine - INFO - Epoch(val) [12][1400/5050]    eta: 0:01:52  time: 0.0298  data_time: 0.0012  memory: 285  
+2026/05/02 17:08:42 - mmengine - INFO - Epoch(val) [12][1450/5050]    eta: 0:01:51  time: 0.0297  data_time: 0.0011  memory: 277  
+2026/05/02 17:08:43 - mmengine - INFO - Epoch(val) [12][1500/5050]    eta: 0:01:49  time: 0.0303  data_time: 0.0012  memory: 303  
+2026/05/02 17:08:45 - mmengine - INFO - Epoch(val) [12][1550/5050]    eta: 0:01:47  time: 0.0296  data_time: 0.0011  memory: 260  
+2026/05/02 17:08:46 - mmengine - INFO - Epoch(val) [12][1600/5050]    eta: 0:01:46  time: 0.0300  data_time: 0.0012  memory: 294  
+2026/05/02 17:08:48 - mmengine - INFO - Epoch(val) [12][1650/5050]    eta: 0:01:44  time: 0.0297  data_time: 0.0012  memory: 281  
+2026/05/02 17:08:49 - mmengine - INFO - Epoch(val) [12][1700/5050]    eta: 0:01:42  time: 0.0291  data_time: 0.0012  memory: 265  
+2026/05/02 17:08:51 - mmengine - INFO - Epoch(val) [12][1750/5050]    eta: 0:01:41  time: 0.0298  data_time: 0.0011  memory: 274  
+2026/05/02 17:08:52 - mmengine - INFO - Epoch(val) [12][1800/5050]    eta: 0:01:39  time: 0.0295  data_time: 0.0011  memory: 251  
+2026/05/02 17:08:54 - mmengine - INFO - Epoch(val) [12][1850/5050]    eta: 0:01:37  time: 0.0290  data_time: 0.0012  memory: 260  
+2026/05/02 17:08:55 - mmengine - INFO - Epoch(val) [12][1900/5050]    eta: 0:01:36  time: 0.0297  data_time: 0.0011  memory: 289  
+2026/05/02 17:08:57 - mmengine - INFO - Epoch(val) [12][1950/5050]    eta: 0:01:34  time: 0.0293  data_time: 0.0010  memory: 283  
+2026/05/02 17:08:58 - mmengine - INFO - Epoch(val) [12][2000/5050]    eta: 0:01:33  time: 0.0320  data_time: 0.0012  memory: 290  
+2026/05/02 17:09:00 - mmengine - INFO - Epoch(val) [12][2050/5050]    eta: 0:01:31  time: 0.0297  data_time: 0.0011  memory: 265  
+2026/05/02 17:09:01 - mmengine - INFO - Epoch(val) [12][2100/5050]    eta: 0:01:30  time: 0.0290  data_time: 0.0009  memory: 259  
+2026/05/02 17:09:03 - mmengine - INFO - Epoch(val) [12][2150/5050]    eta: 0:01:28  time: 0.0294  data_time: 0.0010  memory: 256  
+2026/05/02 17:09:04 - mmengine - INFO - Epoch(val) [12][2200/5050]    eta: 0:01:26  time: 0.0287  data_time: 0.0009  memory: 260  
+2026/05/02 17:09:06 - mmengine - INFO - Epoch(val) [12][2250/5050]    eta: 0:01:25  time: 0.0296  data_time: 0.0009  memory: 280  
+2026/05/02 17:09:07 - mmengine - INFO - Epoch(val) [12][2300/5050]    eta: 0:01:23  time: 0.0300  data_time: 0.0011  memory: 251  
+2026/05/02 17:09:09 - mmengine - INFO - Epoch(val) [12][2350/5050]    eta: 0:01:22  time: 0.0309  data_time: 0.0018  memory: 263  
+2026/05/02 17:09:10 - mmengine - INFO - Epoch(val) [12][2400/5050]    eta: 0:01:20  time: 0.0298  data_time: 0.0011  memory: 267  
+2026/05/02 17:09:12 - mmengine - INFO - Epoch(val) [12][2450/5050]    eta: 0:01:19  time: 0.0315  data_time: 0.0011  memory: 290  
+2026/05/02 17:09:13 - mmengine - INFO - Epoch(val) [12][2500/5050]    eta: 0:01:17  time: 0.0307  data_time: 0.0011  memory: 286  
+2026/05/02 17:09:15 - mmengine - INFO - Epoch(val) [12][2550/5050]    eta: 0:01:16  time: 0.0290  data_time: 0.0010  memory: 284  
+2026/05/02 17:09:16 - mmengine - INFO - Epoch(val) [12][2600/5050]    eta: 0:01:14  time: 0.0272  data_time: 0.0010  memory: 253  
+2026/05/02 17:09:17 - mmengine - INFO - Epoch(val) [12][2650/5050]    eta: 0:01:12  time: 0.0280  data_time: 0.0010  memory: 237  
+2026/05/02 17:09:19 - mmengine - INFO - Epoch(val) [12][2700/5050]    eta: 0:01:11  time: 0.0278  data_time: 0.0009  memory: 250  
+2026/05/02 17:09:20 - mmengine - INFO - Epoch(val) [12][2750/5050]    eta: 0:01:09  time: 0.0274  data_time: 0.0009  memory: 251  
+2026/05/02 17:09:22 - mmengine - INFO - Epoch(val) [12][2800/5050]    eta: 0:01:07  time: 0.0284  data_time: 0.0009  memory: 257  
+2026/05/02 17:09:23 - mmengine - INFO - Epoch(val) [12][2850/5050]    eta: 0:01:06  time: 0.0285  data_time: 0.0009  memory: 281  
+2026/05/02 17:09:24 - mmengine - INFO - Epoch(val) [12][2900/5050]    eta: 0:01:04  time: 0.0290  data_time: 0.0009  memory: 270  
+2026/05/02 17:09:26 - mmengine - INFO - Epoch(val) [12][2950/5050]    eta: 0:01:03  time: 0.0290  data_time: 0.0011  memory: 265  
+2026/05/02 17:09:27 - mmengine - INFO - Epoch(val) [12][3000/5050]    eta: 0:01:01  time: 0.0301  data_time: 0.0011  memory: 283  
+2026/05/02 17:09:29 - mmengine - INFO - Epoch(val) [12][3050/5050]    eta: 0:01:00  time: 0.0296  data_time: 0.0009  memory: 314  
+2026/05/02 17:09:30 - mmengine - INFO - Epoch(val) [12][3100/5050]    eta: 0:00:58  time: 0.0293  data_time: 0.0009  memory: 304  
+2026/05/02 17:09:32 - mmengine - INFO - Epoch(val) [12][3150/5050]    eta: 0:00:57  time: 0.0302  data_time: 0.0009  memory: 307  
+2026/05/02 17:09:33 - mmengine - INFO - Epoch(val) [12][3200/5050]    eta: 0:00:55  time: 0.0294  data_time: 0.0010  memory: 278  
+2026/05/02 17:09:35 - mmengine - INFO - Epoch(val) [12][3250/5050]    eta: 0:00:54  time: 0.0285  data_time: 0.0010  memory: 271  
+2026/05/02 17:09:36 - mmengine - INFO - Epoch(val) [12][3300/5050]    eta: 0:00:52  time: 0.0283  data_time: 0.0010  memory: 292  
+2026/05/02 17:09:38 - mmengine - INFO - Epoch(val) [12][3350/5050]    eta: 0:00:51  time: 0.0297  data_time: 0.0010  memory: 286  
+2026/05/02 17:09:39 - mmengine - INFO - Epoch(val) [12][3400/5050]    eta: 0:00:49  time: 0.0296  data_time: 0.0010  memory: 301  
+2026/05/02 17:09:41 - mmengine - INFO - Epoch(val) [12][3450/5050]    eta: 0:00:48  time: 0.0293  data_time: 0.0009  memory: 286  
+2026/05/02 17:09:42 - mmengine - INFO - Epoch(val) [12][3500/5050]    eta: 0:00:46  time: 0.0290  data_time: 0.0010  memory: 253  
+2026/05/02 17:09:44 - mmengine - INFO - Epoch(val) [12][3550/5050]    eta: 0:00:44  time: 0.0300  data_time: 0.0009  memory: 298  
+2026/05/02 17:09:45 - mmengine - INFO - Epoch(val) [12][3600/5050]    eta: 0:00:43  time: 0.0282  data_time: 0.0011  memory: 275  
+2026/05/02 17:09:46 - mmengine - INFO - Epoch(val) [12][3650/5050]    eta: 0:00:41  time: 0.0302  data_time: 0.0010  memory: 315  
+2026/05/02 17:09:48 - mmengine - INFO - Epoch(val) [12][3700/5050]    eta: 0:00:40  time: 0.0308  data_time: 0.0009  memory: 292  
+2026/05/02 17:09:50 - mmengine - INFO - Epoch(val) [12][3750/5050]    eta: 0:00:38  time: 0.0310  data_time: 0.0011  memory: 316  
+2026/05/02 17:09:51 - mmengine - INFO - Epoch(val) [12][3800/5050]    eta: 0:00:37  time: 0.0293  data_time: 0.0009  memory: 293  
+2026/05/02 17:09:53 - mmengine - INFO - Epoch(val) [12][3850/5050]    eta: 0:00:35  time: 0.0292  data_time: 0.0011  memory: 258  
+2026/05/02 17:09:54 - mmengine - INFO - Epoch(val) [12][3900/5050]    eta: 0:00:34  time: 0.0294  data_time: 0.0010  memory: 260  
+2026/05/02 17:09:55 - mmengine - INFO - Epoch(val) [12][3950/5050]    eta: 0:00:32  time: 0.0301  data_time: 0.0011  memory: 286  
+2026/05/02 17:09:57 - mmengine - INFO - Epoch(val) [12][4000/5050]    eta: 0:00:31  time: 0.0278  data_time: 0.0009  memory: 244  
+2026/05/02 17:09:58 - mmengine - INFO - Epoch(val) [12][4050/5050]    eta: 0:00:29  time: 0.0279  data_time: 0.0009  memory: 250  
+2026/05/02 17:10:00 - mmengine - INFO - Epoch(val) [12][4100/5050]    eta: 0:00:28  time: 0.0284  data_time: 0.0009  memory: 276  
+2026/05/02 17:10:01 - mmengine - INFO - Epoch(val) [12][4150/5050]    eta: 0:00:26  time: 0.0281  data_time: 0.0009  memory: 255  
+2026/05/02 17:10:03 - mmengine - INFO - Epoch(val) [12][4200/5050]    eta: 0:00:25  time: 0.0279  data_time: 0.0009  memory: 238  
+2026/05/02 17:10:04 - mmengine - INFO - Epoch(val) [12][4250/5050]    eta: 0:00:23  time: 0.0275  data_time: 0.0009  memory: 230  
+2026/05/02 17:10:05 - mmengine - INFO - Epoch(val) [12][4300/5050]    eta: 0:00:22  time: 0.0280  data_time: 0.0010  memory: 289  
+2026/05/02 17:10:07 - mmengine - INFO - Epoch(val) [12][4350/5050]    eta: 0:00:20  time: 0.0285  data_time: 0.0010  memory: 269  
+2026/05/02 17:10:08 - mmengine - INFO - Epoch(val) [12][4400/5050]    eta: 0:00:19  time: 0.0282  data_time: 0.0012  memory: 247  
+2026/05/02 17:10:10 - mmengine - INFO - Epoch(val) [12][4450/5050]    eta: 0:00:17  time: 0.0324  data_time: 0.0013  memory: 258  
+2026/05/02 17:10:11 - mmengine - INFO - Epoch(val) [12][4500/5050]    eta: 0:00:16  time: 0.0283  data_time: 0.0010  memory: 246  
+2026/05/02 17:10:13 - mmengine - INFO - Epoch(val) [12][4550/5050]    eta: 0:00:14  time: 0.0289  data_time: 0.0011  memory: 245  
+2026/05/02 17:10:14 - mmengine - INFO - Epoch(val) [12][4600/5050]    eta: 0:00:13  time: 0.0292  data_time: 0.0012  memory: 252  
+2026/05/02 17:10:15 - mmengine - INFO - Epoch(val) [12][4650/5050]    eta: 0:00:11  time: 0.0284  data_time: 0.0011  memory: 242  
+2026/05/02 17:10:17 - mmengine - INFO - Epoch(val) [12][4700/5050]    eta: 0:00:10  time: 0.0286  data_time: 0.0012  memory: 249  
+2026/05/02 17:10:18 - mmengine - INFO - Epoch(val) [12][4750/5050]    eta: 0:00:08  time: 0.0283  data_time: 0.0011  memory: 247  
+2026/05/02 17:10:20 - mmengine - INFO - Epoch(val) [12][4800/5050]    eta: 0:00:07  time: 0.0284  data_time: 0.0011  memory: 237  
+2026/05/02 17:10:21 - mmengine - INFO - Epoch(val) [12][4850/5050]    eta: 0:00:05  time: 0.0283  data_time: 0.0011  memory: 244  
+2026/05/02 17:10:23 - mmengine - INFO - Epoch(val) [12][4900/5050]    eta: 0:00:04  time: 0.0283  data_time: 0.0011  memory: 244  
+2026/05/02 17:10:24 - mmengine - INFO - Epoch(val) [12][4950/5050]    eta: 0:00:02  time: 0.0288  data_time: 0.0011  memory: 249  
+2026/05/02 17:10:25 - mmengine - INFO - Epoch(val) [12][5000/5050]    eta: 0:00:01  time: 0.0281  data_time: 0.0011  memory: 242  
+2026/05/02 17:10:27 - mmengine - INFO - Epoch(val) [12][5050/5050]    eta: 0:00:00  time: 0.0279  data_time: 0.0011  memory: 236  
+2026/05/02 17:11:12 - mmengine - INFO - 
++-------------+---------+---------+---------+---------+
+| classes     | AP_0.25 | AR_0.25 | AP_0.50 | AR_0.50 |
++-------------+---------+---------+---------+---------+
+| bed         | 0.8782  | 0.9942  | 0.7072  | 0.8233  |
+| table       | 0.5896  | 0.9736  | 0.3919  | 0.7423  |
+| sofa        | 0.7024  | 0.9825  | 0.5937  | 0.8262  |
+| chair       | 0.8320  | 0.9746  | 0.7083  | 0.8702  |
+| desk        | 0.4014  | 0.9522  | 0.1838  | 0.6211  |
+| dresser     | 0.4377  | 0.9450  | 0.2889  | 0.7339  |
+| night_stand | 0.7164  | 0.9647  | 0.5959  | 0.8314  |
+| bookshelf   | 0.3447  | 0.9149  | 0.1294  | 0.4326  |
+| bathtub     | 0.7729  | 0.9796  | 0.5212  | 0.7347  |
+| toilet      | 0.9378  | 1.0000  | 0.7290  | 0.8414  |
++-------------+---------+---------+---------+---------+
+| Overall     | 0.6613  | 0.9681  | 0.4849  | 0.7457  |
++-------------+---------+---------+---------+---------+
+2026/05/02 17:11:13 - mmengine - INFO - Epoch(val) [12][5050/5050]    bed_AP_0.25: 0.8782  table_AP_0.25: 0.5896  sofa_AP_0.25: 0.7024  chair_AP_0.25: 0.8320  desk_AP_0.25: 0.4014  dresser_AP_0.25: 0.4377  night_stand_AP_0.25: 0.7164  bookshelf_AP_0.25: 0.3447  bathtub_AP_0.25: 0.7729  toilet_AP_0.25: 0.9378  mAP_0.25: 0.6613  bed_rec_0.25: 0.9942  table_rec_0.25: 0.9736  sofa_rec_0.25: 0.9825  chair_rec_0.25: 0.9746  desk_rec_0.25: 0.9522  dresser_rec_0.25: 0.9450  night_stand_rec_0.25: 0.9647  bookshelf_rec_0.25: 0.9149  bathtub_rec_0.25: 0.9796  toilet_rec_0.25: 1.0000  mAR_0.25: 0.9681  bed_AP_0.50: 0.7072  table_AP_0.50: 0.3919  sofa_AP_0.50: 0.5937  chair_AP_0.50: 0.7083  desk_AP_0.50: 0.1838  dresser_AP_0.50: 0.2889  night_stand_AP_0.50: 0.5959  bookshelf_AP_0.50: 0.1294  bathtub_AP_0.50: 0.5212  toilet_AP_0.50: 0.7290  mAP_0.50: 0.4849  bed_rec_0.50: 0.8233  table_rec_0.50: 0.7423  sofa_rec_0.50: 0.8262  chair_rec_0.50: 0.8702  desk_rec_0.50: 0.6211  dresser_rec_0.50: 0.7339  night_stand_rec_0.50: 0.8314  bookshelf_rec_0.50: 0.4326  bathtub_rec_0.50: 0.7347  toilet_rec_0.50: 0.8414  mAR_0.50: 0.7457  data_time: 0.0011  time: 0.0296
